@@ -44,4 +44,13 @@ public class HttpRequest {
 	public String toString() {
 		return "["+method+"]" + " " + uri;
 	}
+	
+	public HttpRequest copy() {
+		var hr = new HttpRequest();
+		hr.setUri(uri);
+		hr.setMethod(method);
+		hr.setCharset(charset);
+		hr.setExcludePaths(excludePaths);
+		return hr;
+	}
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 public class HttpQuery extends HttpRequest {
 
 	private boolean debug = false;
-	private boolean disabled = false;
+	private boolean enable = true;
 	private boolean strict = true;
 	private boolean parallel = true;
 	private String description = "";
@@ -25,14 +25,14 @@ public class HttpQuery extends HttpRequest {
 			requireNonNull(actual);
 		}
 		else {
-			expected = actual = this;
+			expected = actual = this.copy();
 		}
 		return this;
 	}
 
 	@Override
 	public String toString() {
-		return description + " : " + super.toString();
+		return description + " : " + expected.toString();
 	}
 	
 }

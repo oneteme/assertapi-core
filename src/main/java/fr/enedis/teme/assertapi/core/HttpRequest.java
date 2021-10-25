@@ -22,7 +22,8 @@ public class HttpRequest {
 	private String[] excludePaths;
 	
 	public String url() {
-		return requireNonNull(uri).trim().startsWith("/") ? uri : "/" + uri;
+		var v = requireNonNull(uri).trim();
+		return v.startsWith("/") ? v : "/" + v;
 	}
 
 	public String httpMethod() {

@@ -1,9 +1,11 @@
 package fr.enedis.teme.assertapi.core;
 
+import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,52 +13,35 @@ import lombok.RequiredArgsConstructor;
 public class ResponseProxyComparator implements ResponseComparator {
 	
 	private final ResponseComparator comparator;
-
-	@Override
+	private final RestTemplate template;
+	
 	public void assumeEnabled(boolean enable) {
-		
+		comparator.assumeEnabled(enable);
 	}
-
-	@Override
 	public ResponseEntity<byte[]> assertNotResponseException(SafeSupplier<ResponseEntity<byte[]>> supp) {
-		// TODO Auto-generated method stub
-		return null;
+		return comparator.assertNotResponseException(supp);
 	}
-
-	@Override
 	public RestClientResponseException assertResponseException(SafeSupplier<?> supp) {
-		// TODO Auto-generated method stub
-		return null;
+		return comparator.assertResponseException(supp);
 	}
-
-	@Override
 	public void assertStatusCode(int expectedStatusCode, int actualStatusCode) {
-		// TODO Auto-generated method stub
-		
+		comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
 	}
-
-	@Override
 	public void assertContentType(MediaType expectedContentType, MediaType actualContentType) {
-		// TODO Auto-generated method stub
-		
+		comparator.assertContentType(expectedContentType, actualContentType);
 	}
-
-	@Override
 	public void assertByteContent(byte[] expectedContent, byte[] actualContent) {
-		// TODO Auto-generated method stub
-		
+		comparator.assertByteContent(expectedContent, actualContent);
 	}
-
-	@Override
 	public void assertTextContent(String expectedContent, String actualContent) {
-		// TODO Auto-generated method stub
-		
+		comparator.assertTextContent(expectedContent, actualContent);
 	}
-
-	@Override
+	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) throws JSONException {
+		comparator.assertJsonContent(expectedContent, actualContent, strict);
+	}
 	public void assertJsonCompareResut(JSONCompareResult res) {
-		// TODO Auto-generated method stub
-		
+		comparator.assertJsonCompareResut(res);
 	}
-
+	
+	
 }

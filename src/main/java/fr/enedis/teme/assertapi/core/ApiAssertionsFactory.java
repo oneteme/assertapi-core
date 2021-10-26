@@ -40,9 +40,9 @@ public class ApiAssertionsFactory {
 		
 		requireNonNull(comparator);
 		return new DefaultApiAssertions(
-				requireNonNull(exTemp), 
+				requireNonNull(exTemp),
 				requireNonNull(acTemp),
-				trTemp == null ? comparator : new ResponseProxyComparator(comparator)); 
+				trTemp == null ? comparator : new ResponseProxyComparator(comparator, trTemp)); 
 	}
 
 }

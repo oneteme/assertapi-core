@@ -21,7 +21,7 @@ public class HttpRequest {
 	private String charset = "UTF-8";
 	private String[] excludePaths;
 	
-	public String url() {
+	public String uri() {
 		var v = requireNonNull(uri).trim();
 		return v.startsWith("/") ? v : "/" + v;
 	}

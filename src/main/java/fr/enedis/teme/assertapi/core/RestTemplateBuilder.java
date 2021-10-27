@@ -11,6 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RestTemplateBuilder {
 
+	public static RestTemplate build(String url) {
+
+		var rt = new RestTemplate();
+		RootUriTemplateHandler.addTo(rt, url);
+		return rt;
+	}
+	
 	public static RestTemplate build(ServerConfig conf) {
 
 		return build(conf, init(conf));
@@ -23,5 +30,6 @@ public final class RestTemplateBuilder {
 		rt.getClientHttpRequestInitializers().add(initializer);
 		return rt;
 	}
+	
 
 }

@@ -22,12 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import com.jayway.jsonpath.JsonPath;
 
 import fr.enedis.teme.assertapi.core.ResponseComparator.SafeSupplier;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor
 public final class DefaultApiAssertions implements ApiAssertions {
 	
 	private final RestTemplate exTemp;
@@ -37,44 +36,59 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	@Override
 	public void assertApi(HttpQuery query) throws Exception {
 		
-		comparator.assumeEnabled(query.isEnable());
-    	String aUrl = query.getActual().url();
+		var comp = comparator.query(query);
+		comp.assumeEnabled(query.isEnable());
+    	String aUrl = query.getActual().uri();
     	CompletableFuture<ResponseEntity<byte[]>> af = query.isParallel() 
     			? supplyAsync(()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class), commonPool())
     			: completedFuture(acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class));
     	try {
-        	var eRes = exTemp.exchange(query.getExpected().url(), HttpMethod.valueOf(query.getExpected().httpMethod()), null, byte[].class);
+        	var eRes = exTemp.exchange(query.getExpected().uri(), HttpMethod.valueOf(query.getExpected().httpMethod()), null, byte[].class);
         	
-        	var aRes = comparator.assertNotResponseException(execute(af));
-        	comparator.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
-        	comparator.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
+        	var aRes = comp.assertNotResponseException(execute(af));
+        	comp.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
+        	comp.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
 			if(isTextContent(eRes.getHeaders().getContentType())) {
 		    	var eCont = new String(eRes.getBody(), query.getExpected().charset());
 		    	var aCont = new String(aRes.getBody(), query.getActual().charset());
 		    	if(APPLICATION_JSON.isCompatibleWith(eRes.getHeaders().getContentType())) {
-		    		comparator.assertJsonContent(
-							excludePaths(eCont, query.getExpected()), 
+		    		comp.assertJsonContent(
+							excludePaths(eCont, query.getExpected()),
 							excludePaths(aCont, query.getActual()), 
 							query.isStrict());
 		    	}
 		    	else {
-		    		comparator.assertTextContent(eCont, aCont);
+		    		comp.assertTextContent(eCont, aCont);
 		    	}
 			}
 			else {
-				comparator.assertByteContent(eRes.getBody(), aRes.getBody());
+				comp.assertByteContent(eRes.getBody(), aRes.getBody());
 			}
     	}
     	catch(RestClientResponseException ee) {
-        	var ae = comparator.assertResponseException(execute(af));
-        	comparator.assertStatusCode(ee.getRawStatusCode(), ae.getRawStatusCode());
-//        	assertEquals("response body", ee.getResponseBodyAsString(), ae.getResponseBodyAsString());
+        	var ae = comp.assertResponseException(execute(af));
+        	comp.assertStatusCode(ee.getRawStatusCode(), ae.getRawStatusCode());
+        	comp.assertContentType(ee.getResponseHeaders().getContentType(), ae.getResponseHeaders().getContentType());
+        	var mediaType = ee.getResponseHeaders().getContentType();
+			if(isTextContent(mediaType)) {
+	        	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
+		    		comp.assertJsonContent(
+							excludePaths(ee.getResponseBodyAsString(), query.getExpected()),
+							excludePaths(ae.getResponseBodyAsString(), query.getActual()), 
+							query.isStrict());
+		    	}
+		    	else {
+		    		comp.assertTextContent(ee.getResponseBodyAsString(), ae.getResponseBodyAsString());
+		    	}
+			}
     	}
     	catch(Exception e) {
     		waitFor(af);
     		throw e;
     	}
+		comp.testOK();
 	}
+	
 	
 	private static boolean isTextContent(MediaType media){
 		

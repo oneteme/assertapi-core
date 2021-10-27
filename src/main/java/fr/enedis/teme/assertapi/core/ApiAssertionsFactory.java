@@ -2,6 +2,8 @@ package fr.enedis.teme.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.function.Consumer;
+
 import org.springframework.web.client.RestTemplate;
 
 import lombok.NoArgsConstructor;
@@ -9,30 +11,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApiAssertionsFactory {
 
-	private RestTemplate exTemp;
-	private RestTemplate acTemp;
-	private RestTemplate trTemp;
 	private ResponseComparator comparator;
+	private ServerConfig exServerConfig;
+	private ServerConfig acServerConfig;
+	private Consumer<ApiAssertionsResult> resultTracer;
 
-	public ApiAssertionsFactory trace(RestTemplate trTemp) {
-		this.trTemp = trTemp;
-		return this;
-	}
-
-	public ApiAssertionsFactory compare(RestTemplate expectedTemp, RestTemplate actualTemp) {
-		this.exTemp = expectedTemp;
-		this.acTemp = actualTemp;
-		return this;
-	}
-	
-	public ApiAssertionsFactory compare(ServerConfig expectedServerConf, ServerConfig actualServerConf) {
-		this.exTemp = RestTemplateBuilder.build(expectedServerConf);
-		this.acTemp = RestTemplateBuilder.build(actualServerConf);
-		return this;
-	}
-	
 	public ApiAssertionsFactory using(ResponseComparator comparator) {
 		this.comparator = comparator;
+		return this;
+	}
+	
+	public ApiAssertionsFactory comparing(ServerConfig expectedServerConf, ServerConfig actualServerConf) {
+		this.exServerConfig = expectedServerConf;
+		this.acServerConfig = actualServerConf;
+		return this;
+	}
+	
+	public ApiAssertionsFactory trace(Consumer<ApiAssertionsResult> trTemp) {
+		this.resultTracer = trTemp;
+		return this;
+	}
+	
+	public ApiAssertionsFactory trace(String url) {
+		var template = new RestTemplate();
+		this.resultTracer = tr-> template.put(url, tr);
 		return this;
 	}
 	
@@ -40,9 +42,8 @@ public class ApiAssertionsFactory {
 		
 		requireNonNull(comparator);
 		return new DefaultApiAssertions(
-				requireNonNull(exTemp),
-				requireNonNull(acTemp),
-				trTemp == null ? comparator : new ResponseProxyComparator(comparator, trTemp)); 
+				RestTemplateBuilder.build(requireNonNull(exServerConfig)),
+				RestTemplateBuilder.build(requireNonNull(acServerConfig)),
+				resultTracer == null ? comparator : new ResponseProxyComparator(comparator, resultTracer, exServerConfig, acServerConfig)); 
 	}
-
 }

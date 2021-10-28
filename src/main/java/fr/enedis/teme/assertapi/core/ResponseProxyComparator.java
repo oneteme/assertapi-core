@@ -54,6 +54,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
+	
 	public RestClientResponseException assertResponseException(SafeSupplier<?> supp) {
 		try {
 			return comparator.assertResponseException(supp);
@@ -63,6 +64,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
+	
 	public void assertStatusCode(int expectedStatusCode, int actualStatusCode) {
 		try {
 			comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
@@ -72,6 +74,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
+	
 	public void assertContentType(MediaType expectedContentType, MediaType actualContentType) {
 		try {
 			comparator.assertContentType(expectedContentType, actualContentType);
@@ -80,8 +83,8 @@ public class ResponseProxyComparator implements ResponseComparator {
 			trace(KO, CONTENT_TYPE);
 			throw e;
 		}
-		
 	}
+	
 	public void assertByteContent(byte[] expectedContent, byte[] actualContent) {
 		try {
 			comparator.assertByteContent(expectedContent, actualContent);
@@ -91,6 +94,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
+
 	public void assertTextContent(String expectedContent, String actualContent) {
 		try {
 			comparator.assertTextContent(expectedContent, actualContent);
@@ -100,6 +104,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
+	
 	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) throws JSONException {
 		try {
 			comparator.assertJsonContent(expectedContent, actualContent, strict);

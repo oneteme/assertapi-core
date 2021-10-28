@@ -36,7 +36,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	@Override
 	public void assertApi(HttpQuery query) throws Exception {
 		
-		var comp = comparator.query(query);
+		var comp = comparator.comparing(query);
 		comp.assumeEnabled(query.isEnable());
     	String aUrl = query.getActual().uri();
     	CompletableFuture<ResponseEntity<byte[]>> af = query.isParallel() 
@@ -86,7 +86,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
     		waitFor(af);
     		throw e;
     	}
-		comp.testOK();
+		comp.finish();
 	}
 	
 	

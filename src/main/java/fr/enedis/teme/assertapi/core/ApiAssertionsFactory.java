@@ -32,7 +32,7 @@ public class ApiAssertionsFactory {
 		return this;
 	}
 	
-	public ApiAssertionsFactory trace(String url) {
+	public ApiAssertionsFactory traceOn(String url) {
 		var template = new RestTemplate();
 		this.resultTracer = tr-> template.put(url, tr);
 		return this;
@@ -46,4 +46,5 @@ public class ApiAssertionsFactory {
 				RestTemplateBuilder.build(requireNonNull(acServerConfig)),
 				resultTracer == null ? comparator : new ResponseProxyComparator(comparator, resultTracer, exServerConfig, acServerConfig)); 
 	}
+	
 }

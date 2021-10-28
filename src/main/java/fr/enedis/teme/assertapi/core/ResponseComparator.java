@@ -45,9 +45,9 @@ public interface ResponseComparator {
 
 	void assertJsonCompareResut(JSONCompareResult res);
 	
-	default ResponseComparator query(HttpQuery query) { return this; }
+	default ResponseComparator comparing(HttpQuery query) { return this; }
 	
-	default void testOK() { }
+	default void finish() { }
 	
 	@FunctionalInterface
 	public interface SafeSupplier<T> {

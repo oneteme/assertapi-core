@@ -1,8 +1,9 @@
 package fr.enedis.teme.assertapi.core;
 
-import static fr.enedis.teme.assertapi.core.ApiAssertionsResult.TestStatus.KO;
-import static fr.enedis.teme.assertapi.core.ApiAssertionsResult.TestStatus.OK;
-import static fr.enedis.teme.assertapi.core.ApiAssertionsResult.TestStatus.SKIP;
+import static fr.enedis.teme.assertapi.core.TestStatus.KO;
+import static fr.enedis.teme.assertapi.core.TestStatus.OK;
+import static fr.enedis.teme.assertapi.core.TestStatus.SKIP;
+import static fr.enedis.teme.assertapi.core.TestStep.*;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Consumer;
@@ -13,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientResponseException;
 
-import fr.enedis.teme.assertapi.core.ApiAssertionsResult.TestStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +40,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assumeEnabled(enable);
 		}
 		catch(Throwable e) {
-			trace(SKIP);
+			trace(SKIP, null);
 			throw e;
 		}
 	}
@@ -50,7 +50,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			return comparator.assertNotResponseException(supp);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, HTTP_CODE);
 			throw e;
 		}
 	}
@@ -59,7 +59,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			return comparator.assertResponseException(supp);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, HTTP_CODE);
 			throw e;
 		}
 	}
@@ -68,7 +68,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, HTTP_CODE);
 			throw e;
 		}
 	}
@@ -77,7 +77,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assertContentType(expectedContentType, actualContentType);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, CONTENT_TYPE);
 			throw e;
 		}
 		
@@ -87,7 +87,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assertByteContent(expectedContent, actualContent);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, RESPONSE_CONTENT);
 			throw e;
 		}
 	}
@@ -96,7 +96,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assertTextContent(expectedContent, actualContent);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, RESPONSE_CONTENT);
 			throw e;
 		}
 	}
@@ -105,7 +105,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 			comparator.assertJsonContent(expectedContent, actualContent, strict);
 		}
 		catch(Throwable e) {
-			trace(KO);
+			trace(KO, RESPONSE_CONTENT);
 			throw e;
 		}
 	}
@@ -115,28 +115,29 @@ public class ResponseProxyComparator implements ResponseComparator {
 	}
 	
 	@Override
-	public ResponseComparator query(HttpQuery query) {
+	public ResponseComparator comparing(HttpQuery query) {
 		return new ResponseProxyComparator(comparator, tracer, exServerConfig, acServerConfig, requireNonNull(query));
 	}
 
 	@Override
-	public void testOK() { 
+	public void finish() { 
 		try {
-			comparator.testOK();
-			trace(OK);
+			comparator.finish();
+			trace(OK, null);
 		}
 		catch(Exception e) {
-			trace(KO);
+			trace(KO, null);
 		}
 	}
 	
-	private void trace(TestStatus status) {
+	private void trace(TestStatus status, TestStep step) {
 		try {
 			tracer.accept(new ApiAssertionsResult(
 					exServerConfig.buildRootUrl(),
 					acServerConfig.buildRootUrl(),
 					query,
-					status
+					status,
+					step
 				));
 		}
 		catch(Exception e) {

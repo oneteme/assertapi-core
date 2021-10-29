@@ -89,7 +89,6 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		comp.finish();
 	}
 	
-	
 	private static boolean isTextContent(MediaType media){
 		
 		return Stream.of(

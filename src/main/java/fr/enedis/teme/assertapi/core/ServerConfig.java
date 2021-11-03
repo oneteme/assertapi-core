@@ -38,7 +38,7 @@ public final class ServerConfig extends HashMap<String, String> {
 	}
 	
 	public int getPort(){
-		return parseInt(getOrDefault(PORT_KEY, "80"));
+		return parseInt(getOrDefault(PORT_KEY, "443"));
 	}
 
 	public String getAuthMethod() {

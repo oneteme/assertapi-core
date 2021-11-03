@@ -39,7 +39,7 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 	
 	static RestTemplateClientHttpRequestInitializer init(ServerConfig conf) {
 		String authorizationValue = null;
-    	if(conf.getAuthMethod() != null) {
+    	if(conf != null && conf.getAuthMethod() != null) {
 	    	switch (requireNonNull(conf.getAuthMethod())) {
 	    	case "basic":
 	    		authorizationValue = BASIC_AUTH + encodeBasicAuth(requireNonNull(conf.getUsername()), requireNonNull(conf.getPassword()), null);
@@ -47,8 +47,11 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 	    	case "token":
 	    		authorizationValue = BEARER_AUTH + requireNonNull(conf.getToken());
 	    		break;
-	    	case "novaToken" : 
+	    	case "novaBasic" : 
 	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", fetchIdToken(conf), null);
+	    		break;
+	    	case "novaToken" : 
+	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", requireNonNull(conf.getToken()), null);
 	    		break;
 	    	default:
 	    		throw new IllegalArgumentException("Unknown method " + conf.getAuthMethod());

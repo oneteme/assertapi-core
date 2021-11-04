@@ -34,7 +34,7 @@ public class HttpQuery extends HttpRequest {
 	public String toString() {
 		return description == null || description.isBlank() 
 				? expected.toString() 
-				: description + " : " + expected.toString();
+				: description + " : " + actual.toString();
 	}
 	
 }

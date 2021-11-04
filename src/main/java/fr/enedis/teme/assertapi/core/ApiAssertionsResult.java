@@ -27,5 +27,5 @@ public final class ApiAssertionsResult {
 				+ "\told : [" + query.getExpected().getMethod() + "] " + expectedUrl() + "\n" 
 				+ "\tnew : [" + query.getActual().getMethod() + "] "  + actualUrl();
 	}
-
+	
 }

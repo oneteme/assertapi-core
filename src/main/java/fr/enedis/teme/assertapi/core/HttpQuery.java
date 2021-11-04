@@ -25,7 +25,7 @@ public class HttpQuery extends HttpRequest {
 			requireNonNull(actual);
 		}
 		else {
-			expected = actual = this.copy();
+			expected = actual = this.copy(); //copy avoid recursive serialization exception
 		}
 		return this;
 	}

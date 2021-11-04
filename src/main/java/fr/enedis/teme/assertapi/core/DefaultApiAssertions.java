@@ -91,7 +91,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	
 	private static boolean isTextContent(MediaType media){
 		
-		return Stream.of(
+		return media != null && Stream.of(
 				APPLICATION_JSON, APPLICATION_XML,
 				TEXT_PLAIN, TEXT_HTML, TEXT_XML)
 				.anyMatch(media::isCompatibleWith);

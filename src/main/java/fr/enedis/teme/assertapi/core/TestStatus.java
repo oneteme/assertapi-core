@@ -2,5 +2,5 @@ package fr.enedis.teme.assertapi.core;
 
 public enum TestStatus {
 	
-	OK, KO, SKIP;
+	OK, KO, SKIP, FAIL;
 }

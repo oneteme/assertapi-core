@@ -8,16 +8,10 @@ import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientResponseException;
 
 public interface ResponseComparator {
 	
 	void assumeEnabled(boolean enable);
-	
-	ResponseEntity<byte[]> assertNotResponseException(SafeSupplier<ResponseEntity<byte[]>> supp);
-
-	RestClientResponseException assertResponseException(SafeSupplier<?> supp);
 	
 	void assertStatusCode(int expectedStatusCode, int actualStatusCode);
 	
@@ -49,10 +43,12 @@ public interface ResponseComparator {
 	
 	default void finish() { }
 	
+	void assertionFail(Throwable t);
+	
 	@FunctionalInterface
 	public interface SafeSupplier<T> {
 		
-		T get() throws Exception;
+		T get() throws Throwable;
 	}
 	
 }

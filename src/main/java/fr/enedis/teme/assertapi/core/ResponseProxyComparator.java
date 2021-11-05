@@ -1,9 +1,12 @@
 package fr.enedis.teme.assertapi.core;
 
+import static fr.enedis.teme.assertapi.core.TestStatus.FAIL;
 import static fr.enedis.teme.assertapi.core.TestStatus.KO;
 import static fr.enedis.teme.assertapi.core.TestStatus.OK;
 import static fr.enedis.teme.assertapi.core.TestStatus.SKIP;
-import static fr.enedis.teme.assertapi.core.TestStep.*;
+import static fr.enedis.teme.assertapi.core.TestStep.CONTENT_TYPE;
+import static fr.enedis.teme.assertapi.core.TestStep.HTTP_CODE;
+import static fr.enedis.teme.assertapi.core.TestStep.RESPONSE_CONTENT;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Consumer;
@@ -11,8 +14,6 @@ import java.util.function.Consumer;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientResponseException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,26 +46,6 @@ public class ResponseProxyComparator implements ResponseComparator {
 		}
 	}
 
-	public ResponseEntity<byte[]> assertNotResponseException(SafeSupplier<ResponseEntity<byte[]>> supp) {
-		try {
-			return comparator.assertNotResponseException(supp);
-		}
-		catch(Throwable e) {
-			trace(KO, HTTP_CODE);
-			throw e;
-		}
-	}
-	
-	public RestClientResponseException assertResponseException(SafeSupplier<?> supp) {
-		try {
-			return comparator.assertResponseException(supp);
-		}
-		catch(Throwable e) {
-			trace(KO, HTTP_CODE);
-			throw e;
-		}
-	}
-	
 	public void assertStatusCode(int expectedStatusCode, int actualStatusCode) {
 		try {
 			comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
@@ -105,6 +86,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 		}
 	}
 	
+	@Override
 	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) throws JSONException {
 		try {
 			comparator.assertJsonContent(expectedContent, actualContent, strict);
@@ -114,9 +96,16 @@ public class ResponseProxyComparator implements ResponseComparator {
 			throw e;
 		}
 	}
-	
+
+	@Override
 	public void assertJsonCompareResut(JSONCompareResult res) {
 		//should not be call
+	}
+	
+	@Override
+	public void assertionFail(Throwable t) {
+		trace(FAIL, null);
+		comparator.assertionFail(t);
 	}
 	
 	@Override

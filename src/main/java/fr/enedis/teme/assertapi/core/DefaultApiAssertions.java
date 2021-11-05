@@ -1,5 +1,6 @@
 package fr.enedis.teme.assertapi.core;
 
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -21,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.jayway.jsonpath.JsonPath;
 
-import fr.enedis.teme.assertapi.core.ResponseComparator.SafeSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,59 +34,99 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	private final ResponseComparator comparator;
 	
 	@Override
-	public void assertApi(HttpQuery query) throws Exception {
+	public void assertApi(HttpQuery query) throws Throwable {
 		
 		var comp = comparator.comparing(query);
 		comp.assumeEnabled(query.isEnable());
+		
     	String aUrl = query.getActual().uri();
     	CompletableFuture<ResponseEntity<byte[]>> af = query.isParallel() 
     			? supplyAsync(()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class), commonPool())
     			: completedFuture(acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class));
+    	
+    	ResponseEntity<byte[]> eRes = null;
     	try {
-        	var eRes = exTemp.exchange(query.getExpected().uri(), HttpMethod.valueOf(query.getExpected().httpMethod()), null, byte[].class);
-        	
-        	var aRes = comp.assertNotResponseException(execute(af));
-        	comp.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
-        	comp.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
-			if(isTextContent(eRes.getHeaders().getContentType())) {
-		    	var eCont = new String(eRes.getBody(), query.getExpected().charset());
-		    	var aCont = new String(aRes.getBody(), query.getActual().charset());
-		    	if(APPLICATION_JSON.isCompatibleWith(eRes.getHeaders().getContentType())) {
-		    		comp.assertJsonContent(
-							excludePaths(eCont, query.getExpected()),
-							excludePaths(aCont, query.getActual()), 
-							query.isStrict());
-		    	}
-		    	else {
-		    		comp.assertTextContent(eCont, aCont);
-		    	}
-			}
-			else {
-				comp.assertByteContent(eRes.getBody(), aRes.getBody());
-			}
+        	eRes = exTemp.exchange(query.getExpected().uri(), HttpMethod.valueOf(query.getExpected().httpMethod()), null, byte[].class);
     	}
-    	catch(RestClientResponseException ee) {
-        	var ae = comp.assertResponseException(execute(af));
-        	comp.assertStatusCode(ee.getRawStatusCode(), ae.getRawStatusCode());
-        	comp.assertContentType(ee.getResponseHeaders().getContentType(), ae.getResponseHeaders().getContentType());
-        	var mediaType = ee.getResponseHeaders().getContentType();
-			if(isTextContent(mediaType)) {
-	        	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
-		    		comp.assertJsonContent(
-							excludePaths(ee.getResponseBodyAsString(), query.getExpected()),
-							excludePaths(ae.getResponseBodyAsString(), query.getActual()), 
-							query.isStrict());
-		    	}
-		    	else {
-		    		comp.assertTextContent(ee.getResponseBodyAsString(), ae.getResponseBodyAsString());
-		    	}
-			}
+    	catch(RestClientResponseException eExp) {
+    		assertApiKO(query, comp, eExp, af);
     	}
     	catch(Exception e) {
     		waitFor(af);
-    		throw e;
+    		comp.assertionFail(e);
+    		throw e; //throw it if no exception was thrown
+    	}
+    	if(eRes != null) {
+    		assertApiOK(query, comp, eRes, af);
     	}
 		comp.finish();
+	}
+	
+	void assertApiKO(HttpQuery query, ResponseComparator comp, RestClientResponseException eExp, CompletableFuture<ResponseEntity<byte[]>> af) throws Throwable{
+
+		ResponseEntity<byte[]> aRes = null;
+		RestClientResponseException aExp = null;
+		try {
+			aRes = execute(af);
+		} catch (RestClientResponseException e) {
+			aExp = e;
+		}
+		catch(Throwable e) {
+    		comp.assertionFail(e);
+    		throw e; //throw it if no exception was thrown
+		}
+		if(aRes == null) {
+        	comp.assertStatusCode(eExp.getRawStatusCode(), aExp.getRawStatusCode());
+        	comp.assertContentType(eExp.getResponseHeaders().getContentType(), aExp.getResponseHeaders().getContentType());
+        	var mediaType = eExp.getResponseHeaders().getContentType();
+			if(isTextContent(mediaType)) {
+	        	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
+		    		comp.assertJsonContent(
+							excludePaths(eExp.getResponseBodyAsString(), query.getExpected()),
+							excludePaths(aExp.getResponseBodyAsString(), query.getActual()), 
+							query.isStrict());
+		    	}
+		    	else {
+		    		comp.assertTextContent(eExp.getResponseBodyAsString(), aExp.getResponseBodyAsString());
+		    	}
+			}
+		}
+		else {
+        	comp.assertStatusCode(eExp.getRawStatusCode(), aRes.getStatusCodeValue()); //KO
+		}
+	}
+	
+	private void assertApiOK(HttpQuery query, ResponseComparator comp, ResponseEntity<byte[]> eRes, CompletableFuture<ResponseEntity<byte[]>> af) throws Throwable {
+
+    	ResponseEntity<byte[]> aRes = null;
+		try {
+			aRes = execute(af);
+		} catch (RestClientResponseException aExp) {
+        	comp.assertStatusCode(eRes.getStatusCodeValue(), aExp.getRawStatusCode()); //KO
+        	throw aExp; //throw it if no exception was thrown
+		}
+		catch(Exception e) {
+    		comp.assertionFail(e);
+    		throw e; //throw it if no exception was thrown
+		}
+    	comp.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
+    	comp.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
+		if(isTextContent(eRes.getHeaders().getContentType())) {
+	    	var eCont = new String(eRes.getBody(), query.getExpected().charset());
+	    	var aCont = new String(aRes.getBody(), query.getActual().charset());
+	    	if(APPLICATION_JSON.isCompatibleWith(eRes.getHeaders().getContentType())) {
+	    		comp.assertJsonContent(
+						excludePaths(eCont, query.getExpected()),
+						excludePaths(aCont, query.getActual()), 
+						query.isStrict());
+	    	}
+	    	else {
+	    		comp.assertTextContent(eCont, aCont);
+	    	}
+		}
+		else {
+			comp.assertByteContent(eRes.getBody(), aRes.getBody());
+		}
 	}
 	
 	private static boolean isTextContent(MediaType media){
@@ -106,16 +146,12 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		return v;
     }
     
-    private static <T> SafeSupplier<T> execute(CompletableFuture<T> cf){
-    	return ()-> {
-    		try {
-				return cf.get();
-			} catch (ExecutionException e) {
-				throw e.getCause() instanceof RestClientResponseException 
-					? (RestClientResponseException) e.getCause() 
-					: e;
-			}
-    	};
+    private static <T> T execute(CompletableFuture<T> cf) throws Throwable {
+		try {
+			return cf.get();
+		} catch (ExecutionException e) {
+			throw ofNullable(e.getCause()).orElse(e);
+		}
     }
 
     private static void waitFor(CompletableFuture<?> cf){

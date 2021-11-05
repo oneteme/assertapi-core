@@ -90,6 +90,9 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		    		comp.assertTextContent(eExp.getResponseBodyAsString(), aExp.getResponseBodyAsString());
 		    	}
 			}
+			else {
+				comp.assertByteContent(eExp.getResponseBodyAsByteArray(), aExp.getResponseBodyAsByteArray());
+			}
 		}
 		else {
         	comp.assertStatusCode(eExp.getRawStatusCode(), aRes.getStatusCodeValue()); //KO

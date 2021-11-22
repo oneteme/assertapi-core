@@ -2,17 +2,18 @@ package fr.enedis.teme.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.concurrent.CompletableFuture.completedFuture;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_XML;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpEntity;
@@ -44,9 +45,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		comp.assumeEnabled(query.isEnable());
 		
     	String aUrl = query.getActual().getUri();
-    	CompletableFuture<ResponseEntity<byte[]>> af = query.isParallel() 
-    			? supplyAsync(()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().getMethod()), entity(query.getActual()), byte[].class), commonPool())
-    			: completedFuture(acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().getMethod()), entity(query.getActual()), byte[].class));
+    	var af = submit(query.isParallel(), ()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().getMethod()), entity(query.getActual()), byte[].class));
     	
     	ResponseEntity<byte[]> eRes = null;
     	try {
@@ -66,7 +65,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		comp.finish();
 	}
 	
-	void assertApiKO(HttpQuery query, ResponseComparator comp, RestClientResponseException eExp, CompletableFuture<ResponseEntity<byte[]>> af) throws Throwable{
+	void assertApiKO(HttpQuery query, ResponseComparator comp, RestClientResponseException eExp, Future<ResponseEntity<byte[]>> af) throws Throwable{
 
 		ResponseEntity<byte[]> aRes = null;
 		RestClientResponseException aExp = null;
@@ -103,7 +102,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
 	}
 	
-	private void assertApiOK(HttpQuery query, ResponseComparator comp, ResponseEntity<byte[]> eRes, CompletableFuture<ResponseEntity<byte[]>> af) throws Throwable {
+	private void assertApiOK(HttpQuery query, ResponseComparator comp, ResponseEntity<byte[]> eRes, Future<ResponseEntity<byte[]>> af) throws Throwable {
 
     	ResponseEntity<byte[]> aRes = null;
 		try {
@@ -153,7 +152,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		return v;
     }
     
-    private static <T> T execute(CompletableFuture<T> cf) throws Throwable {
+    private static <T> T execute(Future<T> cf) throws Throwable {
 		try {
 			return cf.get();
 		} catch (ExecutionException e) {
@@ -161,9 +160,9 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
     }
 
-    private static void waitFor(CompletableFuture<?> cf){
+    private static void waitFor(Future<?> cf){
 		try {
-			cf.join();
+			cf.get();
 		}
 		catch(Exception ex) {
 			log.warn(ex.getMessage());
@@ -178,4 +177,40 @@ public final class DefaultApiAssertions implements ApiAssertions {
     	headers.setContentType(APPLICATION_JSON);
     	return new HttpEntity<>(req.getBody(), headers);
     }
+
+	private static final <T> Future<T> submit(boolean parallel, Callable<T> callable) {
+
+		return parallel 
+				? ForkJoinPool.commonPool().submit(callable)
+				: new Future<>() {
+					@Override
+					public T get() throws InterruptedException, ExecutionException {
+						try {
+							return callable.call();
+						} catch (Exception e) {
+							throw new ExecutionException(e);
+						}
+					}
+
+					@Override
+					public boolean cancel(boolean mayInterruptIfRunning) {
+						return false;
+					}
+
+					@Override
+					public boolean isCancelled() {
+						return false;
+					}
+
+					@Override
+					public boolean isDone() {
+						return false;
+					}
+
+					@Override
+					public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+						return null;
+					}
+				};
+	}
 }

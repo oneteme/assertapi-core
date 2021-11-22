@@ -44,11 +44,10 @@ public class HttpQuery extends HttpRequest {
 			s += getActual().getUri();
 		}
 		else {
-			s += "<missing url>";
+			s += "<empty url>";
 		}
 		return s;
 	}
-	
 	
 	private static boolean isValid(String s) {
 		return s != null && !s.isBlank();

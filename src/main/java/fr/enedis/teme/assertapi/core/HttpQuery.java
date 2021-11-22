@@ -1,7 +1,6 @@
 package fr.enedis.teme.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,9 +33,24 @@ public class HttpQuery extends HttpRequest {
 
 	@Override
 	public String toString() {
-		return description == null || description.isEmpty() 
-				? actual.toString() 
-				: description + " : " + actual.toString();
+		var s = "";
+		if(isValid(description)) {
+			s = description + " : ";
+		}
+		if(isValid(getUri())) {
+			s += getUri();
+		}
+		else if(getActual() != null && isValid(getActual().getUri())){
+			s += getActual().getUri();
+		}
+		else {
+			s += "<missing url>";
+		}
+		return s;
 	}
 	
+	
+	private static boolean isValid(String s) {
+		return s != null && !s.isBlank();
+	}
 }

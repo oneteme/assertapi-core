@@ -1,23 +1,24 @@
 package fr.enedis.teme.assertapi.core;
 
-import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
-import java.util.HashMap;
-
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@SuppressWarnings("serial")
+@Getter
+@Setter
 @NoArgsConstructor
-public final class ServerConfig extends HashMap<String, String> {
-
-	private static final String PORT_KEY = "port";
-	private static final String HOST_KEY = "host";
+public final class ServerConfig{
 	
-	private ServerConfig(String host, int port) {
-		put(HOST_KEY, host);
-		put(PORT_KEY, valueOf(port));
+	private String host;
+	private int port;
+	private ServerAuth auth;
+
+	private ServerConfig(String host, int port, ServerAuth auth) {
+		this.host = host;
+		this.port = port;
+		this.auth = auth;
 	}
 
 	public String buildRootUrl() {
@@ -30,34 +31,12 @@ public final class ServerConfig extends HashMap<String, String> {
 	
 	public static ServerConfig localServer(int port) {
 		
-		return new ServerConfig("localhost", port);
+		return localServer(port, null);
+	}
+
+	public static ServerConfig localServer(int port, ServerAuth auth) {
+		
+		return new ServerConfig("localhost", port, auth);
 	}
 	
-	public String getHost() {
-		return get(HOST_KEY);
-	}
-	
-	public int getPort(){
-		return parseInt(getOrDefault(PORT_KEY, "443"));
-	}
-
-	public String getAuthMethod() {
-		return get("auth-method");
-	}
-
-	public String getToken() {
-		return get("token");
-	}
-
-	public String getUsername() {
-		return get("username");
-	}
-
-	public String getPassword() {
-		return get("password");
-	}
-
-	public String getAccessTokenUrl() {
-		return get("access-token-url");
-	}
 }

@@ -39,36 +39,37 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 	
 	static RestTemplateClientHttpRequestInitializer init(ServerConfig conf) {
 		String authorizationValue = null;
-    	if(conf != null && conf.getAuthMethod() != null) {
-	    	switch (requireNonNull(conf.getAuthMethod())) {
+    	if(conf.getAuth() != null) {
+    		var auth = conf.getAuth();
+	    	switch (requireNonNull(auth.getAuthMethod())) {
 	    	case "basic":
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth(requireNonNull(conf.getUsername()), requireNonNull(conf.getPassword()), null);
+	    		authorizationValue = BASIC_AUTH + encodeBasicAuth(requireNonNull(auth.getUsername()), requireNonNull(auth.getPassword()), null);
 	    		break;
 	    	case "token":
-	    		authorizationValue = BEARER_AUTH + requireNonNull(conf.getToken());
+	    		authorizationValue = BEARER_AUTH + requireNonNull(auth.getToken());
 	    		break;
 	    	case "novaBasic" : 
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", fetchIdToken(conf), null);
+	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", fetchIdToken(auth), null);
 	    		break;
 	    	case "novaToken" : 
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", requireNonNull(conf.getToken()), null);
+	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", requireNonNull(auth.getToken()), null);
 	    		break;
 	    	default:
-	    		throw new IllegalArgumentException("Unknown method " + conf.getAuthMethod());
+	    		throw new IllegalArgumentException("Unknown method " + auth.getAuthMethod());
 	    	}
     	}
     	return new RestTemplateClientHttpRequestInitializer(authorizationValue);
 	}
 
-    private static String fetchIdToken(ServerConfig conf) {
+    private static String fetchIdToken(ServerAuth auth) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(requireNonNull(conf.getUsername()), requireNonNull(conf.getPassword()));
+        headers.setBasicAuth(requireNonNull(auth.getUsername()), requireNonNull(auth.getPassword()));
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "client_credentials");
         map.add("scope", "openid");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<Map<String, String>> resp = new RestTemplate().exchange(requireNonNull(conf.getAccessTokenUrl()), POST, request, 
+        ResponseEntity<Map<String, String>> resp = new RestTemplate().exchange(requireNonNull(auth.getAccessTokenUrl()), POST, request, 
         		new ParameterizedTypeReference<Map<String,String>>() {});
         return resp.getBody().get("id_token");
     }

@@ -14,6 +14,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +41,14 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		var comp = comparator.comparing(query);
 		comp.assumeEnabled(query.isEnable());
 		
-    	String aUrl = query.getActual().uri();
+    	String aUrl = query.getActual().getUri();
     	CompletableFuture<ResponseEntity<byte[]>> af = query.isParallel() 
-    			? supplyAsync(()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class), commonPool())
-    			: completedFuture(acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().httpMethod()), null, byte[].class));
+    			? supplyAsync(()-> acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().getMethod()), entity(query.getActual()), byte[].class), commonPool())
+    			: completedFuture(acTemp.exchange(aUrl, HttpMethod.valueOf(query.getActual().getMethod()), entity(query.getActual()), byte[].class));
     	
     	ResponseEntity<byte[]> eRes = null;
     	try {
-        	eRes = exTemp.exchange(query.getExpected().uri(), HttpMethod.valueOf(query.getExpected().httpMethod()), null, byte[].class);
+        	eRes = exTemp.exchange(query.getExpected().getUri(), HttpMethod.valueOf(query.getExpected().getMethod()), entity(query.getExpected()), byte[].class);
     	}
     	catch(RestClientResponseException eExp) {
     		assertApiKO(query, comp, eExp, af);
@@ -75,7 +77,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
     		comp.assertionFail(e);
     		throw e; //throw it if no exception was thrown
 		}
-		if(aRes == null) {
+		if(aExp != null) {
         	comp.assertStatusCode(eExp.getRawStatusCode(), aExp.getRawStatusCode());
         	comp.assertContentType(eExp.getResponseHeaders().getContentType(), aExp.getResponseHeaders().getContentType());
         	var mediaType = eExp.getResponseHeaders().getContentType();
@@ -115,8 +117,8 @@ public final class DefaultApiAssertions implements ApiAssertions {
     	comp.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
     	comp.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
 		if(isTextContent(eRes.getHeaders().getContentType())) {
-	    	var eCont = new String(eRes.getBody(), query.getExpected().charset());
-	    	var aCont = new String(aRes.getBody(), query.getActual().charset());
+	    	var eCont = new String(eRes.getBody(), query.getExpected().getOutput().getCharset());
+	    	var aCont = new String(aRes.getBody(), query.getActual().getOutput().getCharset());
 	    	if(APPLICATION_JSON.isCompatibleWith(eRes.getHeaders().getContentType())) {
 	    		comp.assertJsonContent(
 						excludePaths(eCont, query.getExpected()),
@@ -141,9 +143,9 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	}
 
     private static String excludePaths(String v, HttpRequest hr) {
-		if(hr.getExcludePaths() != null) {
+		if(hr.getOutput().getExcludePaths() != null) {
 			var json = JsonPath.parse(v);
-			Stream.of(hr.getExcludePaths()).forEach(json::delete);
+			Stream.of(hr.getOutput().getExcludePaths()).forEach(json::delete);
 	    	v = json.jsonString();
 		}
 		return v;
@@ -164,5 +166,14 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		catch(Exception ex) {
 			log.warn(ex.getMessage());
 		}
+    }
+    
+    private static HttpEntity<String> entity(HttpRequest req){
+    	if(req.getBody() == null) {
+    		return null;
+    	}
+    	var headers = new HttpHeaders();
+    	headers.setContentType(APPLICATION_JSON);
+    	return new HttpEntity<>(req.getBody(), headers);
     }
 }

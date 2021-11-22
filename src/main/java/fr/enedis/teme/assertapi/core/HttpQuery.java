@@ -1,6 +1,7 @@
 package fr.enedis.teme.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +16,20 @@ public class HttpQuery extends HttpRequest {
 	private boolean enable = true;
 	private boolean strict = true;
 	private boolean parallel = true;
-	private String description = "";
+	private String description;
 	private HttpRequest expected;
 	private HttpRequest actual;
 
+	@Override
 	public HttpQuery build() {
 		if(getUri() == null) {
-			requireNonNull(expected);
-			requireNonNull(actual);
+			requireNonNull(expected).build();
+			requireNonNull(actual).build();
 		}
 		else {
-			expected = actual = this.copy(); //copy avoid recursive serialization exception
+			expected = actual = super.build().copy(); //copy avoid recursive serialization exception
 		}
+		description = ofNullable(description).orElse("");
 		return this;
 	}
 

@@ -194,22 +194,22 @@ public final class DefaultApiAssertions implements ApiAssertions {
 
 					@Override
 					public boolean cancel(boolean mayInterruptIfRunning) {
-						return false;
+						throw new UnsupportedOperationException();
 					}
 
 					@Override
 					public boolean isCancelled() {
-						return false;
+						throw new UnsupportedOperationException();
 					}
 
 					@Override
 					public boolean isDone() {
-						return false;
+						throw new UnsupportedOperationException();
 					}
 
 					@Override
 					public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-						return null;
+						throw new UnsupportedOperationException();
 					}
 				};
 	}

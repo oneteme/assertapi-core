@@ -21,21 +21,20 @@ public class HttpQuery extends HttpRequest {
 	private HttpRequest actual;
 
 	@Override
-	public void build() {
+	public HttpQuery build() {
 		if(getUri() == null) {
 			requireNonNull(expected).build();
 			requireNonNull(actual).build();
 		}
 		else {
-			super.build();
-			expected = actual = copy(); //copy avoid recursive serialization exception
+			expected = actual = super.build().copy(); //copy avoid recursive serialization exception
 		}
-		description = ofNullable(description).orElse("");
+		return this;
 	}
 
 	@Override
 	public String toString() {
-		return description == null || description.isBlank() 
+		return description == null || description.isEmpty() 
 				? actual.toString() 
 				: description + " : " + actual.toString();
 	}

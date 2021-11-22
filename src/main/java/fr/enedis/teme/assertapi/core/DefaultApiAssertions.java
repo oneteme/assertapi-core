@@ -1,5 +1,6 @@
 package fr.enedis.teme.assertapi.core;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -38,6 +39,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	@Override
 	public void assertApi(HttpQuery query) throws Throwable {
 		
+	    requireNonNull(query).build();
 		var comp = comparator.comparing(query);
 		comp.assumeEnabled(query.isEnable());
 		

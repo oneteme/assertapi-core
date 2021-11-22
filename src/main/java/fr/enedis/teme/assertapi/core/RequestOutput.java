@@ -16,7 +16,7 @@ public final class RequestOutput {
 	private String[] excludePaths;
 	
 	public RequestOutput build() {
-		charset = ofNullable(charset).map(c-> c.trim().toUpperCase().replace('-', '_')).orElse(UTF_8.name());
+		charset = ofNullable(charset).map(c-> c.trim().toUpperCase().replace('_', '-')).orElse(UTF_8.name());
 		return this;
 	}
 	

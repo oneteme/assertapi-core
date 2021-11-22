@@ -22,12 +22,11 @@ public class HttpRequest {
 	private String body;
 	private RequestOutput output;
 	
-	public HttpRequest build() {
+	public void build() {
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
 		this.method = ofNullable(method).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.output = ofNullable(output).orElseGet(RequestOutput::new).build();
-		return this;
 	}
 
 	public HttpRequest copy() {

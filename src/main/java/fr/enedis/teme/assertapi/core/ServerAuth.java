@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class ServerAuth extends HashMap<String, String> {
 
 	public String getAuthMethod() {
-		return get("type");
+		return get("type"); //basic|token|novaBasic|novaToken
 	}
 
 	public String getToken() {
@@ -26,5 +26,10 @@ public class ServerAuth extends HashMap<String, String> {
 
 	public String getAccessTokenUrl() {
 		return get("access-token-url");
+	}
+	
+	@Override
+	public String toString() {
+		return "type=" + getAuthMethod();
 	}
 }

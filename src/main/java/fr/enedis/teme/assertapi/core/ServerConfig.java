@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public final class ServerConfig{
+public final class ServerConfig {
 	
 	private String host;
 	private int port;
@@ -23,10 +23,9 @@ public final class ServerConfig{
 
 	public String buildRootUrl() {
     	
-		int port = getPort();
-    	return format("http%s://%s", 
-    			port == 443 ? "s" : "", getHost()) + 
-    			(port == 80 || port == 443 ? "" : ":" + port) + "/";
+    	return format("http%s://%s%s/", 
+    			port == 443 ? "s" : "", host, 
+    			port == 80 || port == 443 ? "" : ":" + port);
     }
 	
 	public static ServerConfig localServer(int port) {
@@ -39,4 +38,12 @@ public final class ServerConfig{
 		return new ServerConfig("localhost", port, auth);
 	}
 	
+	@Override
+	public String toString() {
+		var s = buildRootUrl();
+		if(auth != null) {
+			s+= " {" + auth + "}";
+		}
+		return s;
+	}
 }

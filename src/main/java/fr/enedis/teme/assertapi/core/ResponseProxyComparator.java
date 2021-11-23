@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Consumer;
 
-import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.http.MediaType;
 
@@ -87,7 +86,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 	}
 	
 	@Override
-	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) throws JSONException {
+	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) {
 		try {
 			comparator.assertJsonContent(expectedContent, actualContent, strict);
 		}

@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public final class RequestOutput {
 	
-	private String charset;
+	private String charset; //UTF-8|ISO_8859_1|UTF_16
 	private String[] excludePaths;
 	
 	public RequestOutput build() {

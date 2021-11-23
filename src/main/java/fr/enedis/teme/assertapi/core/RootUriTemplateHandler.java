@@ -70,7 +70,7 @@ public class RootUriTemplateHandler implements UriTemplateHandler {
 	 */
 	public static RootUriTemplateHandler addTo(RestTemplate restTemplate, String rootUri) {
 		Assert.notNull(restTemplate, "RestTemplate must not be null");
-		RootUriTemplateHandler handler = new RootUriTemplateHandler(rootUri, restTemplate.getUriTemplateHandler());
+		var handler = new RootUriTemplateHandler(rootUri, restTemplate.getUriTemplateHandler());
 		restTemplate.setUriTemplateHandler(handler);
 		return handler;
 	}

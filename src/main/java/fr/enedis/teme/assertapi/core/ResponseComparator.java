@@ -21,7 +21,7 @@ public interface ResponseComparator {
 
 	void assertTextContent(String expectedContent, String actualContent);
 	
-	default void assertJsonContent(String expectedContent, String actualContent, boolean strict) throws JSONException {
+	default void assertJsonContent(String expectedContent, String actualContent, boolean strict) {
 		var jsr = new JSONCompareResult();
         if (expectedContent != actualContent) {
 	        if(expectedContent == null) {
@@ -31,7 +31,13 @@ public interface ResponseComparator {
 	        	jsr.fail("Actual response is null.");
 	        }
 	        else {
-	        	jsr = compareJSON(expectedContent, actualContent, new DefaultComparator(strict ? STRICT : LENIENT));
+	        	try {
+	        		jsr = compareJSON(expectedContent, actualContent, new DefaultComparator(strict ? STRICT : LENIENT));
+	        	}
+	        	catch(JSONException e) {
+	        		assertionFail(e);
+	        		throw new IllegalStateException(e); // Can't happen : assertionFail should throw exception
+	        	}
 	        }
 	    }
 		assertJsonCompareResut(jsr);
@@ -44,11 +50,5 @@ public interface ResponseComparator {
 	default void finish() { }
 	
 	void assertionFail(Throwable t);
-	
-	@FunctionalInterface
-	public interface SafeSupplier<T> {
 		
-		T get() throws Throwable;
-	}
-	
 }

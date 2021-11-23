@@ -62,7 +62,7 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 	}
 
     private static String fetchIdToken(ServerAuth auth) {
-        HttpHeaders headers = new HttpHeaders();
+        var headers = new HttpHeaders();
         headers.setContentType(APPLICATION_FORM_URLENCODED);
         headers.setBasicAuth(requireNonNull(auth.getUsername()), requireNonNull(auth.getPassword()));
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();

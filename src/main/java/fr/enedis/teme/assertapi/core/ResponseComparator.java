@@ -10,9 +10,11 @@ import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.springframework.http.MediaType;
 
 public interface ResponseComparator {
-	
+
 	void assumeEnabled(boolean enable);
-	
+
+	void assertionFail(Throwable t);
+
 	void assertStatusCode(int expectedStatusCode, int actualStatusCode);
 	
 	void assertContentType(MediaType expectedContentType, MediaType actualContentType);
@@ -48,7 +50,5 @@ public interface ResponseComparator {
 	default ResponseComparator comparing(HttpQuery query) { return this; }
 	
 	default void finish() { }
-	
-	void assertionFail(Throwable t);
 		
 }

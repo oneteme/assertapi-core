@@ -15,6 +15,7 @@ public class HttpQuery extends HttpRequest {
 	private boolean enable = true;
 	private boolean strict = true;
 	private boolean parallel = true;
+	private String name;
 	private String description;
 	private HttpRequest expected;
 	private HttpRequest actual;
@@ -34,8 +35,11 @@ public class HttpQuery extends HttpRequest {
 	@Override
 	public String toString() {
 		var s = "";
+		if(isValid(name)) {
+			s = "[" + name + "] "; 
+		}
 		if(isValid(description)) {
-			s = description + " : ";
+			s += description + " : ";
 		}
 		if(isValid(getUri())) {
 			s += getUri();

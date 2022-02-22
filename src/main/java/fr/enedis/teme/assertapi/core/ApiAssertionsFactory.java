@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class ApiAssertionsFactory {
+public final class ApiAssertionsFactory {
 
 	private ResponseComparator comparator;
 	private ServerConfig exServerConfig;

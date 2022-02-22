@@ -40,17 +40,17 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	private final ResponseComparator comparator;
 	
 	@Override
-	public void assertApi(HttpQuery query)  {
+	public void assertApi(ApiRequest query)  {
 		
-	    requireNonNull(query).build();
+	    requireNonNull(query);
 		var comp = comparator.comparing(query);
-		comp.assumeEnabled(query.isEnable());
+		comp.assumeEnabled(query.getConfiguration().isEnable());
 		
-    	var af = submit(query.isParallel(), ()-> exchange(acTemp, query.getActual()));
+    	var af = submit(query.getConfiguration().isParallel(), ()-> exchange(acTemp, query));
     	
     	ResponseEntity<byte[]> eRes = null;
     	try {
-        	eRes = exchange(exTemp, query.getExpected());
+        	eRes = exchange(exTemp, query);
     	}
     	catch(RestClientResponseException eExp) {
     		assertApiKO(query, comp, eExp, af);
@@ -75,7 +75,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		comp.finish();
 	}
 	
-	void assertApiKO(HttpQuery query, ResponseComparator comp, RestClientResponseException eExp, Future<ResponseEntity<byte[]>> af) {
+	void assertApiKO(ApiRequest query, ResponseComparator comp, RestClientResponseException eExp, Future<ResponseEntity<byte[]>> af) {
 
 		ResponseEntity<byte[]> aRes = null;
 		try {
@@ -88,9 +88,9 @@ public final class DefaultApiAssertions implements ApiAssertions {
 			if(isTextContent(mediaType)) {
 	        	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
 		    		comp.assertJsonContent(
-							excludePaths(eExp.getResponseBodyAsString(), query.getExpected().getOutput()),
-							excludePaths(aExp.getResponseBodyAsString(), query.getActual().getOutput()), 
-							query.isStrict());
+							excludePaths(eExp.getResponseBodyAsString(), query.getConfiguration()),
+							excludePaths(aExp.getResponseBodyAsString(), query.getConfiguration()), 
+							query.getConfiguration().isStrict());
 		    	}
 		    	else {
 		    		comp.assertTextContent(eExp.getResponseBodyAsString(), aExp.getResponseBodyAsString());
@@ -113,7 +113,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
 	}
 	
-	private void assertApiOK(HttpQuery query, ResponseComparator comp, ResponseEntity<byte[]> eRes, Future<ResponseEntity<byte[]>> af) {
+	private void assertApiOK(ApiRequest query, ResponseComparator comp, ResponseEntity<byte[]> eRes, Future<ResponseEntity<byte[]>> af) {
 
     	ResponseEntity<byte[]> aRes = null;
 		try {
@@ -133,13 +133,13 @@ public final class DefaultApiAssertions implements ApiAssertions {
     	comp.assertStatusCode(eRes.getStatusCodeValue(), aRes.getStatusCodeValue());
     	comp.assertContentType(eRes.getHeaders().getContentType(), aRes.getHeaders().getContentType());
 		if(isTextContent(eRes.getHeaders().getContentType())) {
-	    	var eCont = decodeResponseBody(eRes.getBody(), query.getExpected().getOutput());
-	    	var aCont = decodeResponseBody(aRes.getBody(), query.getActual().getOutput());
+	    	var eCont = decodeResponseBody(eRes.getBody(), query.getCharset());
+	    	var aCont = decodeResponseBody(aRes.getBody(), query.getCharset());
 	    	if(APPLICATION_JSON.isCompatibleWith(eRes.getHeaders().getContentType())) {
 	    		comp.assertJsonContent(
-						excludePaths(eCont, query.getExpected().getOutput()),
-						excludePaths(aCont, query.getActual().getOutput()), 
-						query.isStrict());
+						excludePaths(eCont, query.getConfiguration()),
+						excludePaths(aCont, query.getConfiguration()), 
+						query.getConfiguration().isStrict());
 	    	}
 	    	else {
 	    		comp.assertTextContent(eCont, aCont);
@@ -150,9 +150,9 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
 	}
 	
-	private static final String decodeResponseBody(byte[] body, RequestOutput out) {
+	private static final String decodeResponseBody(byte[] body, String chartset) {
 		try {
-			return new String(body, out.getCharset());
+			return new String(body, chartset);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnexpectedException(e);
 		}
@@ -166,7 +166,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 				.anyMatch(media::isCompatibleWith);
 	}
 
-    private static String excludePaths(String v, RequestOutput out) {
+    private static String excludePaths(String v, AssertionConfig out) {
 		if(out.getExcludePaths() != null) {
 			var json = JsonPath.parse(v);
 			Stream.of(out.getExcludePaths()).forEach(json::delete);
@@ -191,7 +191,7 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
     }
 
-    private static ResponseEntity<byte[]> exchange(RestTemplate template, HttpRequest req) throws RestClientException {
+    private static ResponseEntity<byte[]> exchange(RestTemplate template, ApiRequest req) throws RestClientException {
     	HttpEntity<String> entity = null;
     	if(req.getBody() != null) {
     		var headers = new HttpHeaders();

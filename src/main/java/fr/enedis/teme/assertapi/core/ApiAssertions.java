@@ -2,6 +2,6 @@ package fr.enedis.teme.assertapi.core;
 
 public interface ApiAssertions {
 
-	void assertApi(HttpQuery query);
+	void assertApi(ApiRequest query);
 
 }

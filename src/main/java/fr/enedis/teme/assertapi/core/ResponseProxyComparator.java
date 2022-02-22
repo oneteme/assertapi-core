@@ -25,7 +25,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 	private final Consumer<ApiAssertionsResult> tracer;
 	private final ServerConfig exServerConfig;
 	private final ServerConfig acServerConfig;
-	private final HttpQuery query;
+	private final ApiRequest query;
 
 	public ResponseProxyComparator(ResponseComparator comparator, Consumer<ApiAssertionsResult> tracer, ServerConfig exServerConfig, ServerConfig acServerConfig) {
 		this.comparator = comparator;
@@ -108,7 +108,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 	}
 	
 	@Override
-	public ResponseComparator comparing(HttpQuery query) {
+	public ResponseComparator comparing(ApiRequest query) {
 		return new ResponseProxyComparator(comparator, tracer, exServerConfig, acServerConfig, requireNonNull(query));
 	}
 

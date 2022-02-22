@@ -47,7 +47,7 @@ public interface ResponseComparator {
 
 	void assertJsonCompareResut(JSONCompareResult res);
 	
-	default ResponseComparator comparing(HttpQuery query) { return this; }
+	default ResponseComparator comparing(ApiRequest query) { return this; }
 	
 	default void finish() { }
 		

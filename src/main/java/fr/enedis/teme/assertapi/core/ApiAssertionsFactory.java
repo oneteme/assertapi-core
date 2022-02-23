@@ -1,9 +1,16 @@
 package fr.enedis.teme.assertapi.core;
 
+import static fr.enedis.teme.assertapi.core.AssertionContext.CTX;
+import static fr.enedis.teme.assertapi.core.AssertionContext.CTX_ID;
+import static fr.enedis.teme.assertapi.core.AssertionContext.buildContext;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
+import static org.springframework.http.HttpMethod.GET;
 
 import java.util.function.Consumer;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.NoArgsConstructor;
@@ -12,29 +19,33 @@ import lombok.NoArgsConstructor;
 public final class ApiAssertionsFactory {
 
 	private ResponseComparator comparator;
-	private ServerConfig exServerConfig;
-	private ServerConfig acServerConfig;
-	private Consumer<ApiAssertionsResult> resultTracer;
-
+	private ServerConfig exServer;
+	private ServerConfig acServer;
+	private Consumer<ApiAssertionsResult> tracer;
+	
 	public ApiAssertionsFactory using(ResponseComparator comparator) {
 		this.comparator = comparator;
 		return this;
 	}
 	
 	public ApiAssertionsFactory comparing(ServerConfig expectedServerConf, ServerConfig actualServerConf) {
-		this.exServerConfig = expectedServerConf;
-		this.acServerConfig = actualServerConf;
+		this.exServer = expectedServerConf;
+		this.acServer = actualServerConf;
 		return this;
 	}
 	
-	public ApiAssertionsFactory trace(Consumer<ApiAssertionsResult> trTemp) {
-		this.resultTracer = trTemp;
+	public ApiAssertionsFactory trace(Consumer<ApiAssertionsResult> tracer) {
+		this.tracer = tracer;
 		return this;
 	}
 	
 	public ApiAssertionsFactory traceOn(String url) {
-		var template = new RestTemplate();
-		this.resultTracer = tr-> template.put(url, tr);
+		var template = new RestTemplate(); //put only
+		var hds = new HttpHeaders();
+		hds.add(CTX, buildContext().toHeader());
+		var ctx = template.exchange(url, GET, new HttpEntity<>(hds), String.class).getBody();
+		template.setClientHttpRequestInitializers(singletonList(req-> req.getHeaders().set(CTX_ID, ctx)));
+		this.tracer = tr-> template.put(url, tr);
 		return this;
 	}
 	
@@ -42,9 +53,11 @@ public final class ApiAssertionsFactory {
 		
 		requireNonNull(comparator);
 		return new DefaultApiAssertions(
-				RestTemplateBuilder.build(requireNonNull(exServerConfig)),
-				RestTemplateBuilder.build(requireNonNull(acServerConfig)),
-				resultTracer == null ? comparator : new ResponseProxyComparator(comparator, resultTracer, exServerConfig, acServerConfig)); 
+				RestTemplateBuilder.build(requireNonNull(exServer)),
+				RestTemplateBuilder.build(requireNonNull(acServer)),
+				tracer == null 
+					? r-> comparator 
+					: r-> new ResponseProxyComparator(comparator, tracer, exServer, acServer, r)); 
 	}
 	
 }

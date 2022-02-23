@@ -40,6 +40,14 @@ public final class ApiRequest {
 		this.description = description;
 		this.configuration = ofNullable(configuration).orElseGet(AssertionConfig::defaultConfig);
 	}
+	
+	public boolean hasHeaders() {
+		return headers != null && !headers.isEmpty();
+	}
+
+	public boolean hasBody() {
+		return body != null;
+	}
 
 	@Override
 	public String toString() {

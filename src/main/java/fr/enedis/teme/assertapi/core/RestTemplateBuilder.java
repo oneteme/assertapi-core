@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RestTemplateBuilder {
-
+	
 	public static RestTemplate build(String url) {
 
 		var rt = new RestTemplate();

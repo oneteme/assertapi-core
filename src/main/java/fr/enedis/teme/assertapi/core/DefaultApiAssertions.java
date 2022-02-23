@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpEntity;
@@ -37,23 +38,23 @@ public final class DefaultApiAssertions implements ApiAssertions {
 	
 	private final RestTemplate exTemp;
 	private final RestTemplate acTemp;
-	private final ResponseComparator comparator;
+	private final Function<ApiRequest, ResponseComparator> comparatorFn;
 	
 	@Override
 	public void assertApi(ApiRequest query)  {
 		
 	    requireNonNull(query);
-		var comp = comparator.comparing(query);
-		comp.assumeEnabled(query.getConfiguration().isEnable());
+		var cmp = comparatorFn.apply(query);
+		cmp.assumeEnabled(query.getConfiguration().isEnable());
 		
-    	var af = submit(query.getConfiguration().isParallel(), ()-> exchange(acTemp, query));
+    	var af = submit(query.getConfiguration().isParallel(), ()-> exchange(acTemp, query, cmp));
     	
     	ResponseEntity<byte[]> eRes = null;
     	try {
-        	eRes = exchange(exTemp, query);
+        	eRes = exchange(exTemp, query, cmp);
     	}
     	catch(RestClientResponseException eExp) {
-    		assertApiKO(query, comp, eExp, af);
+    		assertApiKO(query, cmp, eExp, af);
     	}
     	catch(Exception e) {
     		try {
@@ -66,13 +67,13 @@ public final class DefaultApiAssertions implements ApiAssertions {
     			log.warn("Rest call was interrupted");
     		    Thread.currentThread().interrupt();
     		}
-    		comp.assertionFail(e);
+    		cmp.assertionFail(e);
     		throw new IllegalStateException(e); // Can't happen : assertionFail should throw exception
     	}
     	if(eRes != null) {
-    		assertApiOK(query, comp, eRes, af);
+    		assertApiOK(query, cmp, eRes, af);
     	}
-		comp.finish();
+		cmp.assertOK();
 	}
 	
 	void assertApiKO(ApiRequest query, ResponseComparator comp, RestClientResponseException eExp, Future<ResponseEntity<byte[]>> af) {
@@ -191,14 +192,22 @@ public final class DefaultApiAssertions implements ApiAssertions {
 		}
     }
 
-    private static ResponseEntity<byte[]> exchange(RestTemplate template, ApiRequest req) throws RestClientException {
-    	HttpEntity<String> entity = null;
-    	if(req.getBody() != null) {
-    		var headers = new HttpHeaders();
-    		headers.setContentType(APPLICATION_JSON); // ??
-    		entity = new HttpEntity<>(req.getBody(), headers);
-    	}
-    	return template.exchange(req.getUri(), HttpMethod.valueOf(req.getMethod()), entity, byte[].class);
+    private ResponseEntity<byte[]> exchange(RestTemplate template, ApiRequest req, ResponseComparator cmp) throws RestClientException {
+		HttpHeaders headers = null;
+		if(req.hasHeaders()) {
+			headers = new HttpHeaders();
+			for(var e : req.getHeaders().entrySet()) {
+				headers.add(e.getKey(), e.getValue());
+			}
+			headers.setContentType(APPLICATION_JSON); // ??
+		}
+		String body = null;
+		if(req.hasBody()) {
+			body = req.getBody();
+		}
+		var entity = new HttpEntity<>(body, headers);
+    	return cmp.execute(template == exTemp, 
+    			()-> template.exchange(req.getUri(), HttpMethod.valueOf(req.getMethod()), entity, byte[].class));
     }
 
 	private static final <T> Future<T> submit(boolean parallel, Callable<T> callable) {

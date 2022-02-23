@@ -32,8 +32,8 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 	@Override
 	public void initialize(ClientHttpRequest request) {
 		HttpHeaders headers = request.getHeaders();
-		if (this.authorizationValue != null && !headers.containsKey(AUTHORIZATION)) {
-			headers.set(AUTHORIZATION, authorizationValue);
+		if (this.authorizationValue != null) {
+			headers.addIfAbsent(AUTHORIZATION, authorizationValue); //injected in headers
 		}
 	}
 	

@@ -4,6 +4,8 @@ import static org.skyscreamer.jsonassert.JSONCompare.compareJSON;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
+import java.util.function.Supplier;
+
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.skyscreamer.jsonassert.comparator.DefaultComparator;
@@ -47,8 +49,10 @@ public interface ResponseComparator {
 
 	void assertJsonCompareResut(JSONCompareResult res);
 	
-	default ResponseComparator comparing(ApiRequest query) { return this; }
-	
-	default void finish() { }
+	default void assertOK() { }
+
+	default <T> T execute(boolean expexted, Supplier<T> c) {
+		return c.get();
+	}
 		
 }

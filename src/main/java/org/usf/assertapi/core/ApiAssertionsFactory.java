@@ -1,11 +1,11 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
-import static fr.enedis.teme.assertapi.core.AssertionContext.CTX;
-import static fr.enedis.teme.assertapi.core.AssertionContext.CTX_ID;
-import static fr.enedis.teme.assertapi.core.AssertionContext.buildContext;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpMethod.GET;
+import static org.usf.assertapi.core.AssertionContext.CTX;
+import static org.usf.assertapi.core.AssertionContext.CTX_ID;
+import static org.usf.assertapi.core.AssertionContext.buildContext;
 
 import java.util.function.Consumer;
 

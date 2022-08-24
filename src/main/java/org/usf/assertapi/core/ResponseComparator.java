@@ -1,4 +1,4 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
 import static org.skyscreamer.jsonassert.JSONCompare.compareJSON;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;

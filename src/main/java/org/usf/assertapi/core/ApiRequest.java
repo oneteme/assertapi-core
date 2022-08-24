@@ -1,4 +1,4 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.nio.charset.StandardCharsets.UTF_8;

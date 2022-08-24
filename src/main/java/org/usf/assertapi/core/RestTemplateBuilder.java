@@ -1,6 +1,6 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
-import static fr.enedis.teme.assertapi.core.RestTemplateClientHttpRequestInitializer.init;
+import static org.usf.assertapi.core.RestTemplateClientHttpRequestInitializer.init;
 
 import org.springframework.http.client.ClientHttpRequestInitializer;
 import org.springframework.web.client.RestTemplate;

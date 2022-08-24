@@ -1,4 +1,4 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
 import static java.lang.String.format;
 

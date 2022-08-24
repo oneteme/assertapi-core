@@ -1,4 +1,4 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

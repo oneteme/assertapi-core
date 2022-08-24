@@ -1,13 +1,13 @@
-package fr.enedis.teme.assertapi.core;
+package org.usf.assertapi.core;
 
-import static fr.enedis.teme.assertapi.core.TestStatus.FAIL;
-import static fr.enedis.teme.assertapi.core.TestStatus.KO;
-import static fr.enedis.teme.assertapi.core.TestStatus.OK;
-import static fr.enedis.teme.assertapi.core.TestStatus.SKIP;
-import static fr.enedis.teme.assertapi.core.TestStep.CONTENT_TYPE;
-import static fr.enedis.teme.assertapi.core.TestStep.HTTP_CODE;
-import static fr.enedis.teme.assertapi.core.TestStep.RESPONSE_CONTENT;
 import static java.lang.System.currentTimeMillis;
+import static org.usf.assertapi.core.TestStatus.FAIL;
+import static org.usf.assertapi.core.TestStatus.KO;
+import static org.usf.assertapi.core.TestStatus.OK;
+import static org.usf.assertapi.core.TestStatus.SKIP;
+import static org.usf.assertapi.core.TestStep.CONTENT_TYPE;
+import static org.usf.assertapi.core.TestStep.HTTP_CODE;
+import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

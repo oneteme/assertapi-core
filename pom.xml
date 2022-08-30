@@ -69,4 +69,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub assertapi-core Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/oneteme/assertapi-core</url>
+    </repository>
+  </distributionManagement>
 </project>

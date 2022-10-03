@@ -8,8 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ServerAuth extends HashMap<String, String> {
 
+	/**
+	 * Get the auth method type (<b>basic</b> | <b>token</b> | <b>nova_basic</b> | <b>nova_token</b>)
+	 * @return auth method type
+	 */
 	public String getAuthMethod() {
-		return get("type"); //basic|token|novaBasic|novaToken
+		return get("type"); //basic|token|novabasic|nova_token
 	}
 
 	public String getToken() {

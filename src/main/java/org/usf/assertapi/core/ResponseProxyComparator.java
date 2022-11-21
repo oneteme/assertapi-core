@@ -61,6 +61,8 @@ final class ResponseProxyComparator implements ResponseComparator {
 	@Override
 	public void assertStatusCode(int expectedStatusCode, int actualStatusCode) {
 		try {
+			expExecution.setStatusCode(expectedStatusCode);
+			actExecution.setStatusCode(actualStatusCode);
 			comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
 		}
 		catch(Throwable e) {
@@ -72,6 +74,8 @@ final class ResponseProxyComparator implements ResponseComparator {
 	@Override
 	public void assertContentType(MediaType expectedContentType, MediaType actualContentType) {
 		try {
+			expExecution.setContentType(expectedContentType.toString());
+			actExecution.setContentType(expectedContentType.toString());
 			comparator.assertContentType(expectedContentType, actualContentType);
 		}
 		catch(Throwable e) {
@@ -94,6 +98,8 @@ final class ResponseProxyComparator implements ResponseComparator {
 	@Override
 	public void assertTextContent(String expectedContent, String actualContent) {
 		try {
+			expExecution.setResponse(expectedContent);
+			actExecution.setResponse(actualContent);
 			comparator.assertTextContent(expectedContent, actualContent);
 		}
 		catch(Throwable e) {
@@ -105,6 +111,8 @@ final class ResponseProxyComparator implements ResponseComparator {
 	@Override
 	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) {
 		try {
+			expExecution.setResponse(expectedContent);
+			actExecution.setResponse(actualContent);
 			comparator.assertJsonContent(expectedContent, actualContent, strict);
 		}
 		catch(Throwable e) {

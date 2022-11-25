@@ -16,9 +16,6 @@ public final class ApiExecution {
 	private final String host;
 	private long start;
 	private long end;
-	private int statusCode;
-	private String contentType;
-	private String response;
 
 	@Override
 	public String toString() {

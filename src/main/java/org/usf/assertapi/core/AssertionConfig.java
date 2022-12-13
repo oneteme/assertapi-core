@@ -4,14 +4,18 @@ import static java.util.Optional.ofNullable;
 
 import lombok.Getter;
 
+//TODO rename to ExecutionConfig
 @Getter
 public final class AssertionConfig {
 
+	@Deprecated(forRemoval = true)
 	private final boolean debug;
 	private final boolean enable;
+	@Deprecated(forRemoval = true)
 	private final boolean strict;
 	private final boolean parallel;
-	private final String[] excludePaths;
+	@Deprecated(forRemoval = true)
+	private final String[] excludePaths; //only JSON
 	
 	public AssertionConfig(Boolean debug, Boolean enable, Boolean strict, Boolean parallel, String[] excludePaths) {
 		this.debug = ofNullable(debug).orElse(false);

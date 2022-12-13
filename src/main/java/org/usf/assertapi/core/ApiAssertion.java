@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-public interface ApiAssertions {
+public interface ApiAssertion {
 
 	void assertApi(ApiRequest query);
 

@@ -23,23 +23,24 @@ import lombok.extern.slf4j.Slf4j;
 final class ResponseProxyComparator implements ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final Consumer<ApiAssertionsResult> tracer;
-	private final ApiExecution expExecution;
-	private final ApiExecution actExecution;
-	private final ApiRequest request;
+	private final Consumer<AssertionResult> tracer;
+	private final RequestExecution stableRelease;
+	private final RequestExecution latestRelease;
+	
+	private ApiRequest request;
 
-	public ResponseProxyComparator(ResponseComparator comparator, Consumer<ApiAssertionsResult> tracer, ServerConfig exServerConfig, ServerConfig acServerConfig, ApiRequest request) {
+	public ResponseProxyComparator(ResponseComparator comparator, Consumer<AssertionResult> tracer, ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.comparator = comparator;
 		this.tracer = tracer;
-		this.expExecution = new ApiExecution(exServerConfig.buildRootUrl());
-		this.actExecution = new ApiExecution(acServerConfig.buildRootUrl());
-		this.request = request;
+		this.stableRelease = new RequestExecution(stableRelease.buildRootUrl());
+		this.latestRelease = new RequestExecution(latestRelease.buildRootUrl());
 	}
 	
 	@Override
-	public void assumeEnabled(boolean enable) {
+	public void assumeEnabled(ApiRequest query) {
+		this.request = query; //active API
 		try {
-			comparator.assumeEnabled(enable);
+			comparator.assumeEnabled(query);
 		}
 		catch(Throwable e) {
 			trace(SKIP, null);
@@ -48,8 +49,8 @@ final class ResponseProxyComparator implements ResponseComparator {
 	}
 	
 	@Override
-	public <T> T execute(boolean expexted, Supplier<T> c) {
-		var o = expexted ? expExecution : actExecution;
+	public <T> T execute(boolean expected, Supplier<T> c) {
+		var o = expected ? stableRelease : latestRelease;
 		o.setStart(currentTimeMillis());
 		try {
 			return c.get();
@@ -136,16 +137,17 @@ final class ResponseProxyComparator implements ResponseComparator {
 	}
 	
 	private void trace(TestStatus status, TestStep step) {
+		var res = new AssertionResult(
+				request.getId(),
+				stableRelease,
+				latestRelease,
+				status,
+				step);
 		try {
-			tracer.accept(new ApiAssertionsResult(
-					request.getId(),
-					expExecution,
-					actExecution,
-					status,
-					step));
+			tracer.accept(res);
 		}
 		catch(Exception e) {
-			log.warn("cannot trace this test : {}", e.getMessage());
+			log.warn("cannot trace {} : {}", res, e.getMessage());
 		}
 	}
 }

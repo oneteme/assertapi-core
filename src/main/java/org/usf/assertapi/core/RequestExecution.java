@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @RequiredArgsConstructor(onConstructor_ = {@JsonCreator}) // ??
-public final class ApiExecution {
+public final class RequestExecution {
 	
 	private final String host;
 	private long start;
@@ -19,7 +19,4 @@ public final class ApiExecution {
 	public String toString() {
 		return "run on " + host + " in " + (end - start) + " ms";
 	}
-
-	
-	
 }

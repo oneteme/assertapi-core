@@ -12,8 +12,8 @@ import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.springframework.http.MediaType;
 
 public interface ResponseComparator {
-
-	void assumeEnabled(boolean enable);
+	
+	void assumeEnabled(ApiRequest query);
 
 	void assertionFail(Throwable t);
 
@@ -40,7 +40,7 @@ public interface ResponseComparator {
 	        	}
 	        	catch(JSONException e) {
 	        		assertionFail(e);
-	        		throw new IllegalStateException(e); // Can't happen : assertionFail should throw exception
+	        		throw expectException(e);
 	        	}
 	        }
 	    }
@@ -51,8 +51,12 @@ public interface ResponseComparator {
 	
 	default void assertOK() { }
 
-	default <T> T execute(boolean expexted, Supplier<T> c) {
+	default <T> T execute(boolean expected, Supplier<T> c) {
 		return c.get();
+	}
+
+	static IllegalStateException expectException(Throwable e) {
+		return new IllegalStateException("assertion should throw exception", e);
 	}
 		
 }

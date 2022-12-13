@@ -59,6 +59,7 @@ public final class LoggableResponseComparator implements ResponseComparator {
 	}
 
 	public void assertOK() {
+		log.info("API test OK {}");
 		comparator.assertOK();
 	}
 

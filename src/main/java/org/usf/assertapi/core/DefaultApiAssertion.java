@@ -33,15 +33,13 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class DefaultApiAssertion implements ApiAssertion {
 	
+	private final ResponseComparator comparator;
 	private final RestTemplate stableReleaseTemp;
 	private final RestTemplate latestReleaseTemp;
-	private final ResponseComparator comparator;
 	
 	private static ExecutorService executor;
 	private Future<?> async; //cancel ??
@@ -65,9 +63,7 @@ public final class DefaultApiAssertion implements ApiAssertion {
 			try {
 				assertApi(q);
 			}
-	    	catch(Throwable e) {
-	    		log.warn("RUN " + q, e);
-	    	}
+	    	catch(Throwable e) {/* do nothing */}
 		}
 	}
 	
@@ -182,7 +178,6 @@ public final class DefaultApiAssertion implements ApiAssertion {
 			exp = ofNullable(e.getCause()).orElse(e);
 		}
 		catch (InterruptedException e) {
-			log.error("Rest call was interrupted", e);
 			Thread.currentThread().interrupt();
 			exp = e;
 		}

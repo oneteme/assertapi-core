@@ -28,13 +28,6 @@ final class ResponseProxyComparator implements ResponseComparator {
 	private final RequestExecution latestRelease;
 	
 	private ApiRequest request;
-
-	public ResponseProxyComparator(ResponseComparator comparator, Consumer<AssertionResult> tracer, ServerConfig stableRelease, ServerConfig latestRelease) {
-		this.comparator = comparator;
-		this.tracer = tracer;
-		this.stableRelease = new RequestExecution(stableRelease.buildRootUrl());
-		this.latestRelease = new RequestExecution(latestRelease.buildRootUrl());
-	}
 	
 	@Override
 	public void assumeEnabled(ApiRequest query) {

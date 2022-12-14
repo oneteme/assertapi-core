@@ -43,7 +43,7 @@ public final class ApiAssertionsFactory {
 		var template = new RestTemplate(); //put only
 		var hds = new HttpHeaders();
 		hds.add(CTX, buildContext().toHeader());
-		var ctx = template.exchange(url, GET, new HttpEntity<>(hds), String.class).getBody();
+		var ctx = template.exchange(url + "/register", GET, new HttpEntity<>(hds), String.class).getBody();
 		template.setClientHttpRequestInitializers(singletonList(req-> req.getHeaders().set(CTX_ID, ctx)));
 		this.tracer = tr-> template.put(url, tr);
 		return this;

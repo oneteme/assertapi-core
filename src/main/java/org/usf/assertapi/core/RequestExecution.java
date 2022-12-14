@@ -9,8 +9,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@AllArgsConstructor
-@RequiredArgsConstructor(onConstructor_ = {@JsonCreator}) // ??
+@RequiredArgsConstructor // ??
+@AllArgsConstructor(onConstructor_ = {@JsonCreator})
 public final class RequestExecution {
 	
 	private final String host;

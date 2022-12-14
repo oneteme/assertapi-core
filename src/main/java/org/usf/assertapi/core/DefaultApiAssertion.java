@@ -34,8 +34,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public final class DefaultApiAssertion implements ApiAssertion {
+@RequiredArgsConstructor
+public class DefaultApiAssertion implements ApiAssertion {
 	
 	private final ResponseComparator comparator;
 	private final RestTemplate stableReleaseTemp;

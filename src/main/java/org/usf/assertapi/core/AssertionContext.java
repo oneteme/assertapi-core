@@ -29,7 +29,6 @@ public final class AssertionContext {
 	private final String address;
 
 	public static AssertionContext buildContext() {
-		
 		return new AssertionContext(
 				getProperty("user.name"), 
 				getProperty("os.name"),
@@ -45,7 +44,6 @@ public final class AssertionContext {
 	}
 	
 	public static AssertionContext parseHeader(ObjectMapper mapper, String header) {
-		
 		try {
 			return mapper.readValue(getDecoder().decode(header), AssertionContext.class);
 		} catch (IOException e) {

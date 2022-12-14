@@ -41,7 +41,7 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 		String authorizationValue = null;
     	if(conf.getAuth() != null) {
     		var auth = conf.getAuth();
-			var authMethod =  requireNonNull(ServerAuthMethod.valueOf(auth.getAuthMethod().toUpperCase().replace("-", "_")));
+			var authMethod =  ServerAuthMethod.valueOf(requireNonNull(auth.getAuthMethod()).toUpperCase().replace("-", "_"));
 	    	switch (authMethod) {
 				case NO_AUTH:
 					break;

@@ -3,14 +3,17 @@ package org.usf.assertapi.core;
 import static java.util.Optional.ofNullable;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.With;
 
 //TODO rename to ExecutionConfig
 @Getter
+@Setter
 public final class AssertionConfig {
 
 	@Deprecated(forRemoval = true)
 	private final boolean debug;
-	private final boolean enable;
+	private boolean enable;
 	@Deprecated(forRemoval = true)
 	private final boolean strict;
 	private final boolean parallel;

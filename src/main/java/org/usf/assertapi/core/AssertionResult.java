@@ -15,7 +15,7 @@ public final class AssertionResult {
 	
 	@Override
 	public String toString() {
-		return id + " => " + status + (step == null ? "" : step);
+		return id + " => " + status + (step == null ? "" : "@" + step);
 	}
 	
 }

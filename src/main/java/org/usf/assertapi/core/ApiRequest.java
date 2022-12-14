@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @JsonInclude(NON_NULL)
 public final class ApiRequest {
-	
+
 	private final Long id;
 	private final String uri;
 	private final String method;

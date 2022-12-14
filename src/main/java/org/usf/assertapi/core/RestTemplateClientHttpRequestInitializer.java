@@ -41,21 +41,24 @@ final class RestTemplateClientHttpRequestInitializer implements ClientHttpReques
 		String authorizationValue = null;
     	if(conf.getAuth() != null) {
     		var auth = conf.getAuth();
-	    	switch (requireNonNull(auth.getAuthMethod())) {
-	    	case "basic":
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth(requireNonNull(auth.getUsername()), requireNonNull(auth.getPassword()), null);
-	    		break;
-	    	case "token":
-	    		authorizationValue = BEARER_AUTH + requireNonNull(auth.getToken());
-	    		break;
-	    	case "novaBasic" : 
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", fetchIdToken(auth), null);
-	    		break;
-	    	case "novaToken" : 
-	    		authorizationValue = BASIC_AUTH + encodeBasicAuth("", requireNonNull(auth.getToken()), null);
-	    		break;
-	    	default:
-	    		throw new IllegalArgumentException("Unknown method " + auth.getAuthMethod());
+			var authMethod =  requireNonNull(ServerAuthMethod.valueOf(auth.getAuthMethod().toUpperCase().replace("-", "_")));
+	    	switch (authMethod) {
+				case NO_AUTH:
+					break;
+				case BASIC:
+					authorizationValue = BASIC_AUTH + encodeBasicAuth(requireNonNull(auth.getUsername()), requireNonNull(auth.getPassword()), null);
+					break;
+				case TOKEN:
+					authorizationValue = BEARER_AUTH + requireNonNull(auth.getToken());
+					break;
+				case NOVA_BASIC:
+					authorizationValue = BASIC_AUTH + encodeBasicAuth("", fetchIdToken(auth), null);
+					break;
+				case NOVA_TOKEN :
+					authorizationValue = BASIC_AUTH + encodeBasicAuth("", requireNonNull(auth.getToken()), null);
+					break;
+	    		default:
+	    			throw new IllegalArgumentException("Unknown method " + auth.getAuthMethod());
 	    	}
     	}
     	return new RestTemplateClientHttpRequestInitializer(authorizationValue);

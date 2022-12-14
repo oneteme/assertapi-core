@@ -77,5 +77,4 @@ public final class ApiAssertionFactory {
 				RestTemplateBuilder.build(stableRelease),
 				RestTemplateBuilder.build(latestRelease)); 
 	}
-	
 }

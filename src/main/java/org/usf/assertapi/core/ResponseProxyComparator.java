@@ -12,6 +12,7 @@ import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import lombok.Getter;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.http.MediaType;
 
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-final class ResponseProxyComparator implements ResponseComparator {
+public class ResponseProxyComparator implements ResponseComparator {
 	
 	private final ResponseComparator comparator;
 	private final Consumer<AssertionResult> tracer;

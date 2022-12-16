@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 
 public interface ApiAssertion {
 
-	void assertApi(ApiRequest query);
+	void exec(ApiRequest query);
 
-	void assertApiAsync(List<ApiRequest> queries);
+	void execAsync(List<ApiRequest> queries);
 
-	void assertApiAsync(Supplier<List<ApiRequest>> queries);
+	void execAsync(Supplier<List<ApiRequest>> queries);
 
 }

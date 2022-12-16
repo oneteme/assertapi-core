@@ -61,26 +61,26 @@ public class DefaultApiAssertion implements ApiAssertion {
 		return executor;
 	}
 
-	public void assertApiAsync(@NonNull List<ApiRequest> queries)  {
-		assertApiAsync(()-> queries);
+	public void execAsync(@NonNull List<ApiRequest> queries)  {
+		execAsync(()-> queries);
 	}
 
 	@Override
-	public void assertApiAsync(@NonNull Supplier<List<ApiRequest>> queries)  {
+	public void execAsync(@NonNull Supplier<List<ApiRequest>> queries)  {
 		this.async = executor().submit(()-> assertApi(queries.get()));
 	}
 
 	public void assertApi(@NonNull List<ApiRequest> queries)  {
 		for(var q : queries) {
 			try {
-				assertApi(q);
+				exec(q);
 			}
 	    	catch(Throwable e) {/* do nothing */}
 		}
 	}
 	
 	@Override
-	public void assertApi(@NonNull ApiRequest query) {
+	public void exec(@NonNull ApiRequest query) {
 		comparator.assumeEnabled(query);
 		
     	var af = submit(query.getConfiguration().isParallel(), ()-> exchange(latestReleaseTemp, query, comparator));

@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpEntity;
@@ -43,6 +44,16 @@ public class DefaultApiAssertion implements ApiAssertion {
 	private static ExecutorService executor;
 	private Future<?> async; //cancel ??
 	
+	interface Execution {
+		
+		List<ApiRequest> get();
+		
+		void onInit();
+		
+		void onComplete();
+		
+	}
+	
 	private static ExecutorService executor() {
 		if(executor == null) {
 			executor = newFixedThreadPool(10); //conf
@@ -50,12 +61,13 @@ public class DefaultApiAssertion implements ApiAssertion {
 		return executor;
 	}
 
+	public void assertApiAsync(@NonNull List<ApiRequest> queries)  {
+		assertApiAsync(()-> queries);
+	}
+
 	@Override
-	public void assertApiAsync(@NonNull List<ApiRequest> queries, Runnable task)  {
-		this.async = executor().submit(()->{
-			assertApi(queries);
-			task.run();
-		});
+	public void assertApiAsync(@NonNull Supplier<List<ApiRequest>> queries)  {
+		this.async = executor().submit(()-> assertApi(queries.get()));
 	}
 
 	public void assertApi(@NonNull List<ApiRequest> queries)  {

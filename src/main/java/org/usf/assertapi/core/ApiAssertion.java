@@ -1,13 +1,14 @@
 package org.usf.assertapi.core;
 
-import lombok.NonNull;
-
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface ApiAssertion {
 
-	void assertApiAsync(@NonNull List<ApiRequest> queries, Runnable task);
-
 	void assertApi(ApiRequest query);
+
+	void assertApiAsync(List<ApiRequest> queries);
+
+	void assertApiAsync(Supplier<List<ApiRequest>> queries);
 
 }

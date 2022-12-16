@@ -30,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.jayway.jsonpath.JsonPath;
 
-import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -50,14 +49,15 @@ public class DefaultApiAssertion implements ApiAssertion {
 		}
 		return executor;
 	}
-	
+
+	@Override
 	public void assertApiAsync(@NonNull List<ApiRequest> queries, Runnable task)  {
 		this.async = executor().submit(()->{
 			assertApi(queries);
 			task.run();
 		});
 	}
-	
+
 	public void assertApi(@NonNull List<ApiRequest> queries)  {
 		for(var q : queries) {
 			try {

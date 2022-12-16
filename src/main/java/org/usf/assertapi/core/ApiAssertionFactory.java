@@ -1,22 +1,11 @@
 package org.usf.assertapi.core;
 
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static org.springframework.http.HttpMethod.GET;
-import static org.usf.assertapi.core.AssertionContext.CTX;
-import static org.usf.assertapi.core.AssertionContext.CTX_ID;
-import static org.usf.assertapi.core.AssertionContext.buildContext;
 
 import java.util.function.Consumer;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.client.RestTemplate;
-
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @NoArgsConstructor
 public final class ApiAssertionFactory {
 
@@ -26,14 +15,14 @@ public final class ApiAssertionFactory {
 	private Consumer<AssertionResult> tracer;
 	private boolean loggable = true;
 	
-	public ApiAssertionFactory using(ResponseComparator comparator) {
-		this.comparator = comparator;
-		return this;
-	}
-	
 	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
 		this.latestRelease = latestRelease;
+		return this;
+	}
+	
+	public ApiAssertionFactory using(ResponseComparator comparator) {
+		this.comparator = comparator;
 		return this;
 	}
 	
@@ -44,21 +33,6 @@ public final class ApiAssertionFactory {
 	
 	public ApiAssertionFactory disableLog() {
 		loggable = false;
-		return this;
-	}
-	
-	public ApiAssertionFactory traceOn(String url) {
-		try {
-			var template = new RestTemplate(); //put only
-			var hds = new HttpHeaders();
-			hds.add(CTX, buildContext().toHeader());
-			var ctx = template.exchange(url, GET, new HttpEntity<>(hds), String.class).getBody();
-			template.setClientHttpRequestInitializers(singletonList(req-> req.getHeaders().set(CTX_ID, ctx)));
-			this.tracer = tr-> template.put(url, tr);
-		} catch(Exception e) {
-			log.warn("error while connecting to " + url, e);
-			this.tracer = tr-> log.warn("cannot trace {} on {}", tr, url);
-		}
 		return this;
 	}
 	
@@ -75,6 +49,6 @@ public final class ApiAssertionFactory {
 		}
 		return new DefaultApiAssertion(cmp,
 				RestTemplateBuilder.build(stableRelease),
-				RestTemplateBuilder.build(latestRelease)); 
+				RestTemplateBuilder.build(latestRelease));
 	}
 }

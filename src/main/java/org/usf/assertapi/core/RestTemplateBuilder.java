@@ -12,24 +12,20 @@ import lombok.NoArgsConstructor;
 public final class RestTemplateBuilder {
 	
 	public static RestTemplate build(String url) {
-
 		var rt = new RestTemplate();
 		RootUriTemplateHandler.addTo(rt, url);
 		return rt;
 	}
 	
 	public static RestTemplate build(ServerConfig conf) {
-
 		return build(conf, init(conf));
 	}
 	
 	public static RestTemplate build(ServerConfig conf, ClientHttpRequestInitializer initializer) {
-
 		var rt = new RestTemplate();
 		RootUriTemplateHandler.addTo(rt, conf.buildRootUrl());
 		rt.getClientHttpRequestInitializers().add(initializer);
 		return rt;
 	}
-	
 
 }

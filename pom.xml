@@ -6,7 +6,7 @@
 
 	<groupId>com.github.usf.assertapi</groupId>
 	<artifactId>assertapi-core</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 	<name>assertapi-core</name>
   <developers>
@@ -24,6 +24,7 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+  
   <scm>
     <connection>scm:git:git://github.com/oneteme/assertapi-core.git</connection>
     <developerConnection>scm:git:ssh://github.com:oneteme/assertapi-core.git</developerConnection>
@@ -116,6 +117,10 @@
   </distributionManagement>-->
   
   <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
     <repository>
       <id>ossrh</id>
       <name>Central Repository OSSRH</name>

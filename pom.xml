@@ -7,17 +7,28 @@
 	<groupId>io.github.usf.assertapi</groupId>
 	<artifactId>assertapi-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 	<name>assertapi-core</name>
-  <contributors>
-    <contributor>
+  <developers>
+    <developer>
       <name>u$f</name>
       <email>usf.alami@gmail.com</email>
-    </contributor>
-  </contributors>
-  <organization>
-    <name>ENEDIS</name>
-    <url>http://www.enedis.fr/</url>
-  </organization>
+      <organization>ENEDIS</organization>
+      <organizationUrl>http://www.enedis.fr</organizationUrl>
+    </developer>
+  </developers>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git://github.com/oneteme/assertapi-core.git</connection>
+    <developerConnection>scm:git:ssh://github.com:oneteme/assertapi-core.git</developerConnection>
+    <url>https://github.com/oneteme/assertapi-core.git</url>
+  </scm>
 
 	<properties>
 		<java.version>11</java.version>

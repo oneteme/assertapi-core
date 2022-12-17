@@ -1,8 +1,5 @@
 package org.usf.assertapi.core;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,7 +7,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @RequiredArgsConstructor // ??
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
 public final class RequestExecution {
 	
 	private final String host;

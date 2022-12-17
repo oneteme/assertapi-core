@@ -4,9 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Consumer;
 
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
 public final class ApiAssertionFactory {
 
 	private ResponseComparator comparator;

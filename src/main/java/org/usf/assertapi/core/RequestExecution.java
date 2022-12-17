@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @RequiredArgsConstructor // ??
-@AllArgsConstructor(onConstructor_ = {@JsonCreator})
+@AllArgsConstructor(onConstructor_ = @JsonCreator)
 public final class RequestExecution {
 	
 	private final String host;

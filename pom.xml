@@ -26,9 +26,7 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git://github.com/oneteme/assertapi-core.git</connection>
-    <developerConnection>scm:git:ssh://github.com:oneteme/assertapi-core.git</developerConnection>
-    <url>https://github.com/oneteme/assertapi-core.git</url>
+    <url>https://github.com/oneteme/assertapi-core</url>
   </scm>
 
 	<properties>
@@ -79,32 +77,6 @@
 					<parameters>true</parameters>
 				</configuration>
 			</plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 		</plugins>
 	</build>
 	

@@ -18,3 +18,14 @@
   <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
+
+
+##Usage
+
+```java
+assertion = new ApiAssertionsFactory()
+        .comparing({version.stable}, {version.latest})
+        .using({response.comparator})
+        .build();
+assertion.exec({api})
+```

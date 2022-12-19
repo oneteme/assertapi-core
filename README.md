@@ -24,8 +24,8 @@
 
 ```java
 assertion = new ApiAssertionsFactory()
-        .comparing({version.stable}, {version.latest})
-        .using({ResponseComparator})
+        .comparing(stableRelease, latestRelease)
+        .using(ResponseComparator)
         .build();
-assertion.exec({api});
+assertion.exec(api);
 ```

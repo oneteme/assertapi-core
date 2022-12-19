@@ -12,7 +12,7 @@
 
 
 ```xml
-`<dependency>
+<dependency>
   <groupId>io.github.oneteme.assertapi</groupId>
   <artifactId>assertapi-core</artifactId>
   <version>0.0.1-SNAPSHOT</version>

@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.With;
 
-@ToString
 @Getter
+@ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AssertionContext {
 	
@@ -77,5 +77,9 @@ public final class AssertionContext {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.err.println(buildContext());
 	}
 }

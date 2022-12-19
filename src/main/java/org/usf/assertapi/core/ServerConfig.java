@@ -22,19 +22,16 @@ public final class ServerConfig {
 	}
 
 	public String buildRootUrl() {
-    	
     	return format("http%s://%s%s/", 
     			port == 443 ? "s" : "", host, 
     			port == 80 || port == 443 ? "" : ":" + port);
     }
 	
 	public static ServerConfig localServer(int port) {
-		
 		return localServer(port, null);
 	}
 
 	public static ServerConfig localServer(int port, ServerAuth auth) {
-		
 		return new ServerConfig("localhost", port, auth);
 	}
 	

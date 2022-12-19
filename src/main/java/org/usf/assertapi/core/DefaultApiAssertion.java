@@ -1,5 +1,6 @@
 package org.usf.assertapi.core;
 
+import static java.lang.Thread.currentThread;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -44,16 +45,6 @@ public class DefaultApiAssertion implements ApiAssertion {
 	private static ExecutorService executor;
 	private Future<?> async; //cancel ??
 	
-	interface Execution {
-		
-		List<ApiRequest> get();
-		
-		void onInit();
-		
-		void onComplete();
-		
-	}
-	
 	private static ExecutorService executor() {
 		if(executor == null) {
 			executor = newFixedThreadPool(10); //conf
@@ -61,6 +52,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 		return executor;
 	}
 
+	@Override
 	public void execAsync(@NonNull List<ApiRequest> queries)  {
 		execAsync(()-> queries);
 	}
@@ -190,7 +182,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 			exp = ofNullable(e.getCause()).orElse(e);
 		}
 		catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+			currentThread().interrupt();
 			exp = e;
 		}
 		comp.assertionFail(exp);

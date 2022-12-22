@@ -10,7 +10,6 @@ public final class ApiAssertionFactory {
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
 	private Consumer<AssertionResult> tracer;
-	private boolean loggable = true;
 	
 	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
@@ -28,11 +27,6 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory disableLog() {
-		loggable = false;
-		return this;
-	}
-	
 	public ApiAssertion build() {
 		requireNonNull(comparator);
 		requireNonNull(stableRelease);
@@ -41,9 +35,6 @@ public final class ApiAssertionFactory {
 				: new ResponseProxyComparator(comparator, tracer, 
 						new RequestExecution(stableRelease.buildRootUrl()), 
 						new RequestExecution(latestRelease.buildRootUrl()));
-		if(loggable) {
-			cmp = new LoggableResponseComparator(cmp);
-		}
 		return new DefaultApiAssertion(cmp,
 				RestTemplateBuilder.build(stableRelease),
 				RestTemplateBuilder.build(latestRelease));

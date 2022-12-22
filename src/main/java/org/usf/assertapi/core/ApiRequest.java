@@ -10,6 +10,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 @Setter
 @Getter
 @JsonInclude(NON_NULL)
@@ -24,10 +29,11 @@ public final class ApiRequest {
 	private final String name;
 	private final String description;
 	private final short referStatus;
-	private final AssertionConfig configuration;
+	private final ResponseCompareConfig respConfig;
+	private final ExecutionConfig execConfig;
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, String description, Short referStatus, AssertionConfig configuration) {
+			String name, String description, Short referStatus, ResponseCompareConfig respConfig, ExecutionConfig configuration) {
 		this.id = id;
 		this.name = name;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
@@ -36,11 +42,16 @@ public final class ApiRequest {
 		this.headers = headers;
 		this.description = description;
 		this.referStatus = ofNullable(referStatus).orElse((short)200); //OK by default
-		this.configuration = ofNullable(configuration).orElseGet(AssertionConfig::defaultConfig);
+		this.execConfig = ofNullable(configuration).orElseGet(ExecutionConfig::defaultConfig);
+		this.respConfig = respConfig; //TODO nullable ?
 	}
 	
 	public boolean hasHeaders() {
 		return headers != null && !headers.isEmpty();
+	}
+	
+	public ExecutionConfig executionConfig() {
+		return execConfig;
 	}
 
 	@Override
@@ -54,4 +65,5 @@ public final class ApiRequest {
 		}
 		return sb.append("[").append(method).append("] ").append(uri).toString();
 	}
+	
 }

@@ -1,10 +1,9 @@
 package org.usf.assertapi.core;
 
 import static java.lang.System.currentTimeMillis;
+import static org.usf.assertapi.core.TestStatus.ERROR;
 import static org.usf.assertapi.core.TestStatus.FAIL;
-import static org.usf.assertapi.core.TestStatus.KO;
 import static org.usf.assertapi.core.TestStatus.OK;
-import static org.usf.assertapi.core.TestStatus.SKIP;
 import static org.usf.assertapi.core.TestStep.CONTENT_TYPE;
 import static org.usf.assertapi.core.TestStep.HTTP_CODE;
 import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
@@ -12,16 +11,17 @@ import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import lombok.Getter;
-import org.skyscreamer.jsonassert.JSONCompareResult;
-import org.springframework.http.MediaType;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 @Slf4j
 @RequiredArgsConstructor
-public class ResponseProxyComparator implements ResponseComparator {
+public class ResponseProxyComparator extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
 	private final Consumer<AssertionResult> tracer;
@@ -33,13 +33,7 @@ public class ResponseProxyComparator implements ResponseComparator {
 	@Override
 	public void assumeEnabled(ApiRequest query) {
 		this.request = query; //active API
-		try {
-			comparator.assumeEnabled(query);
-		}
-		catch(Throwable e) {
-			trace(SKIP, null);
-			throw e;
-		}
+		trace(RESPONSE_CONTENT, ()-> comparator.assumeEnabled(query));
 	}
 	
 	@Override
@@ -47,86 +41,62 @@ public class ResponseProxyComparator implements ResponseComparator {
 		var o = expected ? stableRelease : latestRelease;
 		o.setStart(currentTimeMillis());
 		try {
-			return c.get();
+			return comparator.execute(expected, c);
 		} finally {
 			o.setEnd(currentTimeMillis());
  		}
 	}
 
 	@Override
-	public void assertStatusCode(int expectedStatusCode, int actualStatusCode) {
-		try {
-			comparator.assertStatusCode(expectedStatusCode, actualStatusCode);
-		}
-		catch(Throwable e) {
-			trace(KO, HTTP_CODE);
-			throw e;
-		}
+	public void assertStatusCode(int expected, int actual) {
+		trace(HTTP_CODE, ()-> comparator.assertStatusCode(expected, actual));
 	}
 
 	@Override
-	public void assertContentType(MediaType expectedContentType, MediaType actualContentType) {
-		try {
-			comparator.assertContentType(expectedContentType, actualContentType);
-		}
-		catch(Throwable e) {
-			trace(KO, CONTENT_TYPE);
-			throw e;
-		}
+	public void assertContentType(String expected, String actual) {
+		trace(CONTENT_TYPE, ()-> comparator.assertContentType(expected, actual));
 	}
 
 	@Override
-	public void assertByteContent(byte[] expectedContent, byte[] actualContent) {
-		try {
-			comparator.assertByteContent(expectedContent, actualContent);
-		}
-		catch(Throwable e) {
-			trace(KO, RESPONSE_CONTENT);
-			throw e;
-		}
+	public void assertByteContent(byte[] expected, byte[] actual) {
+		trace(RESPONSE_CONTENT, ()-> comparator.assertByteContent(expected, actual));
 	}
 
 	@Override
-	public void assertTextContent(String expectedContent, String actualContent) {
-		try {
-			comparator.assertTextContent(expectedContent, actualContent);
-		}
-		catch(Throwable e) {
-			trace(KO, RESPONSE_CONTENT);
-			throw e;
-		}
+	public void assertTextContent(String expected, String actual) {
+		trace(RESPONSE_CONTENT, ()-> comparator.assertTextContent(expected, actual));
 	}
 	
 	@Override
-	public void assertJsonContent(String expectedContent, String actualContent, boolean strict) {
-		try {
-			comparator.assertJsonContent(expectedContent, actualContent, strict);
-		}
-		catch(Throwable e) {
-			trace(KO, RESPONSE_CONTENT);
-			throw e;
-		}
-	}
-
-	@Override
-	public void assertJsonCompareResut(JSONCompareResult res) {
-		//should not be call
-	}
-	
-	@Override
-	public void assertionFail(Throwable t) {
-		trace(FAIL, null);
-		comparator.assertionFail(t);
+	public void assertJsonContent(String expected, String actual, JsonResponseCompareConfig config) {
+		trace(RESPONSE_CONTENT, ()-> comparator.assertJsonContent(expected, actual, config));
 	}
 	
 	@Override
 	public void assertOK() { 
-		try {
+		trace(null, ()->{
 			comparator.assertOK();
 			trace(OK, null);
+		});
+	}
+
+	@Override
+	public void assertionFail(Throwable t) {
+		trace(ERROR, null);
+		comparator.assertionFail(t);
+	}
+	
+
+	private void trace(TestStep step, Runnable action) {
+		try {
+			action.run();
 		}
-		catch(Exception e) {
-			trace(KO, null);
+		catch(AssertionError e) {
+			trace(FAIL, step);
+			throw e;
+		}
+		catch (Exception e) {
+			trace(ERROR, step);
 		}
 	}
 	

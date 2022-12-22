@@ -10,7 +10,7 @@ import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_XML;
-import static org.usf.assertapi.core.ResponseComparator.expectException;
+import static org.usf.assertapi.core.ResponseComparator.illegalStateException;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -34,6 +34,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 public class DefaultApiAssertion implements ApiAssertion {
@@ -75,7 +76,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 	public void exec(@NonNull ApiRequest query) {
 		comparator.assumeEnabled(query);
 		
-    	var af = submit(query.getConfiguration().isParallel(), ()-> exchange(latestReleaseTemp, query, comparator));
+    	var af = submit(query.executionConfig().isParallel(), ()-> exchange(latestReleaseTemp, query, comparator));
     	ResponseEntity<byte[]> eRes = null;
     	try {
         	eRes = exchange(stableReleaseTemp, query, comparator);
@@ -87,7 +88,7 @@ public class DefaultApiAssertion implements ApiAssertion {
     		try {
     			var aRes = execute(af, comparator);
     			comparator.assertStatusCode(eExp.getRawStatusCode(), aRes.getStatusCodeValue()); //fail
-        		throw expectException(eExp);
+        		throw illegalStateException(eExp);
     		}
     		catch(RestClientResponseException aExp) { 
         		assertApiKO(query, eExp, aExp);
@@ -96,7 +97,7 @@ public class DefaultApiAssertion implements ApiAssertion {
     	catch(Exception e) {
     		af.cancel(true); //may throw exception ?
     		comparator.assertionFail(e);//error
-    		throw expectException(e);
+    		throw illegalStateException(e);
     	}
     	if(eRes != null) {
     		ResponseEntity<byte[]> aRes = null;
@@ -105,7 +106,7 @@ public class DefaultApiAssertion implements ApiAssertion {
     		}
     		catch(RestClientResponseException aExp) {
     			comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getRawStatusCode());//fail
-        		throw expectException(aExp);
+        		throw illegalStateException(aExp);
     		}
     		assertApiOK(query, eRes, aRes);
     	}
@@ -114,7 +115,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 	
 	void assertApiKO(ApiRequest query, RestClientResponseException eExp, RestClientResponseException aExp) {
     	comparator.assertStatusCode(eExp.getRawStatusCode(), aExp.getRawStatusCode());
-    	comparator.assertContentType(eExp.getResponseHeaders().getContentType(), aExp.getResponseHeaders().getContentType());
+    	comparator.assertContentType(eExp.getResponseHeaders().getContentType().getType(), aExp.getResponseHeaders().getContentType().getType());
     	var mediaType = eExp.getResponseHeaders().getContentType();
 		if(isTextContent(mediaType)) {
         	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
@@ -161,7 +162,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 				.anyMatch(media::isCompatibleWith);
 	}
 
-    private static String excludePaths(String v, AssertionConfig out) {
+    private static String excludePaths(String v, ExecutionConfig out) {
 		if(out.getExcludePaths() != null) {
 			var json = JsonPath.parse(v);
 			Stream.of(out.getExcludePaths()).forEach(json::delete);
@@ -186,7 +187,7 @@ public class DefaultApiAssertion implements ApiAssertion {
 			exp = e;
 		}
 		comp.assertionFail(exp);
-		throw expectException(exp);
+		throw illegalStateException(exp);
     }
     
     private ResponseEntity<byte[]> exchange(RestTemplate template, ApiRequest req, ResponseComparator cmp) {

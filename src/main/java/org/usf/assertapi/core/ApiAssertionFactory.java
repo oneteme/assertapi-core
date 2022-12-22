@@ -4,6 +4,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Consumer;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 public final class ApiAssertionFactory {
 
 	private ResponseComparator comparator;
@@ -28,15 +33,11 @@ public final class ApiAssertionFactory {
 	}
 	
 	public ApiAssertion build() {
-		requireNonNull(comparator);
-		requireNonNull(stableRelease);
-		requireNonNull(latestRelease);
-		var cmp = tracer == null ? comparator 
-				: new ResponseProxyComparator(comparator, tracer, 
-						new RequestExecution(stableRelease.buildRootUrl()), 
-						new RequestExecution(latestRelease.buildRootUrl()));
-		return new DefaultApiAssertion(cmp,
-				RestTemplateBuilder.build(stableRelease),
-				RestTemplateBuilder.build(latestRelease));
+		var cmp = tracer == null 
+				? comparator 
+				: new ResponseProxyComparator(requireNonNull(comparator), tracer);
+		return new ApiDefaultAssertion(cmp,
+				RestTemplateBuilder.build(requireNonNull(stableRelease)),
+				RestTemplateBuilder.build(requireNonNull(latestRelease)));
 	}
 }

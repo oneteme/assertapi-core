@@ -8,10 +8,12 @@ import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,55 +26,57 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparator {
 	
 	public void assumeEnabled(ApiRequest query) {
-		log(query.getExecConfig().isEnable() ? "START" : "SKIPPED");
+		logApiTesting(query.getExecConfig().isEnable() ? "START" : "SKIPPED");
 		throw new ApiAssertionError(true, "assertion skipped");
 	}
-
-	@Deprecated(forRemoval = true) //@see assertElapsedTime
-	public <T> T execute(boolean expected, Supplier<T> c) {
-		return c.get();
-	}
 	
-	public void assertElapsedTime(long expected, long actual) {
-		
+	public void assertExecution(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
+		logApiComparaison("elapsedTime", stableReleaseExec.elapsedTime() + "ms", latestReleaseExec.elapsedTime() + "ms");
+		logApiComparaison("contentSize", stableReleaseExec.getSize() + "o", latestReleaseExec.getSize() + "o");
 	}
 
 	public void assertStatusCode(int expected, int actual) {
-		logComparaison("statusCode", expected, actual);
+		logApiComparaison("statusCode", expected, actual);
 		if(expected != actual) {
 			throw notEquals(expected, actual, HTTP_CODE);
 		}
 	}
 	
 	public void assertContentType(String expected, String actual) {
-		logComparaison("mediaType", expected, actual);
+		logApiComparaison("mediaType", expected, actual);
 		if(!Objects.equals(expected, actual)) {
 			throw notEquals(expected, actual, CONTENT_TYPE);
 		}
 	}
 
 	public void assertByteContent(byte[] expected, byte[] actual) {
-		logComparaison("byteContent", expected, actual); //just reference
+		logApiComparaison("byteContent", expected, actual); //just reference
 		if(!Arrays.equals(expected, actual)) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 
 	public void assertTextContent(String expected, String actual) {
-		logComparaison("textContent", expected, actual);
+		logApiComparaison("textContent", expected, actual);
 		if(!Objects.equals(expected, actual)) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 	
 	public void assertJsonContent(String expected, String actual, JsonResponseCompareConfig config) {
-		logComparaison("jsonContent" + (config.isStrict() ? "(strict)" : ""), expected, actual);
+		logApiComparaison("jsonContent", expected, actual);
 		try {
-			JSONAssert.assertEquals(expected, actual, config.isStrict());
+			boolean strict = true;
+			if(config != null) {
+				expected = excludePaths(expected, config);
+				actual = excludePaths(actual, config);
+				strict = config.isStrict();
+			}
+			JSONAssert.assertEquals(expected, actual, strict);
 		} catch (AssertionError e) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		} catch (JSONException e1) {
-			assertionFail(e1);
+			throw new AssertionRuntimeException(e1);
 		}
 	}
 	
@@ -81,7 +85,7 @@ public class ResponseComparator {
 	}
 	
 	public void assertOK() { 
-		log("VALID");
+		logApiTesting("VALID");
 	}
 
 	public void assertionFail(Throwable t) {
@@ -89,20 +93,24 @@ public class ResponseComparator {
 		throw new AssertionRuntimeException(t);
 	}
 
-	static IllegalStateException illegalStateException(Throwable e) {
-		return new IllegalStateException("assertion should throw exception", e);
-	}
-
 	private static AssertionError notEquals(Object expected, Object actual, TestStep stage) {
 		return new ApiAssertionError(false, format("%s : %s <> %s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 
-	private static void log(String msg) {
+	private static void logApiTesting(String msg) {
 		log.info("Testing API : {}", msg);
 	}
 	
-	private static void logComparaison(String stage, Object expected, Object actual) {
+	private static void logApiComparaison(String stage, Object expected, Object actual) {
 		log.info("Comparing API ({}) : {} <> {}", stage, expected, actual);
 	}
 	
+    private static String excludePaths(String v, JsonResponseCompareConfig out) {
+		if(out.getXpath() != null) {
+			var json = JsonPath.parse(v);
+			Stream.of(out.getXpath()).forEach(json::delete);
+	    	v = json.jsonString();
+		}
+		return v;
+    }
 }

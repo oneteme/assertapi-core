@@ -1,6 +1,5 @@
 package org.usf.assertapi.core;
 
-import static java.lang.System.currentTimeMillis;
 import static org.usf.assertapi.core.TestStatus.ERROR;
 import static org.usf.assertapi.core.TestStatus.FAIL;
 import static org.usf.assertapi.core.TestStatus.OK;
@@ -9,7 +8,6 @@ import static org.usf.assertapi.core.TestStep.HTTP_CODE;
 import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,65 +17,59 @@ import lombok.extern.slf4j.Slf4j;
  * @author u$f
  *
  */
-@Slf4j
+@Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 @RequiredArgsConstructor
 public class ResponseProxyComparator extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
 	private final Consumer<AssertionResult> tracer;
-	private final RequestExecution stableRelease;
-	private final RequestExecution latestRelease;
-	
+
 	private ApiRequest request;
+	private ExecutionInfo stableReleaseExec;
+	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void assumeEnabled(ApiRequest query) {
-		this.request = query; //active API
-		trace(RESPONSE_CONTENT, ()-> comparator.assumeEnabled(query));
+	public void assumeEnabled(ApiRequest request) {
+		this.request = request; //active API
+		tryExec(null, ()-> comparator.assumeEnabled(request));
 	}
 	
 	@Override
-	public <T> T execute(boolean expected, Supplier<T> c) {
-		var o = expected ? stableRelease : latestRelease;
-		o.setStart(currentTimeMillis());
-		try {
-			return comparator.execute(expected, c);
-		} finally {
-			o.setEnd(currentTimeMillis());
- 		}
+	public void assertExecution(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
+		this.stableReleaseExec = stableReleaseExec;
+		this.latestReleaseExec = latestReleaseExec;
+		tryExec(null, ()-> comparator.assertExecution(stableReleaseExec, latestReleaseExec));
 	}
 
 	@Override
 	public void assertStatusCode(int expected, int actual) {
-		trace(HTTP_CODE, ()-> comparator.assertStatusCode(expected, actual));
+		tryExec(HTTP_CODE, ()-> comparator.assertStatusCode(expected, actual));
 	}
 
 	@Override
 	public void assertContentType(String expected, String actual) {
-		trace(CONTENT_TYPE, ()-> comparator.assertContentType(expected, actual));
+		tryExec(CONTENT_TYPE, ()-> comparator.assertContentType(expected, actual));
 	}
 
 	@Override
 	public void assertByteContent(byte[] expected, byte[] actual) {
-		trace(RESPONSE_CONTENT, ()-> comparator.assertByteContent(expected, actual));
+		tryExec(RESPONSE_CONTENT, ()-> comparator.assertByteContent(expected, actual));
 	}
 
 	@Override
 	public void assertTextContent(String expected, String actual) {
-		trace(RESPONSE_CONTENT, ()-> comparator.assertTextContent(expected, actual));
+		tryExec(RESPONSE_CONTENT, ()-> comparator.assertTextContent(expected, actual));
 	}
 	
 	@Override
 	public void assertJsonContent(String expected, String actual, JsonResponseCompareConfig config) {
-		trace(RESPONSE_CONTENT, ()-> comparator.assertJsonContent(expected, actual, config));
+		tryExec(RESPONSE_CONTENT, ()-> comparator.assertJsonContent(expected, actual, config));
 	}
 	
 	@Override
 	public void assertOK() { 
-		trace(null, ()->{
-			comparator.assertOK();
-			trace(OK, null);
-		});
+		tryExec(null, comparator::assertOK);
+		trace(OK, null);
 	}
 
 	@Override
@@ -87,7 +79,7 @@ public class ResponseProxyComparator extends ResponseComparator {
 	}
 	
 
-	private void trace(TestStep step, Runnable action) {
+	private void tryExec(TestStep step, Runnable action) {
 		try {
 			action.run();
 		}
@@ -95,16 +87,14 @@ public class ResponseProxyComparator extends ResponseComparator {
 			trace(FAIL, step);
 			throw e;
 		}
-		catch (Exception e) {
-			trace(ERROR, step);
-		}
+		//other exception are catch in ApiAssertion
 	}
 	
 	private void trace(TestStatus status, TestStep step) {
 		var res = new AssertionResult(
 				request.getId(),
-				stableRelease,
-				latestRelease,
+				stableReleaseExec,
+				latestReleaseExec,
 				status,
 				step);
 		try {

@@ -19,6 +19,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.With;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

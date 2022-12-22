@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public final class ServerConfig {
+public final class ServerConfig { //TODO immutable
 	
 	private String host;
 	private int port;

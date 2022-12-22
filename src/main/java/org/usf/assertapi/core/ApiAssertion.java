@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * 
@@ -10,10 +11,15 @@ import java.util.function.Supplier;
  */
 public interface ApiAssertion {
 
-	void exec(ApiRequest query);
+	void assertAll(Stream<ApiRequest> queries);
 
-	void execAsync(List<ApiRequest> queries);
+	void assertAllAsync(Supplier<Stream<ApiRequest>> queries);
 
-	void execAsync(Supplier<List<ApiRequest>> queries);
-
+	default void assertAll(ApiRequest... queries) {
+		assertAll(Stream.of(queries));
+	}
+	
+	default void assertAll(List<ApiRequest> queries) {
+		assertAll(queries.stream());
+	}
 }

@@ -4,6 +4,11 @@ import java.util.HashMap;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 @SuppressWarnings("serial")
 @NoArgsConstructor
 public class ServerAuth extends HashMap<String, String> {

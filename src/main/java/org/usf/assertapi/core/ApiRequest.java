@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,8 +30,8 @@ public final class ApiRequest {
 	private final String name;
 	private final String description;
 	private final short referStatus;
-	private final ResponseCompareConfig respConfig;
 	private final ExecutionConfig execConfig;
+	private final ResponseCompareConfig respConfig; //nullable
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
 			String name, String description, Short referStatus, ResponseCompareConfig respConfig, ExecutionConfig configuration) {
@@ -43,7 +44,7 @@ public final class ApiRequest {
 		this.description = description;
 		this.referStatus = ofNullable(referStatus).orElse((short)200); //OK by default
 		this.execConfig = ofNullable(configuration).orElseGet(ExecutionConfig::defaultConfig);
-		this.respConfig = respConfig; //TODO nullable ?
+		this.respConfig = respConfig;
 	}
 	
 	public boolean hasHeaders() {

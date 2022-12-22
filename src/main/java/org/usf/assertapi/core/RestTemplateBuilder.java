@@ -8,6 +8,11 @@ import org.springframework.web.client.RestTemplate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * @author u$f
+ *
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RestTemplateBuilder {
 	

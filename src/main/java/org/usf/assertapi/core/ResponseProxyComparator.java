@@ -90,7 +90,7 @@ public class ResponseProxyComparator extends ResponseComparator {
 		//other exception are catch in ApiAssertion
 	}
 	
-	private void trace(TestStatus status, TestStep step) {
+	protected void trace(TestStatus status, TestStep step) {
 		var res = new AssertionResult(
 				request.getId(),
 				stableReleaseExec,

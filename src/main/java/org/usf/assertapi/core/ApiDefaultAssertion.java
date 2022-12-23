@@ -90,7 +90,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
     	}
     	catch(RestClientResponseExceptionWrapper eExp) {
     		try {
-    			var aRes = execute(af, comparator);
+    			var aRes = execute(af);
     			comparator.assertStatusCode(eExp.getStatusCodeValue(), aRes.getStatusCodeValue()); //fail
         		throw illegalStateException(eExp);
     		}
@@ -105,7 +105,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
     	}
 		ResponseEntityWrapper aRes = null;
 		try {
-			aRes = execute(af, comparator);
+			aRes = execute(af);
 		}
 		catch(RestClientResponseExceptionWrapper aExp) {
 			comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
@@ -181,7 +181,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		throw new AssertionRuntimeException("mismatch API configuration");
 	}
     
-    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf, ResponseComparator comp) throws RestClientResponseException {
+    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseException {
     	Throwable exp = null;
 		try {
 			return cf.get();

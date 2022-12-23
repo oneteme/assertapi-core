@@ -217,7 +217,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 
 					@Override
 					public boolean cancel(boolean mayInterruptIfRunning) {
-						throw new UnsupportedOperationException();
+						return true; //!important
 					}
 
 					@Override

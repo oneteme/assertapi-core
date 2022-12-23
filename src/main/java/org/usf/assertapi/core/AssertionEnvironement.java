@@ -24,7 +24,7 @@ import lombok.With;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class AssertionContext {
+public final class AssertionEnvironement {
 
 	private static String prefix = "$env-";
 
@@ -43,8 +43,8 @@ public final class AssertionContext {
 		cons.accept(prefix+"branch", branch);
 	}
 	
-	public static AssertionContext from(UnaryOperator<String> fn) {
-		return new AssertionContext(
+	public static AssertionEnvironement from(UnaryOperator<String> fn) {
+		return new AssertionEnvironement(
 				fn.apply(prefix+"user"), 
 				fn.apply(prefix+"os"), 
 				fn.apply(prefix+"address"), 
@@ -52,8 +52,8 @@ public final class AssertionContext {
 				fn.apply(prefix+"branch"));
 	}
 	
-	public static AssertionContext buildContext() {
-		return new AssertionContext(
+	public static AssertionEnvironement buildContext() {
+		return new AssertionEnvironement(
 				getProperty("user.name"), 
 				getProperty("os.name"), 
 				getProperty("java.version"),

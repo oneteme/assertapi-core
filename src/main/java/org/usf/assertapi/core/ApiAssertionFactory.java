@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 import java.util.function.Consumer;
 
@@ -33,9 +34,10 @@ public final class ApiAssertionFactory {
 	}
 	
 	public ApiAssertion build() {
-		var cmp = tracer == null 
-				? comparator 
-				: new ResponseProxyComparator(requireNonNull(comparator), tracer);
+		var cmp = ofNullable(comparator).orElseGet(ResponseComparator::new);
+		if(tracer != null) {
+			cmp = new ResponseProxyComparator(cmp, tracer);
+		}
 		return new ApiDefaultAssertion(cmp,
 				RestTemplateBuilder.build(requireNonNull(stableRelease)),
 				RestTemplateBuilder.build(requireNonNull(latestRelease)));

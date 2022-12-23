@@ -34,7 +34,7 @@ public final class ApiRequest {
 	private final ResponseCompareConfig respConfig; //nullable
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, String description, Short referStatus, ResponseCompareConfig respConfig, ExecutionConfig configuration) {
+			String name, String description, Short referStatus, ExecutionConfig configuration, ResponseCompareConfig respConfig) {
 		this.id = id;
 		this.name = name;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)

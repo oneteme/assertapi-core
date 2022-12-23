@@ -27,7 +27,9 @@ public class ResponseComparator {
 	
 	public void assumeEnabled(ApiRequest query) {
 		logApiTesting(query.getExecConfig().isEnable() ? "START" : "SKIPPED");
-		throw new ApiAssertionError(true, "api assertion skipped");
+		if(!query.getExecConfig().isEnable()) {
+			throw new ApiAssertionError(true, "api assertion skipped");
+		}
 	}
 	
 	public void assertExecution(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {

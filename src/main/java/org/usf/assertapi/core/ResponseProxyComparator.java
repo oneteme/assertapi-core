@@ -87,7 +87,7 @@ public class ResponseProxyComparator extends ResponseComparator {
 			trace(FAIL, step);
 			throw e;
 		}
-		//other exception are catch in ApiAssertion
+		//other exceptions are catch in ApiAssertion
 	}
 	
 	protected void trace(TestStatus status, TestStep step) {

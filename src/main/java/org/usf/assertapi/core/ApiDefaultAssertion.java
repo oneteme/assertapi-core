@@ -115,7 +115,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		comparator.assertOK();
 	}
 	
-	private void assertResponseEquals(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
+	void assertResponseEquals(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
 		comparator.assertExecution(expect.getRequestExecution(), actual.getRequestExecution());
     	comparator.assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
     	comparator.assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
@@ -134,15 +134,8 @@ public class ApiDefaultAssertion implements ApiAssertion {
 			comparator.assertByteContent(expect.getResponseBodyAsByteArray(), actual.getResponseBodyAsByteArray());
 		}
 	}
-	
-	private static boolean isTextCompatible(MediaType media){
-		return media != null && Stream.of(
-				APPLICATION_JSON, APPLICATION_XML,
-				TEXT_PLAIN, TEXT_HTML, TEXT_XML)
-				.anyMatch(media::isCompatibleWith);
-	}
     
-    private ResponseEntityWrapper exchange(RestTemplate template, ApiRequest req) {
+    ResponseEntityWrapper exchange(RestTemplate template, ApiRequest req) {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
@@ -164,11 +157,11 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
     }
 	
-	private static ExecutorService executor() {
-		if(executor == null) {
-			executor = newFixedThreadPool(10); //conf
-		}
-		return executor;
+	static boolean isTextCompatible(MediaType media){
+		return media != null && Stream.of(
+				APPLICATION_JSON, APPLICATION_XML,
+				TEXT_PLAIN, TEXT_HTML, TEXT_XML)
+				.anyMatch(media::isCompatibleWith);
 	}
 	
 	private static <T extends ResponseCompareConfig> T castConfig(ResponseCompareConfig obj, Class<T> expectedClass){
@@ -197,6 +190,14 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
 		throw new AssertionRuntimeException(exp);
     }
+	
+	private static ExecutorService executor() {
+		if(executor == null) {
+			executor = newFixedThreadPool(10); //conf
+		}
+		return executor;
+	}
+	
 
 	private static IllegalStateException illegalStateException(Throwable e) {
 		return new IllegalStateException("assertion should throw exception", e);

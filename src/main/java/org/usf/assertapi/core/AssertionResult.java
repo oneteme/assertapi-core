@@ -12,15 +12,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class AssertionResult {
 	
-	private final Long id;
-	private final ExecutionInfo expExecution;
-	private final ExecutionInfo actExecution;
+	private final ExecutionInfo stableReleaseExecution;
+	private final ExecutionInfo latestReleaseExecution;
 	private final TestStatus status;
 	private final TestStep step;
 	
 	@Override
 	public String toString() {
-		return id + " => " + status + (step == null ? "" : "@" + step);
+		return status + (step == null ? "" : "@" + step) +
+				"\n\t\t stable : " + stableReleaseExecution +
+				"\n\t\t latest : " + latestReleaseExecution;
 	}
 	
 }

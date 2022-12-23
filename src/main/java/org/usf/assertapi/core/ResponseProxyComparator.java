@@ -7,7 +7,7 @@ import static org.usf.assertapi.core.TestStep.CONTENT_TYPE;
 import static org.usf.assertapi.core.TestStep.HTTP_CODE;
 import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseProxyComparator extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final Consumer<AssertionResult> tracer;
+	private final BiConsumer<ApiRequest, AssertionResult> tracer;
 
 	private ApiRequest request;
 	private ExecutionInfo stableReleaseExec;
@@ -77,7 +77,6 @@ public class ResponseProxyComparator extends ResponseComparator {
 		trace(ERROR, null);
 		comparator.assertionFail(t);
 	}
-	
 
 	private void tryExec(TestStep step, Runnable action) {
 		try {
@@ -92,16 +91,15 @@ public class ResponseProxyComparator extends ResponseComparator {
 	
 	protected void trace(TestStatus status, TestStep step) {
 		var res = new AssertionResult(
-				request.getId(),
 				stableReleaseExec,
 				latestReleaseExec,
 				status,
 				step);
 		try {
-			tracer.accept(res);
+			tracer.accept(request, res);
 		}
 		catch(Exception e) {
-			log.warn("cannot trace {} : {}", res, e.getMessage());
+			log.warn("cannot trace {} => {} : {}", request, res, e.getMessage());
 		}
 	}
 }

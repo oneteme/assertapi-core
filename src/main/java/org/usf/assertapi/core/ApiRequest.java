@@ -9,14 +9,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 
  * @author u$f
  *
  */
-@Setter
 @Getter
 @JsonInclude(NON_NULL)
 public final class ApiRequest {

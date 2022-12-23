@@ -3,7 +3,7 @@ package org.usf.assertapi.core;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * 
@@ -15,7 +15,7 @@ public final class ApiAssertionFactory {
 	private ResponseComparator comparator;
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
-	private Consumer<AssertionResult> tracer;
+	private BiConsumer<ApiRequest, AssertionResult> tracer;
 	
 	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
@@ -28,7 +28,7 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory trace(Consumer<AssertionResult> tracer) {
+	public ApiAssertionFactory trace(BiConsumer<ApiRequest, AssertionResult> tracer) {
 		this.tracer = tracer;
 		return this;
 	}

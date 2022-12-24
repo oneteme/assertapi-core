@@ -108,9 +108,9 @@ public class ResponseComparator {
 	}
 	
     private static String excludePaths(String v, JsonResponseCompareConfig out) {
-		if(out.getXpath() != null) {
+		if(out.getXpaths() != null) {
 			var json = JsonPath.parse(v);
-			Stream.of(out.getXpath()).forEach(json::delete);
+			Stream.of(out.getXpaths()).forEach(json::delete);
 	    	v = json.jsonString();
 		}
 		return v;

@@ -19,11 +19,6 @@ public final class ExecutionConfig {
 		this.enable = ofNullable(enable).orElse(true);
 		this.parallel = ofNullable(parallel).orElse(true);
 	}
-	
-	static ExecutionConfig defaultConfig() {
-		return new ExecutionConfig(null, null);
-	}
-
 	public ExecutionConfig disable() {
 		this.enable = false;
 		return this;
@@ -33,4 +28,9 @@ public final class ExecutionConfig {
 		this.enable = true;
 		return this;
 	}
+	
+	static ExecutionConfig defaultConfig() {
+		return new ExecutionConfig(null, null);
+	}
+
 }

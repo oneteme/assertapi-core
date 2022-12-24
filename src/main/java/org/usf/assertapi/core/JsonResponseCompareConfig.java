@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public final class JsonResponseCompareConfig implements ResponseCompareConfig {
 
 	private final boolean strict;
-	private final String[] xpath;
+	private final String[] xpaths;
 	private final boolean exclude; //always true, false not 
 	
 	@Override

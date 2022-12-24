@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public final class AssertionResult {
+public final class ApiCompareResult {
 	
 	private final ExecutionInfo stableReleaseExecution;
 	private final ExecutionInfo latestReleaseExecution;

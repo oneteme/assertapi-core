@@ -85,7 +85,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
     	try {
         	eRes = exchange(stableReleaseTemp, query);
         	if(eRes.getStatusCodeValue() != query.getReferStatus()) {
-        		throw new ReferInvalidResponseException(query.getReferStatus(), eRes.getStatusCodeValue());
+        		throw new AssertionRuntimeException("unexpected stable release response code");
         	}
     	}
     	catch(RestClientResponseExceptionWrapper eExp) {

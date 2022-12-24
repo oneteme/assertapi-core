@@ -15,7 +15,7 @@ public final class ApiAssertionFactory {
 	private ResponseComparator comparator;
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
-	private BiConsumer<ApiRequest, AssertionResult> tracer;
+	private BiConsumer<ApiRequest, ApiCompareResult> tracer;
 	
 	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
@@ -28,7 +28,7 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory trace(BiConsumer<ApiRequest, AssertionResult> tracer) {
+	public ApiAssertionFactory trace(BiConsumer<ApiRequest, ApiCompareResult> tracer) {
 		this.tracer = tracer;
 		return this;
 	}
@@ -36,7 +36,7 @@ public final class ApiAssertionFactory {
 	public ApiAssertion build() {
 		var cmp = ofNullable(comparator).orElseGet(ResponseComparator::new);
 		if(tracer != null) {
-			cmp = new ResponseProxyComparator(cmp, tracer);
+			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}
 		return new ApiDefaultAssertion(cmp,
 				RestTemplateBuilder.build(requireNonNull(stableRelease)),

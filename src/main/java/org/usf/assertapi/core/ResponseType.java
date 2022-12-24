@@ -2,6 +2,6 @@ package org.usf.assertapi.core;
 
 public enum ResponseType {
 	
-	JSON, CSV;
+	JSON, CSV, TXT, XML;
 
 }

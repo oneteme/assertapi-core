@@ -56,7 +56,5 @@ class ApiRequestTest {
 		api = new ApiRequest(null, "", null, Map.of("hdr1", "value1"), null, null, null, null, null);
 		assertTrue(api.hasHeaders());
 	}
-	
 
-	private ApiRequest ar1 = new ApiRequest(null, "", null, null, null, null, null, null, null);
 }

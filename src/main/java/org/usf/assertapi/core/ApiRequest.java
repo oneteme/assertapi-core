@@ -9,12 +9,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @author u$f
  *
  */
+@Setter
 @Getter
 @JsonInclude(NON_NULL)
 public final class ApiRequest {
@@ -27,12 +29,12 @@ public final class ApiRequest {
 	private String body; //not works in constructor 
 	private final String name;
 	private final String description;
-	private final short referStatus;
+	private final Integer referStatus;
 	private final ExecutionConfig execConfig;
 	private final ResponseCompareConfig respConfig; //nullable
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, String description, Short referStatus, ExecutionConfig configuration, ResponseCompareConfig respConfig) {
+			String name, String description, Integer referStatus, ExecutionConfig configuration, ResponseCompareConfig respConfig) {
 		this.id = id;
 		this.name = name;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
@@ -40,7 +42,7 @@ public final class ApiRequest {
 		this.method = ofNullable(method).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
 		this.description = description;
-		this.referStatus = ofNullable(referStatus).orElse((short)200); //OK by default
+		this.referStatus = ofNullable(referStatus).orElse(200); //OK by default
 		this.execConfig = ofNullable(configuration).orElseGet(ExecutionConfig::defaultConfig);
 		this.respConfig = respConfig;
 	}

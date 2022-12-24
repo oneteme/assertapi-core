@@ -72,5 +72,6 @@ class ResponseComparatorTest {
 	@Test
 	void testAssertionFail() {
 		assertThrows(AssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
+		assertThrows(AssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(new Exception())); //not AssertionError
 	}
 }

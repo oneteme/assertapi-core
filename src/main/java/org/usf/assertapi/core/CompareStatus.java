@@ -5,7 +5,7 @@ package org.usf.assertapi.core;
  * @author u$f
  *
  */
-public enum TestStatus {
+public enum CompareStatus {
 	
 	SKIP, ERROR, OK, FAIL;
 }

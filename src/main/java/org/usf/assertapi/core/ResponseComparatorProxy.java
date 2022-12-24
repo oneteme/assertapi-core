@@ -1,11 +1,11 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.TestStatus.ERROR;
-import static org.usf.assertapi.core.TestStatus.FAIL;
-import static org.usf.assertapi.core.TestStatus.OK;
-import static org.usf.assertapi.core.TestStep.CONTENT_TYPE;
-import static org.usf.assertapi.core.TestStep.HTTP_CODE;
-import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.CompareStatus.ERROR;
+import static org.usf.assertapi.core.CompareStatus.FAIL;
+import static org.usf.assertapi.core.CompareStatus.OK;
+import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
+import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
+import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 
 import java.util.function.BiConsumer;
 
@@ -78,7 +78,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 		comparator.assertionFail(t);
 	}
 
-	private void tryExec(TestStep step, Runnable action) {
+	private void tryExec(CompareStage step, Runnable action) {
 		try {
 			action.run();
 		}
@@ -89,7 +89,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 		//other exceptions are catch in ApiAssertion
 	}
 	
-	protected void trace(TestStatus status, TestStep step) {
+	protected void trace(CompareStatus status, CompareStage step) {
 		var res = new ApiCompareResult(
 				stableReleaseExec,
 				latestReleaseExec,

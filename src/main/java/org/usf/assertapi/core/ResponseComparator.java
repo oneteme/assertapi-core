@@ -2,9 +2,9 @@ package org.usf.assertapi.core;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
-import static org.usf.assertapi.core.TestStep.CONTENT_TYPE;
-import static org.usf.assertapi.core.TestStep.HTTP_CODE;
-import static org.usf.assertapi.core.TestStep.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
+import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
+import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -95,7 +95,7 @@ public class ResponseComparator {
 		throw new AssertionRuntimeException(t);
 	}
 
-	private static AssertionError notEquals(Object expected, Object actual, TestStep stage) {
+	private static AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
 		return new ApiAssertionError(false, format("%s : %s <> %s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 

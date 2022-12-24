@@ -38,8 +38,8 @@ public final class RuntimeEnvironement {
 	public void push(BiConsumer<String, String> cons) {
 		cons.accept(prefix+"user", user);
 		cons.accept(prefix+"os", os);
-		cons.accept(prefix+"address", address);
 		cons.accept(prefix+"jre", jre);
+		cons.accept(prefix+"address", address);
 		cons.accept(prefix+"branch", branch);
 	}
 	
@@ -47,12 +47,12 @@ public final class RuntimeEnvironement {
 		return new RuntimeEnvironement(
 				fn.apply(prefix+"user"), 
 				fn.apply(prefix+"os"), 
-				fn.apply(prefix+"address"), 
 				fn.apply(prefix+"jre"), 
+				fn.apply(prefix+"address"), 
 				fn.apply(prefix+"branch"));
 	}
 	
-	public static RuntimeEnvironement buildContext() {
+	public static RuntimeEnvironement build() {
 		return new RuntimeEnvironement(
 				getProperty("user.name"), 
 				getProperty("os.name"), 

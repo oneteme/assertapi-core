@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 public final class ApiAssertionFactory {

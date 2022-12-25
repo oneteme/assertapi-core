@@ -5,7 +5,7 @@ import static org.usf.assertapi.core.ResponseType.CSV;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 public final class CsvResponseCompareConfig implements ResponseCompareConfig {

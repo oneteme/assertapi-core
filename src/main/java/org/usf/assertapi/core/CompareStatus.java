@@ -3,7 +3,7 @@ package org.usf.assertapi.core;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 public enum CompareStatus {

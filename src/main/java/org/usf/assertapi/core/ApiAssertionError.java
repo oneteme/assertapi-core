@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 @Getter

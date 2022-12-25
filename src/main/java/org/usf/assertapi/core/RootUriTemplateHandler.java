@@ -12,7 +12,7 @@ import org.springframework.web.util.UriTemplateHandler;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 public class RootUriTemplateHandler implements UriTemplateHandler {

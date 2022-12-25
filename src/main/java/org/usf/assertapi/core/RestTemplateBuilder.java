@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

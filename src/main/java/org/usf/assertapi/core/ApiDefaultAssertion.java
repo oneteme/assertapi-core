@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 @RequiredArgsConstructor

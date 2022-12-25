@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 public interface ApiAssertion {

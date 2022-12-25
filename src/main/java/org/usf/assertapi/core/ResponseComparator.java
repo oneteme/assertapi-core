@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 
  * @author u$f
- * @since
+ * @since 1.0
  *
  */
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")

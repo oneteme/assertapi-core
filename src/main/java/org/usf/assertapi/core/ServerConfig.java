@@ -6,10 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 @Getter
 @Setter
 @NoArgsConstructor
-public final class ServerConfig { //TODO immutable
+public final class ServerConfig { //TODO make it immutable
 	
 	private String host;
 	private int port;

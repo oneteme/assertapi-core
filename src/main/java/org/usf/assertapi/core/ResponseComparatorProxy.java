@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author u$f
  *
  */
-@Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 @RequiredArgsConstructor
+@Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparatorProxy extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
@@ -93,8 +93,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 		var res = new ApiCompareResult(
 				stableReleaseExec,
 				latestReleaseExec,
-				status,
-				step);
+				status, step);
 		try {
 			tracer.accept(request, res);
 		}

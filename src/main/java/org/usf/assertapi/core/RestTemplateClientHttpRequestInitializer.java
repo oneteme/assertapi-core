@@ -21,6 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 final class RestTemplateClientHttpRequestInitializer implements ClientHttpRequestInitializer {
 	

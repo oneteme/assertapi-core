@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * 
  * @author u$f
+ * @since
  *
  */
 @Getter
@@ -13,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 public final class ExecutionInfo {
 	
 	//mass transfer, must be light 
-
 	private final long start;
 	private final long end;
+	private final int status;
 	private final int size;
 
 	public long elapsedTime() {
@@ -24,6 +25,6 @@ public final class ExecutionInfo {
 
 	@Override
 	public String toString() {
-		return "fetch " + size + "o in " + elapsedTime() + " ms";
+		return size + "o transferred in " + elapsedTime() + " ms";
 	}
 }

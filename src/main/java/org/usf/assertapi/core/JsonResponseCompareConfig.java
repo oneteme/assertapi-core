@@ -5,6 +5,12 @@ import static org.usf.assertapi.core.ResponseType.JSON;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 @Getter
 @RequiredArgsConstructor
 public final class JsonResponseCompareConfig implements ResponseCompareConfig {

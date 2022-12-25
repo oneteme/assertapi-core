@@ -12,6 +12,12 @@ import org.springframework.web.client.RestClientResponseException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 interface ClientResponseWrapper {
 	
 	ExecutionInfo getRequestExecution();

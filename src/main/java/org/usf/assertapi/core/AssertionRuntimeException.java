@@ -1,5 +1,11 @@
 package org.usf.assertapi.core;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 @SuppressWarnings("serial")
 public final class AssertionRuntimeException extends RuntimeException {
 	

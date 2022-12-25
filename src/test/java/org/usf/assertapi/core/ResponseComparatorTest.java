@@ -18,8 +18,8 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertExecution() {
-		var e1 = new ExecutionInfo(1000, 2000, 100);
-		var e2 = new ExecutionInfo(0, Long.MAX_VALUE, Integer.MAX_VALUE);
+		var e1 = new ExecutionInfo(1000, 2000, 200, 100);
+		var e2 = new ExecutionInfo(0, Long.MAX_VALUE, 500, Integer.MAX_VALUE);
 		assertDoesNotThrow(()-> new ResponseComparator().assertExecution(e1, e2));
 	}
 

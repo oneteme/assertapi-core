@@ -9,6 +9,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriTemplateHandler;
 
+/**
+ * 
+ * @author u$f
+ * @since
+ *
+ */
 public class RootUriTemplateHandler implements UriTemplateHandler {
 
 	private final String rootUri;

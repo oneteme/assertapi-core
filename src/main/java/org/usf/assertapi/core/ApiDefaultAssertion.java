@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * 
  * @author u$f
+ * @since
  *
  */
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 			try {
 				tryAssertOne(q);
 			}
-	    	catch(Throwable e) {/* do nothing */}
+	    	catch(Throwable e) {/* do nothing */} //Exception + Error
 		});
 	}
 	
@@ -84,11 +85,14 @@ public class ApiDefaultAssertion implements ApiAssertion {
     	ResponseEntityWrapper eRes = null;
     	try {
         	eRes = exchange(stableReleaseTemp, query);
-        	if(eRes.getStatusCodeValue() != query.getReferStatus()) {
+        	if(!query.acceptStatus(eRes.getStatusCodeValue())) {
         		throw new AssertionRuntimeException("unexpected stable release response code");
         	}
     	}
     	catch(RestClientResponseExceptionWrapper eExp) {
+        	if(!query.acceptStatus(eExp.getStatusCodeValue())) {
+        		throw new AssertionRuntimeException("unexpected stable release response code");
+        	}
     		try {
     			var aRes = execute(af);
     			comparator.assertStatusCode(eExp.getStatusCodeValue(), aRes.getStatusCodeValue()); //fail
@@ -96,23 +100,24 @@ public class ApiDefaultAssertion implements ApiAssertion {
     		}
     		catch(RestClientResponseExceptionWrapper aExp) {
         		assertResponseEquals(eExp, aExp, query.getRespConfig());
-        		return;
     		}
     	}
     	catch(Exception e) {
     		af.cancel(true); //may throw exception ?
     		throw e;
     	}
-		ResponseEntityWrapper aRes = null;
-		try {
-			aRes = execute(af);
-		}
-		catch(RestClientResponseExceptionWrapper aExp) {
-			comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
-    		throw illegalStateException(aExp);
-		}
-		assertResponseEquals(eRes, aRes, query.getRespConfig());
-		comparator.assertOK();
+    	if(eRes != null) {
+			ResponseEntityWrapper aRes = null;
+			try {
+				aRes = execute(af);
+			}
+			catch(RestClientResponseExceptionWrapper aExp) {
+				comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
+	    		throw illegalStateException(aExp);
+			}
+			assertResponseEquals(eRes, aRes, query.getRespConfig());
+    	}
+    	comparator.assertOK();
 	}
 	
 	void assertResponseEquals(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
@@ -148,11 +153,11 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		var start = currentTimeMillis();
 		try {
 			var res = template.exchange(req.getUri(), HttpMethod.valueOf(req.getMethod()), entity, byte[].class);
-			var exe = new ExecutionInfo(start, currentTimeMillis(), ofNullable(res.getBody()).map(a-> a.length).orElse(0));
+			var exe = new ExecutionInfo(start, currentTimeMillis(), res.getStatusCodeValue(), ofNullable(res.getBody()).map(a-> a.length).orElse(0));
 			return new ResponseEntityWrapper(res, exe);
 		}
 		catch(RestClientResponseException e){
-			var exe = new ExecutionInfo(start, currentTimeMillis(), e.getResponseBodyAsByteArray().length);
+			var exe = new ExecutionInfo(start, currentTimeMillis(), e.getRawStatusCode(), e.getResponseBodyAsByteArray().length);
 			throw new RestClientResponseExceptionWrapper(e, exe);
 		}
     }

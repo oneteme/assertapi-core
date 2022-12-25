@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.ofNullable;
 
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,6 +15,7 @@ import lombok.Setter;
 /**
  * 
  * @author u$f
+ * @since
  *
  */
 @Setter
@@ -29,21 +31,22 @@ public final class ApiRequest {
 	private String body; //not works in constructor 
 	private final String name;
 	private final String description;
-	private final Integer referStatus;
+	//TODO add version
+	private final int[] acceptableStatus;
 	private final ExecutionConfig execConfig;
 	private final ResponseCompareConfig respConfig; //nullable
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, String description, Integer referStatus, ExecutionConfig configuration, ResponseCompareConfig respConfig) {
+			String name, String description, int[] referStatus, ExecutionConfig execConfig, ResponseCompareConfig respConfig) {
 		this.id = id;
 		this.name = name;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
-		this.method = ofNullable(method).map(m-> m.trim().toUpperCase()).orElse("GET");
+		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
 		this.description = description;
-		this.referStatus = ofNullable(referStatus).orElse(200); //OK by default
-		this.execConfig = ofNullable(configuration).orElseGet(ExecutionConfig::defaultConfig);
+		this.acceptableStatus = ofNullable(referStatus).orElse(new int[] {200}); //OK or may be NotFound ?
+		this.execConfig = ofNullable(execConfig).orElseGet(ExecutionConfig::defaultConfig);
 		this.respConfig = respConfig;
 	}
 	
@@ -53,6 +56,10 @@ public final class ApiRequest {
 	
 	public ExecutionConfig executionConfig() {
 		return execConfig;
+	}
+
+	public boolean acceptStatus(int status) {
+		return IntStream.of(acceptableStatus).anyMatch(v-> v == status);
 	}
 
 	@Override

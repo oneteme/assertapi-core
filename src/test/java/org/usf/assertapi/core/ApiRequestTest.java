@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.Collections.emptyMap;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,10 +31,10 @@ class ApiRequestTest {
 		assertNotNull(api.getExecConfig());
 		assertEquals("/", api.getUri());
 		assertEquals("GET", api.getMethod());
-		assertEquals(200, api.getReferStatus());
+		assertArrayEquals(new int[] {200}, api.getAcceptableStatus());
 
 		api = new ApiRequest(1L, "v1/api", "PUT",
-				Map.of("hdr1", "value1"), "api", "some description", 500, null, null);
+				Map.of("hdr1", "value1"), "api", "some description", new int[] {500}, null, null);
 		api.setBody("[]");
 		assertEquals(1, api.getId());
 		assertEquals("api", api.getName());
@@ -44,7 +45,7 @@ class ApiRequestTest {
 		assertNotNull(api.getExecConfig());
 		assertEquals("/v1/api", api.getUri());
 		assertEquals("PUT", api.getMethod());
-		assertEquals(500, api.getReferStatus());
+		assertArrayEquals( new int[] {500}, api.getAcceptableStatus());
 	}
 
 	@Test

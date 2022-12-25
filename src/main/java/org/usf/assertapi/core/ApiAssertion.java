@@ -12,15 +12,15 @@ import java.util.stream.Stream;
  */
 public interface ApiAssertion {
 
-	void assertAll(Stream<ApiRequest> queries);
+	void assertAll(Stream<? extends Api> queries);
 
-	void assertAllAsync(Supplier<Stream<ApiRequest>> queries);
+	void assertAllAsync(Supplier<Stream<? extends Api>> queries);
 
-	default void assertAll(ApiRequest... queries) {
+	default void assertAll(Api... queries) {
 		assertAll(Stream.of(queries));
 	}
 	
-	default void assertAll(List<ApiRequest> queries) {
+	default void assertAll(List<? extends Api> queries) {
 		assertAll(queries.stream());
 	}
 }

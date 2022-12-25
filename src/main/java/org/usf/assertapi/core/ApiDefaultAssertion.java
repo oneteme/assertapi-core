@@ -5,11 +5,6 @@ import static java.lang.Thread.currentThread;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.http.MediaType.TEXT_HTML;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.http.MediaType.TEXT_XML;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +18,6 @@ import java.util.stream.Stream;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.usf.assertapi.core.ClientResponseWrapper.ResponseEntityWrapper;
@@ -49,12 +43,12 @@ public class ApiDefaultAssertion implements ApiAssertion {
 	private Future<?> async; //cancel ??
 	
 	@Override
-	public void assertAllAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
+	public void assertAllAsync(@NonNull Supplier<Stream<? extends Api>> queries)  {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
 	@Override
-	public void assertAll(@NonNull Stream<ApiRequest> queries)  {
+	public void assertAll(@NonNull Stream<? extends Api> queries)  {
 		queries.forEach(q->{
 			try {
 				tryAssertOne(q);
@@ -63,11 +57,16 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		});
 	}
 	
-	private void tryAssertOne(ApiRequest query) {
-		 //assumeEnabled in JUnit does not throw AssertError (should not be catched)
-		comparator.assumeEnabled(query);
+	private void tryAssertOne(Api api) {
+		tryExec(()-> comparator.prepare(api));
+		//assumeEnabled in JUnit does not throw AssertError (should not be catched)
+		comparator.assumeEnabled(api.isEnabled());
+		tryExec(()-> assertOne(api));
+	}
+	
+	void tryExec(SafeRunnable action){
 		try {
-			assertOne(query);
+			action.run();
 		}
 		catch (AssertionRuntimeException e) {
 			comparator.assertionFail(ofNullable(e.getCause()).orElse(e));
@@ -79,18 +78,19 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
 	}
 	
-	private void assertOne(ApiRequest query) throws Exception {
+	private void assertOne(Api api) throws Exception {
 		
-    	var af = submit(query.executionConfig().isParallel(), ()-> exchange(latestReleaseTemp, query));
+    	var af = submit(api.isParallel(), 
+				()-> exchange(latestReleaseTemp, api.latestApi()));
     	ResponseEntityWrapper eRes = null;
     	try {
-        	eRes = exchange(stableReleaseTemp, query);
-        	if(!query.acceptStatus(eRes.getStatusCodeValue())) {
+        	eRes = exchange(stableReleaseTemp, api.stableApi());
+        	if(!api.stableApi().acceptStatus(eRes.getStatusCodeValue())) {
         		throw new AssertionRuntimeException("unexpected stable release response code");
         	}
     	}
     	catch(RestClientResponseExceptionWrapper eExp) {
-        	if(!query.acceptStatus(eExp.getStatusCodeValue())) {
+        	if(!api.stableApi().acceptStatus(eExp.getStatusCodeValue())) {
         		throw new AssertionRuntimeException("unexpected stable release response code");
         	}
     		try {
@@ -99,7 +99,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
         		throw illegalStateException(eExp);
     		}
     		catch(RestClientResponseExceptionWrapper aExp) {
-        		assertResponseEquals(eExp, aExp, query.getRespConfig());
+    			comparator.assertResponse(eExp, aExp, api.getRespConfig());
     		}
     	}
     	catch(Exception e) {
@@ -115,29 +115,9 @@ public class ApiDefaultAssertion implements ApiAssertion {
 				comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
 	    		throw illegalStateException(aExp);
 			}
-			assertResponseEquals(eRes, aRes, query.getRespConfig());
+			comparator.assertResponse(eRes, aRes, api.getRespConfig());
     	}
     	comparator.assertOK();
-	}
-	
-	void assertResponseEquals(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
-		comparator.assertExecution(expect.getRequestExecution(), actual.getRequestExecution());
-    	comparator.assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
-    	comparator.assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
-    	var mediaType = expect.getContentType();
-		if(isTextCompatible(mediaType)) {
-	    	var eCont = expect.getResponseBodyAsString();
-	    	var aCont = actual.getResponseBodyAsString();
-	    	if(APPLICATION_JSON.isCompatibleWith(mediaType)) {
-	    		comparator.assertJsonContent(eCont, aCont, castConfig(config, JsonResponseCompareConfig.class));
-	    	}
-	    	else {
-	    		comparator.assertTextContent(eCont, aCont);
-	    	}
-		}
-		else {
-			comparator.assertByteContent(expect.getResponseBodyAsByteArray(), actual.getResponseBodyAsByteArray());
-		}
 	}
     
     ResponseEntityWrapper exchange(RestTemplate template, ApiRequest req) {
@@ -162,23 +142,6 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
     }
 	
-	static boolean isTextCompatible(MediaType media){
-		return media != null && Stream.of(
-				APPLICATION_JSON, APPLICATION_XML,
-				TEXT_PLAIN, TEXT_HTML, TEXT_XML)
-				.anyMatch(media::isCompatibleWith);
-	}
-	
-	private static <T extends ResponseCompareConfig> T castConfig(ResponseCompareConfig obj, Class<T> expectedClass){
-		if(expectedClass == null) {
-			return null;
-		}
-		if(expectedClass.isInstance(obj)) {
-			return expectedClass.cast(obj);
-		}
-		throw new AssertionRuntimeException("mismatch API configuration");
-	}
-    
     private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseException {
     	Throwable exp = null;
 		try {

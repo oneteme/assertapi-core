@@ -16,7 +16,7 @@ public final class ApiAssertionFactory {
 	private ResponseComparator comparator;
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
-	private BiConsumer<ApiRequest, ApiCompareResult> tracer;
+	private BiConsumer<Api, ApiCompareResult> tracer;
 	
 	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
@@ -29,7 +29,7 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory trace(BiConsumer<ApiRequest, ApiCompareResult> tracer) {
+	public ApiAssertionFactory trace(BiConsumer<Api, ApiCompareResult> tracer) {
 		this.tracer = tracer;
 		return this;
 	}

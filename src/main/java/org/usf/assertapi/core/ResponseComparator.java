@@ -26,10 +26,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
-	public void assumeEnabled(ApiRequest query) {
-		logApiTesting(query.getExecConfig().isEnable() ? "START" : "SKIPPED");
-		if(!query.getExecConfig().isEnable()) {
+	public void prepare(Api api) {
+		logApiTesting("START " + api);
+	}
+	
+	public void assumeEnabled(boolean enabled) {
+		if(!enabled) {
+			logApiTesting("SKIPPED");
 			throw new ApiAssertionError(true, "api assertion skipped");
+		}
+	}
+	
+	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
+		assertExecution(expect.getRequestExecution(), actual.getRequestExecution());
+    	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
+    	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
+		if(expect.isTextCompatible()) {
+	    	var eCont = expect.getResponseBodyAsString();
+	    	var aCont = actual.getResponseBodyAsString();
+	    	if(expect.isJsonCompatible()) {
+	    		assertJsonContent(eCont, aCont, castConfig(config, JsonResponseCompareConfig.class));
+	    	}
+	    	else {
+	    		assertTextContent(eCont, aCont);
+	    	}
+		}
+		else {
+			assertByteContent(expect.getResponseBodyAsByteArray(), actual.getResponseBodyAsByteArray());
 		}
 	}
 	
@@ -116,4 +139,16 @@ public class ResponseComparator {
 		}
 		return v;
     }
+	
+	private static <T extends ResponseCompareConfig> T castConfig(ResponseCompareConfig obj, Class<T> expectedClass){
+		if(expectedClass == null) {
+			return null;
+		}
+		if(expectedClass.isInstance(obj)) {
+			return expectedClass.cast(obj);
+		}
+		throw new AssertionRuntimeException("mismatch API configuration");
+	}
+    
+	
 }

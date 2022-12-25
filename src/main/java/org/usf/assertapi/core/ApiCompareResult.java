@@ -13,16 +13,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class ApiCompareResult {
 	
-	private final ExecutionInfo stableReleaseExecution;
-	private final ExecutionInfo latestReleaseExecution;
+	private final ExecutionInfo stableApiExecution;
+	private final ExecutionInfo latestApiExecution;
 	private final CompareStatus status;
 	private final CompareStage step;
 	
 	@Override
 	public String toString() {
 		return status + (step == null ? "" : "@" + step) +
-				"\n\t\t stable : " + stableReleaseExecution +
-				"\n\t\t latest : " + latestReleaseExecution;
+				"\n\t\t stable : " + stableApiExecution +
+				"\n\t\t latest : " + latestApiExecution;
 	}
 	
 }

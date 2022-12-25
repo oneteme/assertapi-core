@@ -22,16 +22,21 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparatorProxy extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final BiConsumer<ApiRequest, ApiCompareResult> tracer;
+	private final BiConsumer<Api, ApiCompareResult> tracer;
 
-	private ApiRequest request;
+	private Api api;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void assumeEnabled(ApiRequest request) {
-		this.request = request; //active API
-		tryExec(null, ()-> comparator.assumeEnabled(request));
+	public void prepare(Api api) {
+		this.api = api; //active API
+		tryExec(null, ()-> comparator.prepare(api));
+	}
+	
+	@Override
+	public void assumeEnabled(boolean enabled) {
+		tryExec(null, ()-> comparator.assumeEnabled(enabled));
 	}
 	
 	@Override
@@ -95,10 +100,10 @@ public class ResponseComparatorProxy extends ResponseComparator {
 				latestReleaseExec,
 				status, step);
 		try {
-			tracer.accept(request, res);
+			tracer.accept(api, res);
 		}
 		catch(Exception e) {
-			log.warn("cannot trace {} => {} : {}", request, res, e.getMessage());
+			log.warn("cannot trace {} => {} : {}", api, res, e.getMessage());
 		}
 	}
 }

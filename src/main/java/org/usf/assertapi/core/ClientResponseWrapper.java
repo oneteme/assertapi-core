@@ -1,8 +1,14 @@
 package org.usf.assertapi.core;
 
 import static java.util.Optional.ofNullable;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.http.MediaType.TEXT_HTML;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_XML;
 
 import java.nio.charset.Charset;
+import java.util.stream.Stream;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,6 +34,18 @@ interface ClientResponseWrapper {
 	
 	default String getContentTypeValue() {
 		return ofNullable(getContentType()).map(MediaType::getType).orElse(null);
+	}
+	
+	default boolean isTextCompatible(){
+		return getContentType() != null && Stream.of(
+				APPLICATION_JSON, APPLICATION_XML,
+				TEXT_PLAIN, TEXT_HTML, TEXT_XML)
+				.anyMatch(getContentType()::isCompatibleWith);
+	}
+	
+	default boolean isJsonCompatible(){
+		return getContentType() != null 
+				&& APPLICATION_JSON.isCompatibleWith(getContentType());
 	}
 	
 	String getResponseBodyAsString();

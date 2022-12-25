@@ -36,7 +36,7 @@ public class ApiRequest {
 	
 	public ApiRequest(Long id, String name, Integer version, 
 			String uri, String method, Map<String, String> headers,
-			int[] referStatus, ExecutionConfig execConfig) {
+			int[] acceptableStatus, ExecutionConfig execConfig) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -44,7 +44,7 @@ public class ApiRequest {
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
 		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
-		this.acceptableStatus = ofNullable(referStatus).orElse(new int[] {200}); //OK or may be NotFound ?
+		this.acceptableStatus = ofNullable(acceptableStatus).orElse(new int[] {200}); //OK or may be NotFound ?
 		this.execConfig = ofNullable(execConfig).orElseGet(ExecutionConfig::defaultConfig);
 	}
 	

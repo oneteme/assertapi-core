@@ -17,9 +17,9 @@ public final class ApiNonRegressionCheck extends ApiRequest implements ApiCheck 
 	
 	public ApiNonRegressionCheck(Long id, String name, Integer version, 
 			String uri, String method, Map<String, String> headers,
-			int[] referStatus, ExecutionConfig execConfig, String description, ResponseCompareConfig respConfig) {
+			int[] acceptableStatus, ExecutionConfig execConfig, String description, ResponseCompareConfig respConfig) {
 		
-		super(id, name, version, uri, method, headers, referStatus, execConfig);
+		super(id, name, version, uri, method, headers, acceptableStatus, execConfig);
 		this.description = description;
 		this.respConfig = respConfig;
 	}

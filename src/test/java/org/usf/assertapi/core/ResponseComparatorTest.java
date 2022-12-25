@@ -9,10 +9,10 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssumeEnabled() {
-		var a1 = new ApiRequest(null, "uri", null, null, null, null, null, null, null);
+		var a1 = new ApiRequest(null, "uri", null, null, null, null, null, null, null, null);
 		assertDoesNotThrow(()-> new ResponseComparator().assumeEnabled(a1));
 
-		var a2 = new ApiRequest(null, "uri", null, null, null, null, null, new ExecutionConfig(false, null), null);
+		var a2 = new ApiRequest(null, "uri", null, null, null, null, null, null, new ExecutionConfig(false, null), null);
 		assertThrows(ApiAssertionError.class, ()-> new ResponseComparator().assumeEnabled(a2));
 	}
 

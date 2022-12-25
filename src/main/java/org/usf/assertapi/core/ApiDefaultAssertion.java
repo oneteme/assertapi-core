@@ -43,12 +43,12 @@ public class ApiDefaultAssertion implements ApiAssertion {
 	private Future<?> async; //cancel ??
 	
 	@Override
-	public void assertAllAsync(@NonNull Supplier<Stream<? extends Api>> queries)  {
+	public void assertAllAsync(@NonNull Supplier<Stream<? extends ApiCheck>> queries)  {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
 	@Override
-	public void assertAll(@NonNull Stream<? extends Api> queries)  {
+	public void assertAll(@NonNull Stream<? extends ApiCheck> queries)  {
 		queries.forEach(q->{
 			try {
 				tryAssertOne(q);
@@ -57,7 +57,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		});
 	}
 	
-	private void tryAssertOne(Api api) {
+	private void tryAssertOne(ApiCheck api) {
 		tryExec(()-> comparator.prepare(api));
 		//assumeEnabled in JUnit does not throw AssertError (should not be catched)
 		comparator.assumeEnabled(api.isEnabled());
@@ -78,7 +78,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
 	}
 	
-	private void assertOne(Api api) throws Exception {
+	private void assertOne(ApiCheck api) throws Exception {
 		
     	var af = submit(api.isParallel(), 
 				()-> exchange(latestReleaseTemp, api.latestApi()));

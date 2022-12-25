@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
-	public void prepare(Api api) {
+	public void prepare(ApiCheck api) {
 		logApiTesting("START " + api);
 	}
 	

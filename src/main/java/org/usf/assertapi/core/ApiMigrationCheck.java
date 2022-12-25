@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @JsonInclude(NON_NULL)
 @RequiredArgsConstructor
-public final class ApiMigration implements Api {
+public final class ApiMigrationCheck implements ApiCheck {
 
 	private final Long id;
 	private final ApiRequest stableApi;

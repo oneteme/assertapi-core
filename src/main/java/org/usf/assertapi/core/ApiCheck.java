@@ -2,7 +2,14 @@ package org.usf.assertapi.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public interface Api {
+/**
+ * 
+ * @author u$f
+ * @since 1.0
+ *
+ */
+
+public interface ApiCheck {
 	
 	Long getId();
 

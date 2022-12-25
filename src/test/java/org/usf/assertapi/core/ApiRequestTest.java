@@ -21,7 +21,7 @@ class ApiRequestTest {
 		assertThrows(IllegalArgumentException.class, ()->
 			new ApiRequest(null, null, null, null, null, null, null, null));
 		
-		var api = new ApiRequest(null, "", null, null, null, null, null, null);
+		var api = new ApiRequest(null, null, null, "", null, null, null, null);
 		assertNull(api.getId());
 		assertNull(api.getName());
 		assertNull(api.getHeaders());
@@ -31,8 +31,8 @@ class ApiRequestTest {
 		assertEquals("GET", api.getMethod());
 		assertArrayEquals(new int[] {200}, api.getAcceptableStatus());
 
-		api = new ApiRequest(1L, "v1/api", "PUT",
-				Map.of("hdr1", "value1"), "api", 5, new int[] {500}, null);
+		api = new ApiRequest(1L, "api", 5, "v1/api", "PUT",
+				Map.of("hdr1", "value1"),new int[] {500}, null);
 		api.setBody("[]");
 		assertEquals(1, api.getId());
 		assertEquals("api", api.getName());
@@ -47,11 +47,11 @@ class ApiRequestTest {
 
 	@Test
 	void testHasHeaders() {
-		var api = new ApiRequest(null, "", null, null, null, null, null, null);
+		var api = new ApiRequest(null, null, null, "", null, null, null, null);
 		assertFalse(api.hasHeaders());
-		api = new ApiRequest(null, "", null, emptyMap(), null, null, null, null);
+		api = new ApiRequest(null, null, null, "", null, emptyMap(), null, null);
 		assertFalse(api.hasHeaders());
-		api = new ApiRequest(null, "", null, Map.of("hdr1", "value1"), null, null, null, null);
+		api = new ApiRequest(null, null, null, "", null, Map.of("hdr1", "value1"), null, null);
 		assertTrue(api.hasHeaders());
 	}
 

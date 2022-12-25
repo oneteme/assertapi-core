@@ -24,25 +24,26 @@ import lombok.Setter;
 public class ApiRequest {
 
 	private final Long id;
+	private final String name;
+	private final Integer version;
 	private final String uri;
 	private final String method;
 	private final Map<String, String> headers;
 	@JsonDeserialize(using = JsonStringDeserializer.class) 
 	private String body; //not works in constructor 
-	private final String name;
-	private final Integer version;
 	private final int[] acceptableStatus;
 	private final ExecutionConfig execConfig;
 	
-	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, Integer version, int[] referStatus, ExecutionConfig execConfig) {
+	public ApiRequest(Long id, String name, Integer version, 
+			String uri, String method, Map<String, String> headers,
+			int[] referStatus, ExecutionConfig execConfig) {
 		this.id = id;
+		this.name = name;
+		this.version = version;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
 		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
-		this.name = name;
-		this.version = version;
 		this.acceptableStatus = ofNullable(referStatus).orElse(new int[] {200}); //OK or may be NotFound ?
 		this.execConfig = ofNullable(execConfig).orElseGet(ExecutionConfig::defaultConfig);
 	}

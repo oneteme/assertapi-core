@@ -22,14 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparatorProxy extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final BiConsumer<Api, ApiCompareResult> tracer;
+	private final BiConsumer<ApiCheck, ApiCompareResult> tracer;
 
-	private Api api;
+	private ApiCheck api;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void prepare(Api api) {
+	public void prepare(ApiCheck api) {
 		this.api = api; //active API
 		tryExec(null, ()-> comparator.prepare(api));
 	}

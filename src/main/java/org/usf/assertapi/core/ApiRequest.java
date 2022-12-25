@@ -30,20 +30,21 @@ public final class ApiRequest {
 	@JsonDeserialize(using = JsonStringDeserializer.class) 
 	private String body; //not works in constructor 
 	private final String name;
-	private final String description;
-	//TODO add version
+	private final Integer version;
+	private final String description; //request description
 	private final int[] acceptableStatus;
 	private final ExecutionConfig execConfig;
 	private final ResponseCompareConfig respConfig; //nullable
 	
 	public ApiRequest(Long id, String uri, String method, Map<String, String> headers,
-			String name, String description, int[] referStatus, ExecutionConfig execConfig, ResponseCompareConfig respConfig) {
+			String name, Integer version, String description, int[] referStatus, ExecutionConfig execConfig, ResponseCompareConfig respConfig) {
 		this.id = id;
-		this.name = name;
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
 		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
+		this.name = name;
+		this.version = version;
 		this.description = description;
 		this.acceptableStatus = ofNullable(referStatus).orElse(new int[] {200}); //OK or may be NotFound ?
 		this.execConfig = ofNullable(execConfig).orElseGet(ExecutionConfig::defaultConfig);

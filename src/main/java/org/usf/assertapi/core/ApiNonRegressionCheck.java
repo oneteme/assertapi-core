@@ -8,6 +8,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
 
+/**
+ * 
+ * @author u$f
+ * @since 1.0
+ *
+ */
 @Getter
 @JsonInclude(NON_NULL)
 public final class ApiNonRegressionCheck extends ApiRequest implements ApiCheck {

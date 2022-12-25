@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @since 1.0
  *
  */
-
 public interface ApiCheck {
 	
 	Long getId();

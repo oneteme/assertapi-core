@@ -9,12 +9,16 @@ class ExecutionConfigTest {
 	@Test
 	void testContructor() {
 		var ee = new ExecutionConfig(null, null);
-		assertTrue(ee.isEnable());
+		assertTrue(ee.isEnabled());
 		assertTrue(ee.isParallel());
 
 		ee = new ExecutionConfig(false, false);
-		assertFalse(ee.isEnable());
+		assertFalse(ee.isEnabled());
 		assertFalse(ee.isParallel());
+
+		ee = new ExecutionConfig(false, true);
+		assertFalse(ee.isEnabled());
+		assertTrue(ee.isParallel());
 	}
 
 }

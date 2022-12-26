@@ -4,13 +4,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.ofNullable;
 
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 
@@ -18,58 +15,38 @@ import lombok.Setter;
  * @since 1.0
  *
  */
-@Setter
 @Getter
 @JsonInclude(NON_NULL)
-public class ApiRequest {
+public final class ApiRequest extends HttpRequest implements ComparableApi {
 
 	private final Long id;
 	private final String name;
 	private final Integer version;
-	private final String uri;
-	private final String method;
-	private final Map<String, String> headers;
-	@JsonDeserialize(using = JsonStringDeserializer.class) 
-	private String body; //not works in constructor 
-	private final int[] acceptableStatus;
-	private final ExecutionConfig execConfig;
+	private final String description; //case description
+	private final ResponseComparisonConfig comparisonConfig; //nullable
+	private final ExecutionConfig executionConfig;
+	private final HttpRequest statbleApi;
 	
-	public ApiRequest(Long id, String name, Integer version, 
-			String uri, String method, Map<String, String> headers,
-			int[] acceptableStatus, ExecutionConfig execConfig) {
+	public ApiRequest(Long id, String name, Integer version, String description, 
+			String uri, String method, Map<String, String> headers, int[] acceptableStatus, 
+			ExecutionConfig executionConfig, ResponseComparisonConfig responseConfig, HttpRequest statbleApi) {
+		super(uri, method, headers, acceptableStatus);
 		this.id = id;
 		this.name = name;
 		this.version = version;
-		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
-				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
-		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
-		this.headers = headers;
-		this.acceptableStatus = ofNullable(acceptableStatus).orElse(new int[] {200}); //OK or may be NotFound ?
-		this.execConfig = ofNullable(execConfig).orElseGet(ExecutionConfig::defaultConfig);
-	}
-	
-	public boolean hasHeaders() {
-		return headers != null && !headers.isEmpty();
-	}
-	
-	public ExecutionConfig executionConfig() {
-		return execConfig;
-	}
-
-	public boolean acceptStatus(int status) {
-		return IntStream.of(acceptableStatus).anyMatch(v-> v == status);
+		this.description = description;
+		this.comparisonConfig = responseConfig;
+		this.statbleApi = statbleApi;
+		this.executionConfig = ofNullable(executionConfig).orElseGet(ExecutionConfig::defaultConfig);
 	}
 
 	@Override
-	public String toString() {
-		var sb = new StringBuilder(100);
-		if(id != null) {
-			sb.append(id).append(" - ");
-		}
-		if(name != null) {
-			sb.append(name).append(" : ");
-		}
-		return sb.append("[").append(method).append("] ").append(uri).toString();
+	public HttpRequest stableApi() {
+		return ofNullable(statbleApi).orElse(this); 
 	}
-	
+
+	@Override
+	public HttpRequest latestApi() {
+		return this;
+	}
 }

@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public final class ApiCompareResult {
+public final class ComparisonResult {
 	
 	private final ExecutionInfo stableApiExecution;
 	private final ExecutionInfo latestApiExecution;

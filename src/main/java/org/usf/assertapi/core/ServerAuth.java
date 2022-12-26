@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor
-public class ServerAuth extends HashMap<String, String> {
+public final class ServerAuth extends HashMap<String, String> {
 
 	/**
 	 * Get the auth method type (<b>basic</b> | <b>token</b> | <b>nova_basic</b> | <b>nova_token</b>)

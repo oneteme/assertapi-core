@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
-	public void prepare(ApiCheck api) {
+	public void prepare(ComparableApi api) {
 		logApiTesting("START " + api);
 	}
 	
@@ -37,7 +37,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseCompareConfig config) {
+	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseComparisonConfig config) {
 		assertExecution(expect.getRequestExecution(), actual.getRequestExecution());
     	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
     	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
@@ -45,7 +45,7 @@ public class ResponseComparator {
 	    	var eCont = expect.getResponseBodyAsString();
 	    	var aCont = actual.getResponseBodyAsString();
 	    	if(expect.isJsonCompatible()) {
-	    		assertJsonContent(eCont, aCont, castConfig(config, JsonResponseCompareConfig.class));
+	    		assertJsonContent(eCont, aCont, castConfig(config, JsonResponseComparisonConfig.class));
 	    	}
 	    	else {
 	    		assertTextContent(eCont, aCont);
@@ -89,7 +89,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, JsonResponseCompareConfig config) {
+	public void assertJsonContent(String expected, String actual, JsonResponseComparisonConfig config) {
 		logApiComparaison("jsonContent", expected, actual);
 		try {
 			boolean strict = true;
@@ -102,11 +102,11 @@ public class ResponseComparator {
 		} catch (AssertionError e) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		} catch (JSONException e1) {
-			throw new AssertionRuntimeException(e1);
+			throw new ApiAssertionRuntimeException(e1);
 		}
 	}
 	
-	public void assertCSVContent(String expected, String actual, CsvResponseCompareConfig config) {
+	public void assertCSVContent(String expected, String actual, CsvResponseComparisonConfig config) {
 		//TODO complete this
 	}
 	
@@ -116,7 +116,7 @@ public class ResponseComparator {
 
 	public void assertionFail(Throwable t) {
 		log.error("Testing API fail : ", t);
-		throw new AssertionRuntimeException(t);
+		throw new ApiAssertionRuntimeException(t);
 	}
 
 	private static AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
@@ -131,7 +131,7 @@ public class ResponseComparator {
 		log.info("Comparing API ({}) : {} <> {}", stage, expected, actual);
 	}
 	
-    private static String excludePaths(String v, JsonResponseCompareConfig out) {
+    private static String excludePaths(String v, JsonResponseComparisonConfig out) {
 		if(out.getXpaths() != null) {
 			var json = JsonPath.parse(v);
 			Stream.of(out.getXpaths()).forEach(json::delete);
@@ -140,14 +140,14 @@ public class ResponseComparator {
 		return v;
     }
 	
-	private static <T extends ResponseCompareConfig> T castConfig(ResponseCompareConfig obj, Class<T> expectedClass){
+	private static <T extends ResponseComparisonConfig> T castConfig(ResponseComparisonConfig obj, Class<T> expectedClass){
 		if(expectedClass == null) {
 			return null;
 		}
 		if(expectedClass.isInstance(obj)) {
 			return expectedClass.cast(obj);
 		}
-		throw new AssertionRuntimeException("mismatch API configuration");
+		throw new ApiAssertionRuntimeException("mismatch API configuration");
 	}
     
 	

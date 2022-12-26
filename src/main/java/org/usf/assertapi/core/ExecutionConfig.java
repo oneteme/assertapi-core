@@ -13,20 +13,20 @@ import lombok.Getter;
 @Getter
 public final class ExecutionConfig {
 
-	private boolean enable;
+	private boolean enabled;
 	private final boolean parallel;
 	
 	public ExecutionConfig(Boolean enable, Boolean parallel) {
-		this.enable = ofNullable(enable).orElse(true);
+		this.enabled = ofNullable(enable).orElse(true);
 		this.parallel = ofNullable(parallel).orElse(true);
 	}
 	public ExecutionConfig disable() {
-		this.enable = false;
+		this.enabled = false;
 		return this;
 	}
 
 	public ExecutionConfig enable() {
-		this.enable = true;
+		this.enabled = true;
 		return this;
 	}
 	

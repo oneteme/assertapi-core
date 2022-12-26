@@ -8,7 +8,7 @@ import static org.usf.assertapi.core.ResponseType.CSV;
  * @since 1.0
  *
  */
-public final class CsvResponseCompareConfig implements ResponseCompareConfig {
+public final class CsvResponseComparisonConfig implements ResponseComparisonConfig {
 
 	@Override
 	public ResponseType getType() {

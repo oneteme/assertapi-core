@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public final class JsonResponseCompareConfig implements ResponseCompareConfig {
+public final class JsonResponseComparisonConfig implements ResponseComparisonConfig {
 
 	private final boolean strict;
 	private final String[] xpaths;

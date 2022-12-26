@@ -56,7 +56,7 @@ class ResponseComparatorTest {
 		assertThrows(ApiAssertionError.class, ()-> new ResponseComparator().assertJsonContent(
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //mismatch
-		assertThrows(AssertionRuntimeException.class, ()-> new ResponseComparator().assertJsonContent(
+		assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertJsonContent(
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //bad json
 	}
@@ -68,7 +68,7 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertionFail() {
-		assertThrows(AssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
-		assertThrows(AssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(new Exception())); //not AssertionError
+		assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
+		assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(new Exception())); //not AssertionError
 	}
 }

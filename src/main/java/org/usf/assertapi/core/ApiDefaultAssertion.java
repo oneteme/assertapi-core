@@ -43,12 +43,12 @@ public class ApiDefaultAssertion implements ApiAssertion {
 	private Future<?> async; //cancel ??
 	
 	@Override
-	public void assertAllAsync(@NonNull Supplier<Stream<? extends ApiCheck>> queries)  {
+	public void assertAllAsync(@NonNull Supplier<Stream<? extends ComparableApi>> queries)  {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
 	@Override
-	public void assertAll(@NonNull Stream<? extends ApiCheck> queries)  {
+	public void assertAll(@NonNull Stream<? extends ComparableApi> queries)  {
 		queries.forEach(q->{
 			try {
 				tryAssertOne(q);
@@ -57,10 +57,10 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		});
 	}
 	
-	private void tryAssertOne(ApiCheck api) {
+	private void tryAssertOne(ComparableApi api) {
 		tryExec(()-> comparator.prepare(api));
 		//assumeEnabled in JUnit does not throw AssertError (should not be catched)
-		comparator.assumeEnabled(api.isEnabled());
+		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
 		tryExec(()-> assertOne(api));
 	}
 	
@@ -68,30 +68,30 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		try {
 			action.run();
 		}
-		catch (AssertionRuntimeException e) {
+		catch (ApiAssertionRuntimeException e) {
 			comparator.assertionFail(ofNullable(e.getCause()).orElse(e));
 			throw e;
 		}
 		catch (Exception e) {
 			comparator.assertionFail(e);
-			throw new AssertionRuntimeException(e);
+			throw new ApiAssertionRuntimeException(e);
 		}
 	}
 	
-	private void assertOne(ApiCheck api) throws Exception {
+	private void assertOne(ComparableApi api) throws Exception {
 		
-    	var af = submit(api.isParallel(), 
+    	var af = submit(api.getExecutionConfig().isParallel(), 
 				()-> exchange(latestReleaseTemp, api.latestApi()));
     	ResponseEntityWrapper eRes = null;
     	try {
         	eRes = exchange(stableReleaseTemp, api.stableApi());
         	if(!api.stableApi().acceptStatus(eRes.getStatusCodeValue())) {
-        		throw new AssertionRuntimeException("unexpected stable release response code");
+        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
         	}
     	}
     	catch(RestClientResponseExceptionWrapper eExp) {
         	if(!api.stableApi().acceptStatus(eExp.getStatusCodeValue())) {
-        		throw new AssertionRuntimeException("unexpected stable release response code");
+        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
         	}
     		try {
     			var aRes = execute(af);
@@ -99,7 +99,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
         		throw illegalStateException(eExp);
     		}
     		catch(RestClientResponseExceptionWrapper aExp) {
-    			comparator.assertResponse(eExp, aExp, api.getRespConfig());
+    			comparator.assertResponse(eExp, aExp, api.getComparisonConfig());
     		}
     	}
     	catch(Exception e) {
@@ -115,12 +115,12 @@ public class ApiDefaultAssertion implements ApiAssertion {
 				comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
 	    		throw illegalStateException(aExp);
 			}
-			comparator.assertResponse(eRes, aRes, api.getRespConfig());
+			comparator.assertResponse(eRes, aRes, api.getComparisonConfig());
     	}
     	comparator.assertOK();
 	}
     
-    ResponseEntityWrapper exchange(RestTemplate template, ApiRequest req) {
+    ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
@@ -156,7 +156,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 			currentThread().interrupt();
 			exp = e;
 		}
-		throw new AssertionRuntimeException(exp);
+		throw new ApiAssertionRuntimeException(exp);
     }
 	
 	private static ExecutorService executor() {
@@ -206,4 +206,10 @@ public class ApiDefaultAssertion implements ApiAssertion {
 				};
 	}
 
+	@FunctionalInterface
+	interface SafeRunnable {
+
+		void run() throws Exception;
+	}
+	
 }

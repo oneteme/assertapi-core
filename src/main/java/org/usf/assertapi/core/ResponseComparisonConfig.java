@@ -6,7 +6,7 @@ package org.usf.assertapi.core;
  * @since 1.0
  *
  */
-public interface ResponseCompareConfig {
+public interface ResponseComparisonConfig {
 	
 	ResponseType getType();
 	

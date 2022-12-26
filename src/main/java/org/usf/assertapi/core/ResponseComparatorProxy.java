@@ -22,14 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparatorProxy extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final BiConsumer<ApiCheck, ApiCompareResult> tracer;
+	private final BiConsumer<ComparableApi, ComparisonResult> tracer;
 
-	private ApiCheck api;
+	private ComparableApi api;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void prepare(ApiCheck api) {
+	public void prepare(ComparableApi api) {
 		this.api = api; //active API
 		tryExec(null, ()-> comparator.prepare(api));
 	}
@@ -67,7 +67,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 	
 	@Override
-	public void assertJsonContent(String expected, String actual, JsonResponseCompareConfig config) {
+	public void assertJsonContent(String expected, String actual, JsonResponseComparisonConfig config) {
 		tryExec(RESPONSE_CONTENT, ()-> comparator.assertJsonContent(expected, actual, config));
 	}
 	
@@ -95,7 +95,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 	
 	protected void trace(CompareStatus status, CompareStage step) {
-		var res = new ApiCompareResult(
+		var res = new ComparisonResult(
 				stableReleaseExec,
 				latestReleaseExec,
 				status, step);

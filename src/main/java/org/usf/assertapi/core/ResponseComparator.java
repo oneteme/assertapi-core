@@ -69,28 +69,28 @@ public class ResponseComparator {
 	public void assertStatusCode(int expected, int actual) {
 		logApiComparaison("statusCode", expected, actual, false);
 		if(expected != actual) {
-			throw notEquals(expected, actual, HTTP_CODE);
+			failNotEqual(expected, actual, HTTP_CODE);
 		}
 	}
 	
 	public void assertContentType(String expected, String actual) {
 		logApiComparaison("mediaType", expected, actual, false);
 		if(!Objects.equals(expected, actual)) {
-			throw notEquals(expected, actual, CONTENT_TYPE);
+			failNotEqual(expected, actual, CONTENT_TYPE);
 		}
 	}
 
 	public void assertByteContent(byte[] expected, byte[] actual) {
 		logApiComparaison("byteContent", expected, actual, true); //just reference
 		if(!Arrays.equals(expected, actual)) {
-			throw notEquals(expected, actual, RESPONSE_CONTENT);
+			failNotEqual(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 
 	public void assertTextContent(String expected, String actual) {
 		logApiComparaison("textContent", expected, actual, true);
 		if(!Objects.equals(expected, actual)) {
-			throw notEquals(expected, actual, RESPONSE_CONTENT);
+			failNotEqual(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 	
@@ -105,7 +105,7 @@ public class ResponseComparator {
 			}
 			JSONAssert.assertEquals(expected, actual, strict);
 		} catch (AssertionError e) {
-			throw notEquals(expected, actual, RESPONSE_CONTENT); //format JSON => easy test read !
+			failNotEqual(expected, actual, RESPONSE_CONTENT); //format JSON => easy-to-read !
 		} catch (JSONException e1) {
 			throw new ApiAssertionRuntimeException(e1);
 		}
@@ -125,9 +125,9 @@ public class ResponseComparator {
 		throw new ApiAssertionRuntimeException(t);
 	}
 
-	protected AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
+	protected void failNotEqual(Object expected, Object actual, CompareStage stage) {
 		logApiComparaison("TEST " + FAIL);
-		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual)), expected, actual); //body size ? binary ? 
+		throw new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual)), expected, actual); //body size ? binary ? 
 	}
 
 	private static void logApiComparaison(String msg) {

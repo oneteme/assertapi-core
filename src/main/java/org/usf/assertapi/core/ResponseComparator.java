@@ -5,6 +5,10 @@ import static java.lang.String.valueOf;
 import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
 import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
 import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.CompareStatus.ERROR;
+import static org.usf.assertapi.core.CompareStatus.FAIL;
+import static org.usf.assertapi.core.CompareStatus.OK;
+import static org.usf.assertapi.core.CompareStatus.SKIP;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -33,7 +37,7 @@ public class ResponseComparator {
 	
 	public void assumeEnabled(boolean enabled) {
 		if(!enabled) {
-			logApiComparaison("SKIPPED");
+			logApiComparaison("TEST " + SKIP);
 			throw new ApiAssertionError(true, "api assertion skipped");
 		}
 	}
@@ -112,15 +116,17 @@ public class ResponseComparator {
 	}
 	
 	public void assertOK() { 
-		logApiComparaison("VALID");
+		logApiComparaison("TEST " + OK);
 	}
 
 	public void assertionFail(Throwable t) {
 		log.error("Testing API fail : ", t);
+		logApiComparaison("TEST " + ERROR);
 		throw new ApiAssertionRuntimeException(t);
 	}
 
 	private static AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
+		logApiComparaison("TEST " + FAIL);
 		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 

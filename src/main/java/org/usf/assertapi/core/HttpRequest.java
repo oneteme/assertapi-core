@@ -48,6 +48,10 @@ public class HttpRequest {
 
 	@Override
 	public String toString() {
+		return toRequestUri();
+	}
+	
+	public String toRequestUri() {
 		return new StringBuilder(100)
 				.append("[").append(method).append("] ")
 				.append(uri).toString();

@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static java.util.Optional.ofNullable;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 
@@ -11,6 +12,7 @@ import lombok.Getter;
  *
  */
 @Getter
+@ToString
 public final class ExecutionConfig {
 
 	private boolean enabled;

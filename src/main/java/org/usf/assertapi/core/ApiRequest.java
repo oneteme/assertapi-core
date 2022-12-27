@@ -49,4 +49,17 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 	public HttpRequest latestApi() {
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		var sb = new StringBuilder();
+		if(name != null) {
+			sb.append("[").append(name).append("] ");
+		}
+		if(description != null) {
+			sb.append(description);
+		}
+		var s = sb.toString();
+		return s.isEmpty() ? super.toString() : s;
+	}
 }

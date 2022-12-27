@@ -27,12 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparator {
 	
 	public void prepare(ComparableApi api) {
-		logApiTesting("START " + api);
+		logApiComparaison("START <" + api + ">");
+		logApiComparaison("URL ", api.stableApi().toRequestUri(), api.latestApi().toRequestUri(), false);
 	}
 	
 	public void assumeEnabled(boolean enabled) {
 		if(!enabled) {
-			logApiTesting("SKIPPED");
+			logApiComparaison("SKIPPED");
 			throw new ApiAssertionError(true, "api assertion skipped");
 		}
 	}
@@ -57,40 +58,40 @@ public class ResponseComparator {
 	}
 	
 	public void assertExecution(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
-		logApiComparaison("elapsedTime", stableReleaseExec.elapsedTime() + "ms", latestReleaseExec.elapsedTime() + "ms");
-		logApiComparaison("contentSize", stableReleaseExec.getSize() + "o", latestReleaseExec.getSize() + "o");
+		logApiComparaison("elapsedTime", stableReleaseExec.elapsedTime() + "ms", latestReleaseExec.elapsedTime() + "ms", false);
+		logApiComparaison("contentSize", stableReleaseExec.getSize() + "o", latestReleaseExec.getSize() + "o", false);
 	}
 
 	public void assertStatusCode(int expected, int actual) {
-		logApiComparaison("statusCode", expected, actual);
+		logApiComparaison("statusCode", expected, actual, false);
 		if(expected != actual) {
 			throw notEquals(expected, actual, HTTP_CODE);
 		}
 	}
 	
 	public void assertContentType(String expected, String actual) {
-		logApiComparaison("mediaType", expected, actual);
+		logApiComparaison("mediaType", expected, actual, false);
 		if(!Objects.equals(expected, actual)) {
 			throw notEquals(expected, actual, CONTENT_TYPE);
 		}
 	}
 
 	public void assertByteContent(byte[] expected, byte[] actual) {
-		logApiComparaison("byteContent", expected, actual); //just reference
+		logApiComparaison("byteContent", expected, actual, true); //just reference
 		if(!Arrays.equals(expected, actual)) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 
 	public void assertTextContent(String expected, String actual) {
-		logApiComparaison("textContent", expected, actual);
+		logApiComparaison("textContent", expected, actual, true);
 		if(!Objects.equals(expected, actual)) {
 			throw notEquals(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 	
 	public void assertJsonContent(String expected, String actual, JsonResponseComparisonConfig config) {
-		logApiComparaison("jsonContent", expected, actual);
+		logApiComparaison("jsonContent", expected, actual, true);
 		try {
 			boolean strict = true;
 			if(config != null) {
@@ -111,7 +112,7 @@ public class ResponseComparator {
 	}
 	
 	public void assertOK() { 
-		logApiTesting("VALID");
+		logApiComparaison("VALID");
 	}
 
 	public void assertionFail(Throwable t) {
@@ -120,15 +121,21 @@ public class ResponseComparator {
 	}
 
 	private static AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
-		return new ApiAssertionError(false, format("%s : %s <> %s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
+		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 
-	private static void logApiTesting(String msg) {
-		log.info("Testing API : {}", msg);
+	private static void logApiComparaison(String msg) {
+		log.info("================== Comparing API : {} ==================", msg);
 	}
 	
-	private static void logApiComparaison(String stage, Object expected, Object actual) {
-		log.info("Comparing API ({}) : {} <> {}", stage, expected, actual);
+	private static void logApiComparaison(String stage, Object expected, Object actual, boolean multiLine) {
+		if(multiLine) {
+			log.info("Comparing API {} : stable={}", format("%-15s", "("+stage+")"), expected);
+			log.info("Comparing API {} : latest={}", format("%-15s", "("+stage+")"), actual);
+		}
+		else {
+			log.info("Comparing API {} : stable={} ~ latest={}", format("%-15s", "("+stage+")"), expected, actual);
+		}
 	}
 	
     private static String excludePaths(String v, JsonResponseComparisonConfig out) {
@@ -149,6 +156,4 @@ public class ResponseComparator {
 		}
 		throw new ApiAssertionRuntimeException("mismatch API configuration");
 	}
-    
-	
 }

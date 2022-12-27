@@ -25,7 +25,7 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 	private final String description; //case description
 	private final ResponseComparisonConfig comparisonConfig; //nullable
 	private final ExecutionConfig executionConfig;
-	private final HttpRequest statbleApi;
+	private final HttpRequest stableApi;
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
 			String uri, String method, Map<String, String> headers, int[] acceptableStatus, 
@@ -36,13 +36,13 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 		this.version = version;
 		this.description = description;
 		this.comparisonConfig = responseConfig;
-		this.statbleApi = statbleApi;
+		this.stableApi = statbleApi;
 		this.executionConfig = ofNullable(executionConfig).orElseGet(ExecutionConfig::defaultConfig);
 	}
 
 	@Override
 	public HttpRequest stableApi() {
-		return ofNullable(statbleApi).orElse(this); 
+		return ofNullable(stableApi).orElse(this); 
 	}
 
 	@Override

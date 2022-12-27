@@ -142,13 +142,13 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
     }
 	
-    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseException {
+    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseExceptionWrapper {
     	Throwable exp = null;
 		try {
 			return cf.get();
 		} catch (ExecutionException e) {
-			if(e.getCause() instanceof RestClientResponseException) {
-				throw((RestClientResponseException) e.getCause());
+			if(e.getCause() instanceof RestClientResponseExceptionWrapper) {
+				throw((RestClientResponseExceptionWrapper) e.getCause());
 			}
 			exp = ofNullable(e.getCause()).orElse(e);
 		}

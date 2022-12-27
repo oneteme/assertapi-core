@@ -5,7 +5,7 @@
 
 ## Status
 
-[![Java CI with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/maven.yml/badge.svg)](https://github.com/oneteme/assertapi-core/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/oneteme/assertapi-core/actions/workflows/maven-publish.yml)
 
 
 ## MAVEN Integration

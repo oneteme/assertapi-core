@@ -51,13 +51,13 @@ public class ApiDefaultAssertion implements ApiAssertion {
 	public void assertAll(@NonNull Stream<? extends ComparableApi> queries)  {
 		queries.forEach(q->{
 			try {
-				tryAssertOne(q);
+				assertApi(q);
 			}
 	    	catch(Throwable e) {/* do nothing */} //Exception + Error
 		});
 	}
 	
-	private void tryAssertOne(ComparableApi api) {
+	public void assertApi(ComparableApi api) {
 		tryExec(()-> comparator.prepare(api));
 		//assumeEnabled in JUnit does not throw AssertError (should not be catched)
 		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());

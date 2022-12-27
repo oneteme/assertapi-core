@@ -141,7 +141,7 @@ public class ResponseComparator {
     }
 	
 	private static <T extends ResponseComparisonConfig> T castConfig(ResponseComparisonConfig obj, Class<T> expectedClass){
-		if(expectedClass == null) {
+		if(obj == null) {
 			return null;
 		}
 		if(expectedClass.isInstance(obj)) {

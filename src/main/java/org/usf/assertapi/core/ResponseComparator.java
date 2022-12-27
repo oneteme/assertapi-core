@@ -38,7 +38,7 @@ public class ResponseComparator {
 	public void assumeEnabled(boolean enabled) {
 		if(!enabled) {
 			logApiComparaison("TEST " + SKIP);
-			throw new ApiAssertionError(true, "api assertion skipped");
+			throw new ApiAssertionError(true, "api assertion skipped", null, null);
 		}
 	}
 	
@@ -105,7 +105,7 @@ public class ResponseComparator {
 			}
 			JSONAssert.assertEquals(expected, actual, strict);
 		} catch (AssertionError e) {
-			throw notEquals(expected, actual, RESPONSE_CONTENT);
+			throw notEquals(expected, actual, RESPONSE_CONTENT); //format JSON => easy test read !
 		} catch (JSONException e1) {
 			throw new ApiAssertionRuntimeException(e1);
 		}
@@ -125,9 +125,9 @@ public class ResponseComparator {
 		throw new ApiAssertionRuntimeException(t);
 	}
 
-	private static AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
+	protected AssertionError notEquals(Object expected, Object actual, CompareStage stage) {
 		logApiComparaison("TEST " + FAIL);
-		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
+		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual)), expected, actual); //body size ? binary ? 
 	}
 
 	private static void logApiComparaison(String msg) {

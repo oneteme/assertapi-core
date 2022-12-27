@@ -166,7 +166,6 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		return executor;
 	}
 	
-
 	private static IllegalStateException illegalStateException(Throwable e) {
 		return new IllegalStateException("assertion should throw exception", e);
 	}

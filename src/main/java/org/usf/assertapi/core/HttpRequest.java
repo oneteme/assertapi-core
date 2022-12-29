@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 
@@ -18,7 +18,6 @@ import lombok.Setter;
  * @since 1.0
  *
  */
-@Setter
 @Getter
 @JsonInclude(NON_NULL)
 public class HttpRequest {
@@ -26,16 +25,18 @@ public class HttpRequest {
 	private final String uri;
 	private final String method;
 	private final Map<String, String> headers;
-	@JsonDeserialize(using = JsonStringDeserializer.class) 
-	private String body; //Deserializing body not works in constructor 
+	@JsonRawValue
+	private final String body;
 	private final int[] acceptableStatus;
 	
-	public HttpRequest(String uri, String method, Map<String, String> headers, int[] acceptableStatus) {
+	public HttpRequest(String uri, String method, Map<String, String> headers,
+			@JsonDeserialize(using = JsonStringDeserializer.class) String body, int... acceptableStatus) {
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
 		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
 		this.headers = headers;
-		this.acceptableStatus = ofNullable(acceptableStatus).orElse(new int[] {200}); //OK or may be NotFound ?
+		this.body = body;
+		this.acceptableStatus = acceptableStatus == null || acceptableStatus.length == 0 ? new int[] {200} : acceptableStatus; //OK or may be NotFound ?
 	}
 	
 	public boolean hasHeaders() {

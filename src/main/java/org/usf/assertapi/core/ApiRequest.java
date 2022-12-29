@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
 
@@ -28,16 +29,16 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 	private final HttpRequest stableApi;
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
-			String uri, String method, Map<String, String> headers, int[] acceptableStatus, 
-			ExecutionConfig executionConfig, ResponseComparisonConfig responseConfig, HttpRequest statbleApi) {
-		super(uri, method, headers, acceptableStatus);
+			String uri, String method, Map<String, String> headers, @JsonDeserialize(using = JsonStringDeserializer.class) String body, 
+			int[] acceptableStatus, ExecutionConfig executionConfig, ResponseComparisonConfig responseConfig, HttpRequest statbleApi) {
+		super(uri, method, headers, body, acceptableStatus);
 		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.description = description;
 		this.comparisonConfig = responseConfig;
 		this.stableApi = statbleApi;
-		this.executionConfig = ofNullable(executionConfig).orElseGet(ExecutionConfig::defaultConfig);
+		this.executionConfig = ofNullable(executionConfig).orElseGet(ExecutionConfig::new);
 	}
 
 	@Override

@@ -105,7 +105,7 @@ public class ResponseComparator {
 			}
 			JSONAssert.assertEquals(expected, actual, strict);
 		} catch (AssertionError e) {
-			failNotEqual(expected, actual, RESPONSE_CONTENT); //format JSON => easy-to-read !
+			failNotEqual(expected, actual, RESPONSE_CONTENT); //format JSON => easy-to-compare !
 		} catch (JSONException e1) {
 			throw new ApiAssertionRuntimeException(e1);
 		}

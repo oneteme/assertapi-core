@@ -6,6 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 class ResponseComparatorTest {
+	
+	@Test
+	void testPrepare() {
+		var api = new ApiRequest(null, null, null, null, "api", null, null, null, null, null, null, null);
+		assertDoesNotThrow(()-> new ResponseComparator().prepare(api));
+	}
 
 	@Test
 	void testAssumeEnabled() {

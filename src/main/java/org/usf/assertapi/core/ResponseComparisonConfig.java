@@ -16,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    include = JsonTypeInfo.As.PROPERTY,
 	    property = "type")
 	@JsonSubTypes({
-	    @Type(value = JsonResponseComparisonConfig.class, name = "JSON") })
+	    @Type(value = JsonResponseComparisonConfig.class, name = "JSON"),
+	    @Type(value = CsvResponseComparisonConfig.class, name = "CSV")})
 public interface ResponseComparisonConfig {
 	
 	ResponseType getType();

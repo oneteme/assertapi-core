@@ -24,7 +24,6 @@ class ServerConfigTest {
 		assertEquals(s.buildRootUrl(), expected);
 	}
 
-
 	@ParameterizedTest
 	@CsvSource({
 	    "80, http://localhost/",

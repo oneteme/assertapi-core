@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.lang.System.setProperty;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
@@ -38,6 +39,21 @@ class RuntimeEnvironementTest {
 			assertEquals(variables.get(k), v);
 		});
 	}
+
+	@Test
+	void testWithUser() {
+		assertEquals("user", RuntimeEnvironement.build().withUser("user").getUser());
+	}
 	
+	@Test
+	void testGetHostAddress() {
+		assertDoesNotThrow(RuntimeEnvironement::getHostAddress);
+	}
+
+	
+	@Test
+	void testGetLocalBranch() {
+		assertDoesNotThrow(RuntimeEnvironement::getLocalBranch);
+	}
 
 }

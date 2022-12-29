@@ -18,6 +18,10 @@ public final class ExecutionConfig {
 	private boolean enabled;
 	private final boolean parallel;
 	
+	public ExecutionConfig() {
+		this(null, null);
+	}
+	
 	public ExecutionConfig(Boolean enable, Boolean parallel) {
 		this.enabled = ofNullable(enable).orElse(true);
 		this.parallel = ofNullable(parallel).orElse(true);
@@ -31,9 +35,4 @@ public final class ExecutionConfig {
 		this.enabled = true;
 		return this;
 	}
-	
-	static ExecutionConfig defaultConfig() {
-		return new ExecutionConfig(null, null);
-	}
-
 }

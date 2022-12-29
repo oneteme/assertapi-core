@@ -47,16 +47,6 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
-	@Override
-	public void assertAll(@NonNull Stream<? extends ComparableApi> queries)  {
-		queries.forEach(q->{
-			try {
-				assertApi(q);
-			}
-	    	catch(Throwable e) {/* do nothing */} //Exception + Error
-		});
-	}
-	
 	public void assertApi(ComparableApi api) {
 		tryExec(()-> comparator.prepare(api));
 		//assumeEnabled in JUnit does not throw AssertError (should not be catched)

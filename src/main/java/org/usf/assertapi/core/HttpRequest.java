@@ -58,6 +58,4 @@ public class HttpRequest {
 				.append(uri).toString();
 	}
 	
-	
-	
 }

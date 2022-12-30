@@ -1,14 +1,19 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.*;
+import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
+import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BASIC;
+import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_KEY_TRANSFORMER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_TRANSFORMER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_VALUE_TRANSFORMER;
+import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.CSV;
 import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.JSON;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
-
-import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.CSV;
-
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -27,38 +32,57 @@ import lombok.NoArgsConstructor;
 public final class Module {
 
 	private static final ObjectMapper defaultMapper;
-	private static final Set<Class<? extends RuntimeException>> errors = new HashSet<>(); 
+	private static final Set<Class<? extends RuntimeException>> errors = new HashSet<>();
+	private static final Map<String, Class<? extends ClientAuthenticator>> clientAuthenticators = new HashMap<>();
 	
 	static {
-		defaultMapper = Jackson2ObjectMapperBuilder.json().build().registerModule(new ParameterNamesModule());
-		//register default ResponseComparisonConfig impl.
-		registerSubCompareConfig(JsonComparatorConfig.class, JSON.name());
-		registerSubCompareConfig(CsvComparatorConfig.class, CSV.name());
-		//register default ResponseTransformer impl.
-		registerSubTransformer(JsonXpathTransformer.class, XPATH_TRANSFORMER.name());
-		registerSubTransformer(JsonXpathKeyTransformer.class, XPATH_KEY_TRANSFORMER.name());
-		registerSubTransformer(JsonXpathValueTransformer.class, XPATH_VALUE_TRANSFORMER.name());
+		defaultMapper = json().build().registerModule(new ParameterNamesModule());
+		//register TypeComparatorConfig implementations
+		registerTypeComparatorConfig(JsonComparatorConfig.class, JSON.name());
+		registerTypeComparatorConfig(CsvComparatorConfig.class, CSV.name());
+		//register ResponseTransformer implementations
+		registerResponseTransformer(JsonXpathTransformer.class, XPATH_TRANSFORMER.name());
+		registerResponseTransformer(JsonXpathKeyTransformer.class, XPATH_KEY_TRANSFORMER.name());
+		registerResponseTransformer(JsonXpathValueTransformer.class, XPATH_VALUE_TRANSFORMER.name());
+		//register ClientAuthenticator implementations
+		registerClientAuthenticator(BasicClientAuthenticator.class, BASIC.name());
+		registerClientAuthenticator(BearerClientAuthenticator.class, BEARER.name());
 	}
 	
-	public static void registerSubCompareConfig(Class<? extends TypeComparatorConfig<?>> c, String name) {
+	public static void registerTypeComparatorConfig(Class<? extends TypeComparatorConfig<?>> c, String name) {
 		defaultMapper.registerSubtypes(new NamedType(c, name));
 	}
 
-	public static void registerSubTransformer(Class<? extends ResponseTransformer<?>> c, String name) {
+	public static void registerResponseTransformer(Class<? extends ResponseTransformer<?>> c, String name) {
 		defaultMapper.registerSubtypes(new NamedType(c, name));
 	}
 	
 	public static void registerAssertionFail(Class<? extends RuntimeException> c) {
 		errors.add(c);
 	}
-
-	//TODO register custom auth. 
+	
+	public static void registerClientAuthenticator(Class<? extends ClientAuthenticator> c, String name) {
+		clientAuthenticators.put(name, c);
+	}
+	
 	public static ObjectMapper defaultMapper() {
 		return defaultMapper;
 	}
 	
 	public static boolean isAssertionFail(Throwable t) {
 		return errors.stream().anyMatch(c-> c.isInstance(t));
+	}
+	
+	public static ClientAuthenticator getClientAuthenticator(String name) {
+		var auth = clientAuthenticators.get(name);
+		if(auth == null) {
+			throw new NoSuchElementException("no auth for " + name);
+		}
+		try {
+			return auth.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("default constructor expected" , e);
+		}
 	}
 	
 }

@@ -6,8 +6,8 @@ package org.usf.assertapi.core;
  * @since 1.0
  *
  */
-public enum ResponseType {
+public enum ReleaseTarget {
 	
-	TXT, CSV, JSON, XML, ZIP;
+	STABLE, LATEST;
 
 }

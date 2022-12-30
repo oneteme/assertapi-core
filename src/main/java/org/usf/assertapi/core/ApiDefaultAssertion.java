@@ -89,7 +89,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
         		throw illegalStateException(eExp);
     		}
     		catch(RestClientResponseExceptionWrapper aExp) {
-    			comparator.assertResponse(eExp, aExp, api.getComparisonConfig());
+    			comparator.assertResponse(eExp, aExp, api.getTypeComparatorConfig());
     		}
     	}
     	catch(Exception e) {
@@ -105,7 +105,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 				comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
 	    		throw illegalStateException(aExp);
 			}
-			comparator.assertResponse(eRes, aRes, api.getComparisonConfig());
+			comparator.assertResponse(eRes, aRes, api.getTypeComparatorConfig());
     	}
     	comparator.assertOK();
 	}

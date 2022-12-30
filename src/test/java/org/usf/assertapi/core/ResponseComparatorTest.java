@@ -1,7 +1,10 @@
 package org.usf.assertapi.core;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.usf.assertapi.core.ResponseComparator.castConfig;
 
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +77,28 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertionFail() {
-		assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
-		assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(new Exception())); //not AssertionError
+		var act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
+		assertNull(act.getCause());
+		
+		var exp = new Exception();
+		act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(exp)); //not AssertionError
+		assertEquals(exp, act.getCause());
+		
+		var exp2 = new ApiAssertionRuntimeException("");
+		act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(exp2)); //not AssertionError
+		assertEquals(exp2, act);
 	}
+	
+	@Test
+	void testCastConfig() {
+		var exp = new JsonComparatorConfig(null, null);
+		var act = assertDoesNotThrow(()-> castConfig(null, JsonComparatorConfig.class, ()-> exp));
+		assertEquals(exp, act);
+
+		act = assertDoesNotThrow(()-> castConfig(exp, JsonComparatorConfig.class, null));
+		assertEquals(exp, act);
+		
+		assertThrows(ApiAssertionRuntimeException.class, ()-> castConfig(exp, CsvComparatorConfig.class, null));
+	}
+	
 }

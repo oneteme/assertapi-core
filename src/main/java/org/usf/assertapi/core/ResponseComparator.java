@@ -12,12 +12,7 @@ import static org.usf.assertapi.core.CompareStatus.SKIP;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Stream;
-
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
-
-import com.jayway.jsonpath.JsonPath;
+import java.util.function.Supplier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +37,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ResponseComparisonConfig config) {
+	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, TypeComparatorConfig<?> config) {
 		assertExecution(expect.getRequestExecution(), actual.getRequestExecution());
     	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
     	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
@@ -50,7 +45,7 @@ public class ResponseComparator {
 	    	var eCont = expect.getResponseBodyAsString();
 	    	var aCont = actual.getResponseBodyAsString();
 	    	if(expect.isJsonCompatible()) {
-	    		assertJsonContent(eCont, aCont, castConfig(config, JsonResponseComparisonConfig.class));
+	    		assertJsonContent(eCont, aCont, config);
 	    	}
 	    	else {
 	    		assertTextContent(eCont, aCont);
@@ -69,49 +64,43 @@ public class ResponseComparator {
 	public void assertStatusCode(int expected, int actual) {
 		logApiComparaison("statusCode", expected, actual, false);
 		if(expected != actual) {
-			failNotEqual(expected, actual, HTTP_CODE);
+			throw failNotEqual(expected, actual, HTTP_CODE);
 		}
 	}
 	
 	public void assertContentType(String expected, String actual) {
 		logApiComparaison("mediaType", expected, actual, false);
 		if(!Objects.equals(expected, actual)) {
-			failNotEqual(expected, actual, CONTENT_TYPE);
+			throw failNotEqual(expected, actual, CONTENT_TYPE);
 		}
 	}
 
 	public void assertByteContent(byte[] expected, byte[] actual) {
 		logApiComparaison("byteContent", expected, actual, true); //just reference
 		if(!Arrays.equals(expected, actual)) {
-			failNotEqual(expected, actual, RESPONSE_CONTENT);
+			throw failNotEqual(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 
 	public void assertTextContent(String expected, String actual) {
 		logApiComparaison("textContent", expected, actual, true);
 		if(!Objects.equals(expected, actual)) {
-			failNotEqual(expected, actual, RESPONSE_CONTENT);
+			throw failNotEqual(expected, actual, RESPONSE_CONTENT);
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, JsonResponseComparisonConfig config) {
+	public void assertJsonContent(String expected, String actual, TypeComparatorConfig<?> config) {
 		logApiComparaison("jsonContent", expected, actual, true);
-		try {
-			boolean strict = true;
-			if(config != null) {
-				expected = excludePaths(expected, config);
-				actual = excludePaths(actual, config);
-				strict = config.isStrict();
-			}
-			JSONAssert.assertEquals(expected, actual, strict);
-		} catch (AssertionError e) {
-			failNotEqual(expected, actual, RESPONSE_CONTENT); //format JSON => easy-to-compare !
-		} catch (JSONException e1) {
-			throw new ApiAssertionRuntimeException(e1);
+		var cr = castConfig(config, JsonComparatorConfig.class, ()-> new JsonComparatorConfig(null, null)).compare(expected, actual);
+		if(expected != cr.getExpected() || actual != cr.getActual()) {
+			logApiComparaison("newContent", cr.getExpected(), cr.getActual(), true);
+		}
+		if(!cr.isEquals()) {
+			throw failNotEqual(cr.getExpected(), cr.getActual(), RESPONSE_CONTENT); //format JSON => easy-to-compare !
 		}
 	}
 	
-	public void assertCSVContent(String expected, String actual, CsvResponseComparisonConfig config) {
+	public void assertCSVContent(String expected, String actual, CsvComparatorConfig config) {
 		//TODO complete this
 	}
 	
@@ -122,12 +111,15 @@ public class ResponseComparator {
 	public void assertionFail(Throwable t) {
 		log.error("Testing API fail : ", t);
 		logApiComparaison("TEST " + ERROR);
+		if(t instanceof ApiAssertionRuntimeException) {
+			throw (ApiAssertionRuntimeException)t;
+		}
 		throw new ApiAssertionRuntimeException(t);
 	}
 
-	protected void failNotEqual(Object expected, Object actual, CompareStage stage) {
+	protected AssertionError failNotEqual(Object expected, Object actual, CompareStage stage) {
 		logApiComparaison("TEST " + FAIL);
-		throw new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual)), expected, actual); //body size ? binary ? 
+		return new ApiAssertionError(false, format("%s : stable=%s ~ latest=%s", stage, valueOf(expected), valueOf(actual)), expected, actual); //body size ? binary ? 
 	}
 
 	private static void logApiComparaison(String msg) {
@@ -144,18 +136,9 @@ public class ResponseComparator {
 		}
 	}
 	
-    private static String excludePaths(String v, JsonResponseComparisonConfig out) {
-		if(out.getXpaths() != null) {
-			var json = JsonPath.parse(v);
-			Stream.of(out.getXpaths()).forEach(json::delete);
-	    	v = json.jsonString();
-		}
-		return v;
-    }
-	
-	private static <T extends ResponseComparisonConfig> T castConfig(ResponseComparisonConfig obj, Class<T> expectedClass){
+	static <T extends TypeComparatorConfig<?>> T castConfig(TypeComparatorConfig<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
 		if(obj == null) {
-			return null;
+			return orElseGet.get();
 		}
 		if(expectedClass.isInstance(obj)) {
 			return expectedClass.cast(obj);

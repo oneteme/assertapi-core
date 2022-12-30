@@ -21,7 +21,7 @@ public final class ServerConfig { //TODO make it immutable
 	private int port;
 	private ServerAuth auth;
 
-	private ServerConfig(String host, int port, ServerAuth auth) {
+	ServerConfig(String host, int port, ServerAuth auth) {
 		this.host = host;
 		this.port = port;
 		this.auth = auth;

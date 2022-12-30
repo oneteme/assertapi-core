@@ -25,6 +25,6 @@ public final class ExecutionInfo {
 
 	@Override
 	public String toString() {
-		return size + "o transferred in " + elapsedTime() + " ms";
+		return size + "o transferred in " + elapsedTime() + "ms";
 	}
 }

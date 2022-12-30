@@ -13,8 +13,8 @@ import lombok.Getter;
 public final class ApiAssertionError extends AssertionError {
 	
 	private final boolean skipped;
-	private final Object expected;
-	private final Object actual;
+	private final transient Object expected;
+	private final transient Object actual;
 	
 	ApiAssertionError(boolean skipped, String msg, Object expected, Object actual) {
 		super(msg);

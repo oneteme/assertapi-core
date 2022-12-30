@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.usf.assertapi.core.ServerConfig.localServer;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -32,5 +33,10 @@ class ServerConfigTest {
 	})
 	void testLocalServer(int port, String expected) {
 		assertEquals(localServer(port).buildRootUrl(), expected);
+	}
+	
+	@Test
+	void testToString() {
+		assertEquals("http://localhost/", localServer(80).toString());
 	}
 }

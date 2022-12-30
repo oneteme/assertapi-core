@@ -1,8 +1,10 @@
 package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 import static java.util.Optional.ofNullable;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -35,7 +37,7 @@ public final class ApiAssertionFactory {
 	}
 	
 	public ApiAssertion build() {
-		var cmp = ofNullable(comparator).orElseGet(ResponseComparator::new);
+		var cmp = requireNonNullElseGet(comparator, ResponseComparator::new);
 		if(tracer != null) {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}

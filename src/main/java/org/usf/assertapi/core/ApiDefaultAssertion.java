@@ -57,7 +57,8 @@ public class ApiDefaultAssertion implements ApiAssertion {
 			throw comparator.assertionFail(requireNonNullElse(e.getCause(), e));
 		}
 		catch (Exception e) {
-			if(isAssertionFail(e)) { //junit specific assume exception !error
+			//junit specific assume exception !error
+			if(isAssertionFail(e)) {
 				throw (RuntimeException) e;
 			}
 			throw comparator.assertionFail(e);

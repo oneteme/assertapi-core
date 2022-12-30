@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static org.usf.assertapi.core.CompareStatus.ERROR;
 import static org.usf.assertapi.core.CompareStatus.FAIL;
 import static org.usf.assertapi.core.CompareStatus.OK;
+import static org.usf.assertapi.core.Module.isAssertionFail;
 import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
 import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
 import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
@@ -89,6 +90,13 @@ public class ResponseComparatorProxy extends ResponseComparator {
 		}
 		catch(AssertionError e) {
 			trace(FAIL, step);
+			throw e;
+		}
+		catch(RuntimeException e) {
+			//junit specific assume exception !error
+			if(isAssertionFail(e)) {
+				trace(FAIL, step);
+			}
 			throw e;
 		}
 		//other exceptions are catch in ApiAssertion

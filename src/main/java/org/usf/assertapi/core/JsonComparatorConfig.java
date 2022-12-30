@@ -40,8 +40,8 @@ public final class JsonComparatorConfig implements TypeComparatorConfig<String> 
 			return new CompareResult(expected, actual, true);
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
-		} catch (JSONException e1) {
-			throw new ApiAssertionRuntimeException(e1);
+		} catch (JSONException e) {
+			throw new ApiAssertionRuntimeException(e);
 		}
 	}
 

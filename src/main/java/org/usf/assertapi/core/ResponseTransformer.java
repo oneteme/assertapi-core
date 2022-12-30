@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Objects.requireNonNullElse;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -23,7 +23,7 @@ public abstract class ResponseTransformer<T> {
 	private final ReleaseTarget target;
 	
 	ResponseTransformer(ReleaseTarget target) {
-		this.target = ofNullable(target).orElse(STABLE);
+		this.target = requireNonNullElse(target, STABLE);
 	}
 	
 	public final T transform(T resp, ReleaseTarget rt) {

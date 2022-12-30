@@ -1,9 +1,11 @@
 package org.usf.assertapi.core;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.Objects.requireNonNullElseGet;
 import static java.util.Optional.ofNullable;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -38,7 +40,7 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 		this.description = description;
 		this.typeComparatorConfig = typeComparatorConfig;
 		this.stableApi = statbleApi;
-		this.executionConfig = ofNullable(executionConfig).orElseGet(ExecutionConfig::new);
+		this.executionConfig = requireNonNullElseGet(executionConfig, ExecutionConfig::new);
 	}
 
 	@Override

@@ -2,9 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
-import static java.util.Optional.ofNullable;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**

@@ -195,11 +195,4 @@ public class ApiDefaultAssertion implements ApiAssertion {
 					}
 				};
 	}
-
-	@FunctionalInterface
-	interface SafeRunnable {
-
-		void run() throws Exception;
-	}
-	
 }

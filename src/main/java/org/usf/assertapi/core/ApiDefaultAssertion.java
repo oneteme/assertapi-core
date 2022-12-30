@@ -2,9 +2,11 @@ package org.usf.assertapi.core;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static org.usf.assertapi.core.Module.isAssertionFail;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -48,27 +50,25 @@ public class ApiDefaultAssertion implements ApiAssertion {
 	}
 	
 	public void assertApi(ComparableApi api) {
-		tryExec(()-> comparator.prepare(api));
-		//assumeEnabled in JUnit does not throw AssertError (should not be catched)
-		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
-		tryExec(()-> assertOne(api));
-	}
-	
-	void tryExec(SafeRunnable action){
 		try {
-			action.run();
+			assertOne(api);
 		}
 		catch (ApiAssertionRuntimeException e) {
-			comparator.assertionFail(ofNullable(e.getCause()).orElse(e));
-			throw e;
+			throw comparator.assertionFail(requireNonNullElse(e.getCause(), e));
 		}
 		catch (Exception e) {
-			comparator.assertionFail(e);
-			throw new ApiAssertionRuntimeException(e);
+			if(isAssertionFail(e)) { //junit specific assume exception !error
+				throw (RuntimeException) e;
+			}
+			throw comparator.assertionFail(e);
 		}
+		//throws AssertionError
 	}
 	
 	private void assertOne(ComparableApi api) throws Exception {
+		
+		comparator.prepare(api);
+		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
 		
     	var af = submit(api.getExecutionConfig().isParallel(), 
 				()-> exchange(latestReleaseTemp, api.latestApi()));

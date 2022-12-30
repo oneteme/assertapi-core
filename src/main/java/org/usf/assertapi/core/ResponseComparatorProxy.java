@@ -78,9 +78,9 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 
 	@Override
-	public void assertionFail(Throwable t) {
+	public ApiAssertionRuntimeException assertionFail(Throwable t) {
 		trace(ERROR, null);
-		comparator.assertionFail(t);
+		return comparator.assertionFail(t);
 	}
 
 	private void tryExec(CompareStage step, Runnable action) {

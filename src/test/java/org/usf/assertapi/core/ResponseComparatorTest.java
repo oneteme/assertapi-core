@@ -77,15 +77,12 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertionFail() {
-		var act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(null)); //not AssertionError
-		assertNull(act.getCause());
-		
 		var exp = new Exception();
-		act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(exp)); //not AssertionError
+		var act = assertDoesNotThrow(()-> new ResponseComparator().assertionFail(exp)); //not AssertionError
 		assertEquals(exp, act.getCause());
 		
 		var exp2 = new ApiAssertionRuntimeException("");
-		act = assertThrows(ApiAssertionRuntimeException.class, ()-> new ResponseComparator().assertionFail(exp2)); //not AssertionError
+		act = assertDoesNotThrow(()-> new ResponseComparator().assertionFail(exp2)); //not AssertionError
 		assertEquals(exp2, act);
 	}
 	

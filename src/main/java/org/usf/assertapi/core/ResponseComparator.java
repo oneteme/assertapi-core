@@ -108,13 +108,12 @@ public class ResponseComparator {
 		logApiComparaison("TEST " + OK);
 	}
 
-	public void assertionFail(Throwable t) {
+	public ApiAssertionRuntimeException assertionFail(Throwable t) { //must not be AssertionError
 		log.error("Testing API fail : ", t);
 		logApiComparaison("TEST " + ERROR);
-		if(t instanceof ApiAssertionRuntimeException) {
-			throw (ApiAssertionRuntimeException)t;
-		}
-		throw new ApiAssertionRuntimeException(t);
+		return t instanceof ApiAssertionRuntimeException 
+				? (ApiAssertionRuntimeException) t
+				: new ApiAssertionRuntimeException(t);
 	}
 
 	protected AssertionError failNotEqual(Object expected, Object actual, CompareStage stage) {

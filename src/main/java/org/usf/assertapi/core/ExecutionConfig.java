@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Objects.requireNonNullElse;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -23,8 +23,8 @@ public final class ExecutionConfig {
 	}
 	
 	public ExecutionConfig(Boolean enable, Boolean parallel) {
-		this.enabled = ofNullable(enable).orElse(true);
-		this.parallel = ofNullable(parallel).orElse(true);
+		this.enabled = requireNonNullElse(enable, true);
+		this.parallel = requireNonNullElse(parallel, true);
 	}
 	public ExecutionConfig disable() {
 		this.enabled = false;

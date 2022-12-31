@@ -23,7 +23,7 @@ public final class JsonXpathTransformer extends ResponseTransformer<String> {
 	
 	public JsonXpathTransformer(ReleaseTarget target, String[] xpaths, Boolean exclude) {
 		super(target);
-		this.xpaths = requireNonEmpty(xpaths, ()-> XPATH_TRANSFORMER + " : require xpath");
+		this.xpaths = requireNonEmpty(xpaths, ()-> getType() + " : require xpath");
 		this.exclude = true; //always true, TODO false not working
 	}
 	
@@ -38,5 +38,4 @@ public final class JsonXpathTransformer extends ResponseTransformer<String> {
 		Stream.of(xpaths).forEach(json::delete);
 		return json.jsonString();
     }
-	
 }

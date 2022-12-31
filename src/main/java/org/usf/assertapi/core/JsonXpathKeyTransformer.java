@@ -23,8 +23,8 @@ public final class JsonXpathKeyTransformer extends ResponseTransformer<String> {
 	
 	public JsonXpathKeyTransformer(ReleaseTarget target, String xpath, Map<String, String> map) {
 		super(target);
-		this.xpath = requireNonEmpty(xpath, ()-> XPATH_KEY_TRANSFORMER + " : require xpath");
-		this.map = requireNonEmpty(map, ()->  XPATH_KEY_TRANSFORMER + " : require Map<oldKey,newKey>");
+		this.xpath = requireNonEmpty(xpath, ()-> getType() + " : require xpath");
+		this.map = requireNonEmpty(map, ()->  getType() + " : require Map<oldKey,newKey>");
 	}
 	
 	@Override
@@ -38,6 +38,4 @@ public final class JsonXpathKeyTransformer extends ResponseTransformer<String> {
 		map.entrySet().forEach(e-> json.renameKey(xpath, e.getKey(), e.getValue()));
 		return json.jsonString();
     }
-    
-    
 }

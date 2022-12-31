@@ -26,5 +26,4 @@ public class JsonXpathValueTransformer extends ResponseTransformer<String> {
 	public String transform(String resp) {
 		return null;
 	}
-
 }

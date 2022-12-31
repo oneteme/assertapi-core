@@ -1,12 +1,12 @@
 package org.usf.assertapi.core;
 
+import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
+import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
+import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 import static org.usf.assertapi.core.CompareStatus.ERROR;
 import static org.usf.assertapi.core.CompareStatus.FAIL;
 import static org.usf.assertapi.core.CompareStatus.OK;
 import static org.usf.assertapi.core.Module.isAssertionFail;
-import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
-import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
-import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 
 import java.util.function.BiConsumer;
 

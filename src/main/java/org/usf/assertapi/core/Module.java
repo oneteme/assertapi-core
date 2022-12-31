@@ -57,12 +57,12 @@ public final class Module {
 		defaultMapper.registerSubtypes(new NamedType(c, name));
 	}
 	
-	public static void registerAssertionFail(Class<? extends RuntimeException> c) {
-		errors.add(c);
-	}
-	
 	public static void registerClientAuthenticator(Class<? extends ClientAuthenticator> c, String name) {
 		clientAuthenticators.put(name, c);
+	}
+	
+	public static void registerAssertionFail(Class<? extends RuntimeException> c) {
+		errors.add(c);
 	}
 	
 	public static ObjectMapper defaultMapper() {
@@ -76,12 +76,12 @@ public final class Module {
 	public static ClientAuthenticator getClientAuthenticator(String name) {
 		var auth = clientAuthenticators.get(name);
 		if(auth == null) {
-			throw new NoSuchElementException("no auth for " + name);
+			throw new NoSuchElementException("no such class for " + name);
 		}
 		try {
 			return auth.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
-			throw new IllegalArgumentException("default constructor expected" , e);
+			throw new IllegalArgumentException("error while creating new instance of " + auth.getName(), e);
 		}
 	}
 	

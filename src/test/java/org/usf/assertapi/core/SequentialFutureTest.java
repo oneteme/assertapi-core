@@ -15,7 +15,7 @@ class SequentialFutureTest {
 
 	@Test
 	void testGet() {
-		assertEquals(0, assertDoesNotThrow(()-> new SequentialFuture<>(()-> 0).get()));
+		assertEquals(10, assertDoesNotThrow(()-> new SequentialFuture<>(()-> 10).get()));
 		assertEquals("", assertDoesNotThrow(()-> new SequentialFuture<>(()-> "").get()));
 		var exp = new IOException();
 		var act = assertThrows(ExecutionException.class, ()-> new SequentialFuture<>(()-> {throw exp;}).get());

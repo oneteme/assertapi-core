@@ -2,18 +2,14 @@ package org.usf.assertapi.core;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
-import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
-import static org.usf.assertapi.core.Module.isAssertionFail;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -53,62 +49,41 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		try {
 			assertOne(api);
 		}
-		catch (ApiAssertionRuntimeException e) {
-			throw comparator.assertionFail(requireNonNullElse(e.getCause(), e));
+		catch (Throwable e) {//Exception | AssertionError
+			comparator.assertionFail(e);
 		}
-		catch (Exception e) {
-			//junit specific assume exception !error
-			if(isAssertionFail(e)) {
-				throw (RuntimeException) e;
-			}
-			throw comparator.assertionFail(e);
-		}
-		//throws AssertionError
 	}
 	
 	private void assertOne(ComparableApi api) throws Exception {
-		
 		comparator.prepare(api);
 		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
+
+		ClientResponseWrapper expected = null;
+		ClientResponseWrapper actual = null;
 		
-    	var af = submit(api.getExecutionConfig().isParallel(), 
+		var af = submit(api.getExecutionConfig().isParallel(), 
 				()-> exchange(latestReleaseTemp, api.latestApi()));
-    	ResponseEntityWrapper eRes = null;
     	try {
-        	eRes = exchange(stableReleaseTemp, api.stableApi());
-        	if(!api.stableApi().acceptStatus(eRes.getStatusCodeValue())) {
-        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
-        	}
+        	expected = exchange(stableReleaseTemp, api.stableApi());
     	}
-    	catch(RestClientResponseExceptionWrapper eExp) {
-        	if(!api.stableApi().acceptStatus(eExp.getStatusCodeValue())) {
-        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
-        	}
-    		try {
-    			var aRes = execute(af);
-    			comparator.assertStatusCode(eExp.getStatusCodeValue(), aRes.getStatusCodeValue()); //fail
-        		throw illegalStateException(eExp);
-    		}
-    		catch(RestClientResponseExceptionWrapper aExp) {
-    			comparator.assertResponse(eExp, aExp, api.getTypeComparatorConfig());
-    		}
+    	catch(RestClientResponseExceptionWrapper e) {
+    		expected = e;
     	}
     	catch(Exception e) {
     		af.cancel(true); //may throw exception ?
     		throw e;
     	}
-    	if(eRes != null) {
-			ResponseEntityWrapper aRes = null;
-			try {
-				aRes = execute(af);
-			}
-			catch(RestClientResponseExceptionWrapper aExp) {
-				comparator.assertStatusCode(eRes.getStatusCodeValue(), aExp.getStatusCodeValue());//fail
-	    		throw illegalStateException(aExp);
-			}
-			comparator.assertResponse(eRes, aRes, api.getTypeComparatorConfig());
+    	if(!api.stableApi().acceptStatus(expected.getStatusCodeValue())) {
+    		af.cancel(true); //may throw exception ?
+    		throw new ApiAssertionRuntimeException("unexpected stable release response code");
     	}
-    	comparator.assertOK();
+		try {
+			actual = execute(af);
+		}
+		catch(RestClientResponseExceptionWrapper e) {
+			actual = e;
+		}
+		comparator.assertResponse(expected, actual, api.getContentComparator());
 	}
     
     ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) {
@@ -133,21 +108,19 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
     }
 	
-    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseExceptionWrapper {
-    	Throwable exp = null;
+    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws Exception {
 		try {
 			return cf.get();
 		} catch (ExecutionException e) {
 			if(e.getCause() instanceof RestClientResponseExceptionWrapper) {
 				throw((RestClientResponseExceptionWrapper) e.getCause());
 			}
-			exp = ofNullable(e.getCause()).orElse(e);
+			throw e;
 		}
 		catch (InterruptedException e) {
 			currentThread().interrupt();
-			exp = e;
+			throw e;
 		}
-		throw new ApiAssertionRuntimeException(exp);
     }
 	
 	private static ExecutorService executor() {
@@ -157,42 +130,9 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		return executor;
 	}
 	
-	private static IllegalStateException illegalStateException(Throwable e) {
-		return new IllegalStateException("assertion should throw exception", e);
-	}
-
 	private static final <T> Future<T> submit(boolean parallel, Callable<T> callable) {
 		return parallel 
 				? commonPool().submit(callable)
-				: new Future<>() {
-					@Override
-					public T get() throws InterruptedException, ExecutionException {
-						try {
-							return callable.call();
-						} catch (Exception e) {
-							throw new ExecutionException(e); //manage exceptions
-						}
-					}
-
-					@Override
-					public boolean cancel(boolean mayInterruptIfRunning) {
-						return true; //!important
-					}
-
-					@Override
-					public boolean isCancelled() {
-						throw new UnsupportedOperationException();
-					}
-
-					@Override
-					public boolean isDone() {
-						throw new UnsupportedOperationException();
-					}
-
-					@Override
-					public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-						throw new UnsupportedOperationException();
-					}
-				};
+				: new SequentialFuture<>(callable);
 	}
 }

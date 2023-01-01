@@ -1,20 +1,14 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.CompareStatus.ERROR;
-import static org.usf.assertapi.core.CompareStatus.FAIL;
-import static org.usf.assertapi.core.CompareStatus.OK;
-import static org.usf.assertapi.core.Module.isAssertionFail;
-import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
-import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
-import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
-
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 
+ * @version 1.0
  * @author u$f
  *
  */
@@ -25,93 +19,81 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	private final ResponseComparator comparator;
 	private final BiConsumer<ComparableApi, ComparisonResult> tracer;
 
-	private ComparableApi api;
+	private ComparableApi currentApi;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
 	public void prepare(ComparableApi api) {
-		this.api = api; //active API
-		tryExec(null, ()-> comparator.prepare(api));
+		this.currentApi = api; //current API
+		comparator.prepare(api);
 	}
 	
 	@Override
-	public void assumeEnabled(boolean enabled) {
-		tryExec(null, ()-> comparator.assumeEnabled(enabled));
-	}
-	
-	@Override
-	public void assertExecution(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
+	public void assertElapsedTime(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
 		this.stableReleaseExec = stableReleaseExec;
 		this.latestReleaseExec = latestReleaseExec;
-		tryExec(null, ()-> comparator.assertExecution(stableReleaseExec, latestReleaseExec));
+		comparator.assertElapsedTime(stableReleaseExec, latestReleaseExec);
 	}
 
 	@Override
+	public void assumeEnabled(boolean enabled) {
+		comparator.assumeEnabled(enabled);
+	}
+	
+	@Override
 	public void assertStatusCode(int expected, int actual) {
-		tryExec(HTTP_CODE, ()-> comparator.assertStatusCode(expected, actual));
+		comparator.assertStatusCode(expected, actual);
 	}
 
 	@Override
 	public void assertContentType(String expected, String actual) {
-		tryExec(CONTENT_TYPE, ()-> comparator.assertContentType(expected, actual));
+		comparator.assertContentType(expected, actual);
+	}
+
+	@Override
+	public void assertHeaders(Map<String, List<String>> expected, Map<String, List<String>> actual) {
+		comparator.assertHeaders(expected, actual);
 	}
 
 	@Override
 	public void assertByteContent(byte[] expected, byte[] actual) {
-		tryExec(RESPONSE_CONTENT, ()-> comparator.assertByteContent(expected, actual));
+		comparator.assertByteContent(expected, actual);
 	}
 
 	@Override
 	public void assertTextContent(String expected, String actual) {
-		tryExec(RESPONSE_CONTENT, ()-> comparator.assertTextContent(expected, actual));
-	}
-	
-	@Override
-	public void assertJsonContent(String expected, String actual, TypeComparatorConfig<?> config) {
-		tryExec(RESPONSE_CONTENT, ()-> comparator.assertJsonContent(expected, actual, config));
-	}
-	
-	@Override
-	public void assertOK() { 
-		tryExec(null, comparator::assertOK);
-		trace(OK, null);
+		comparator.assertTextContent(expected, actual);
 	}
 
 	@Override
-	public ApiAssertionRuntimeException assertionFail(Throwable t) {
-		trace(ERROR, null);
-		return comparator.assertionFail(t);
+	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) throws Exception {
+		comparator.assertJsonContent(expected, actual, config);
 	}
 
-	private void tryExec(CompareStage step, Runnable action) {
-		try {
-			action.run();
-		}
-		catch(AssertionError e) {
-			trace(FAIL, step);
-			throw e;
-		}
-		catch(RuntimeException e) {
-			//junit specific assume exception !error
-			if(isAssertionFail(e)) {
-				trace(FAIL, step);
-			}
-			throw e;
-		}
-		//other exceptions are catch in ApiAssertion
+	@Override
+	public void assertionFail(Throwable t) {
+		comparator.assertionFail(t);
 	}
-	
-	protected void trace(CompareStatus status, CompareStage step) {
-		var res = new ComparisonResult(
+		
+	@Override
+	public void finish(CompareStatus status) {
+		var result = new ComparisonResult(
 				stableReleaseExec,
 				latestReleaseExec,
-				status, step);
+				status, getCurrentStage());
 		try {
-			tracer.accept(api, res);
+			tracer.accept(currentApi, result);
 		}
 		catch(Exception e) {
-			log.warn("cannot trace {} => {} : {}", api, res, e.getMessage());
+			log.warn("cannot trace {} => {} : {}", currentApi, result, e.getMessage());
 		}
+		comparator.finish(status);
 	}
+	
+	@Override
+	public CompareStage getCurrentStage() {
+		return comparator.getCurrentStage();
+	}
+	
 }

@@ -4,7 +4,7 @@ import static java.util.Optional.ofNullable;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
-import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.JSON;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
 
 import org.json.JSONException;
 
@@ -17,18 +17,18 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonComparatorConfig implements TypeComparatorConfig<String> {
+public final class JsonContentComparator implements ContentComparator<String> {
 
 	private final boolean strict;
 	private final ResponseTransformer<String>[] transformers;
 
-	public JsonComparatorConfig(Boolean strict, ResponseTransformer<String>[] transformers) {
+	public JsonContentComparator(Boolean strict, ResponseTransformer<String>[] transformers) {
 		this.strict = ofNullable(strict).orElse(true);
 		this.transformers = transformers;
 	}
 	
 	@Override
-	public CompareResult compare(String expected, String actual) {
+	public CompareResult compare(String expected, String actual) throws JSONException {
 		try {
 			if(transformers != null) {
 				for(var t : transformers) {
@@ -40,8 +40,6 @@ public final class JsonComparatorConfig implements TypeComparatorConfig<String> 
 			return new CompareResult(expected, actual, true);
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
-		} catch (JSONException e) {
-			throw new ApiAssertionRuntimeException(e);
 		}
 	}
 

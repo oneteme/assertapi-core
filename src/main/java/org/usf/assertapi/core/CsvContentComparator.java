@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.CSV;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor //keep one default constructor
-public final class CsvComparatorConfig implements TypeComparatorConfig<String> {
+public final class CsvContentComparator implements ContentComparator<String> {
 	
 	private final ResponseTransformer<String>[] transformers;
 

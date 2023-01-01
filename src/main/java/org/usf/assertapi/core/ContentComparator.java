@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 	    use = JsonTypeInfo.Id.NAME,
 	    include = JsonTypeInfo.As.PROPERTY,
 	    property = "@type")
-public interface TypeComparatorConfig<T> {
+public interface ContentComparator<T> {
 	
 	String getType();
 	
-	CompareResult compare(T expected, T actual);
+	CompareResult compare(T expected, T actual) throws Exception;
 	
 	ResponseTransformer<T>[] getTransformers();
 	

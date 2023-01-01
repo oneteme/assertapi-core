@@ -16,6 +16,6 @@ public interface ComparableApi {
 	
 	ExecutionConfig getExecutionConfig();
 
-	TypeComparatorConfig<?> getTypeComparatorConfig();
+	ContentComparator<?> getContentComparator();
 
 }

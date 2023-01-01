@@ -8,5 +8,5 @@ package org.usf.assertapi.core;
  */
 public enum CompareStatus {
 	
-	SKIP, ERROR, OK, FAIL;
+	SKIP, ERROR, FAIL, OK;
 }

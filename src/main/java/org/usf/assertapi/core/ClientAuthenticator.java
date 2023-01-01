@@ -1,14 +1,25 @@
 package org.usf.assertapi.core;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequest;
 
 import lombok.Getter;
 
+/**
+ * 
+ * @author u$f
+ * @since 1.0
+ *
+ */
 public interface ClientAuthenticator {
 	
 	String getType();
 	
-	void authorization(ClientHttpRequest request, ServerConfig conf);
+	default void authorization(ClientHttpRequest req, ServerConfig conf) {
+		authorization(req.getHeaders(), conf.getAuth());
+	}
+
+	void authorization(HttpHeaders headers, ServerAuth auth);
 	
 	@Getter
 	enum ServerAuthMethod {

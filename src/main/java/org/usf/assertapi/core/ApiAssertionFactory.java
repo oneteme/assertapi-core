@@ -1,9 +1,10 @@
 package org.usf.assertapi.core;
 
-import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 
 import java.util.function.BiConsumer;
+
+import lombok.NonNull;
 
 /**
  * 
@@ -18,18 +19,18 @@ public final class ApiAssertionFactory {
 	private ServerConfig latestRelease;
 	private BiConsumer<ComparableApi, ComparisonResult> tracer;
 	
-	public ApiAssertionFactory comparing(ServerConfig stableRelease, ServerConfig latestRelease) {
+	public ApiAssertionFactory comparing(@NonNull ServerConfig stableRelease, @NonNull ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
 		this.latestRelease = latestRelease;
 		return this;
 	}
 	
-	public ApiAssertionFactory using(ResponseComparator comparator) {
+	public ApiAssertionFactory using(@NonNull ResponseComparator comparator) {
 		this.comparator = comparator;
 		return this;
 	}
 	
-	public ApiAssertionFactory trace(BiConsumer<ComparableApi, ComparisonResult> tracer) {
+	public ApiAssertionFactory trace(@NonNull BiConsumer<ComparableApi, ComparisonResult> tracer) {
 		this.tracer = tracer;
 		return this;
 	}
@@ -40,7 +41,7 @@ public final class ApiAssertionFactory {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}
 		return new ApiDefaultAssertion(cmp,
-				RestTemplateBuilder.build(requireNonNull(stableRelease)),
-				RestTemplateBuilder.build(requireNonNull(latestRelease)));
+				RestTemplateBuilder.build(stableRelease),
+				RestTemplateBuilder.build(latestRelease));
 	}
 }

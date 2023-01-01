@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER;
@@ -11,19 +12,21 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-public class BearerClientAuthenticator implements ClientAuthenticator {
+/**
+ * 
+ * @author u$f
+ * @since 1.0
+ *
+ */
+public final class BearerClientAuthenticator implements ClientAuthenticator {
 
 	@Override
-	public void authorization(ClientHttpRequest request, ServerConfig conf) {
-		var auth = requireNonNull(conf.getAuth());
-		request.getHeaders().setBearerAuth(auth.getToken() == null 
-				? fetchIdToken(auth) 
-				: auth.getToken());
+	public void authorization(HttpHeaders headers, ServerAuth auth) {
+		headers.setBearerAuth(requireNonNullElseGet(auth.getToken(), ()-> fetchIdToken(auth)));
 	}
 	
 	@Deprecated(forRemoval = true) //specific nova

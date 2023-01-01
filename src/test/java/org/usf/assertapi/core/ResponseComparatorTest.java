@@ -128,10 +128,8 @@ class ResponseComparatorTest {
 		var exp = new JsonComparatorConfig(null, null);
 		var act = assertDoesNotThrow(()-> castConfig(null, JsonComparatorConfig.class, ()-> exp));
 		assertEquals(exp, act);
-
 		act = assertDoesNotThrow(()-> castConfig(exp, JsonComparatorConfig.class, null));
 		assertEquals(exp, act);
-		
 		assertThrows(ApiAssertionRuntimeException.class, ()-> castConfig(exp, CsvComparatorConfig.class, null));
 	}
 	

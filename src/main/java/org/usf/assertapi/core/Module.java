@@ -10,10 +10,8 @@ import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.CSV;
 import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.JSON;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -32,7 +30,6 @@ import lombok.NoArgsConstructor;
 public final class Module {
 
 	private static final ObjectMapper defaultMapper;
-	private static final Set<Class<? extends RuntimeException>> errors = new HashSet<>();
 	private static final Map<String, Class<? extends ClientAuthenticator>> clientAuthenticators = new HashMap<>();
 	
 	static {
@@ -61,16 +58,8 @@ public final class Module {
 		clientAuthenticators.put(name, c);
 	}
 	
-	public static void registerAssertionFail(Class<? extends RuntimeException> c) {
-		errors.add(c);
-	}
-	
 	public static ObjectMapper defaultMapper() {
 		return defaultMapper;
-	}
-	
-	public static boolean isAssertionFail(Throwable t) {
-		return errors.stream().anyMatch(c-> c.isInstance(t));
 	}
 	
 	public static ClientAuthenticator getClientAuthenticator(String name) {

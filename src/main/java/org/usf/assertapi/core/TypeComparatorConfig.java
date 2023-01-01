@@ -19,7 +19,7 @@ public interface TypeComparatorConfig<T> {
 	
 	String getType();
 	
-	CompareResult compare(T expected, T actual);
+	CompareResult compare(T expected, T actual) throws Exception;
 	
 	ResponseTransformer<T>[] getTransformers();
 	

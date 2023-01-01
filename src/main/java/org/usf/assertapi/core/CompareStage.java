@@ -8,5 +8,9 @@ package org.usf.assertapi.core;
  */
 public enum CompareStage {
 	
-	HTTP_CODE, HEADER_CONTENT, CONTENT_TYPE, RESPONSE_CONTENT;
+	ELAPSED_TIME,
+	HTTP_CODE, 
+	CONTENT_TYPE, 
+	HEADER_CONTENT, 
+	RESPONSE_CONTENT;
 }

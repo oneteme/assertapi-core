@@ -13,8 +13,8 @@ public final class ApiAssertionRuntimeException extends RuntimeException {
 		super(msg);
 	}
 
-	public ApiAssertionRuntimeException(Throwable cause) {
-		super("error while testing API", cause);
+	public ApiAssertionRuntimeException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
 }

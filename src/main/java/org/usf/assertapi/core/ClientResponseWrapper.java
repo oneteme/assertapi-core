@@ -8,6 +8,8 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_XML;
 
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpHeaders;
@@ -48,6 +50,8 @@ interface ClientResponseWrapper {
 				&& APPLICATION_JSON.isCompatibleWith(getContentType());
 	}
 	
+	Map<String, List<String>> getHeaders();
+	
 	String getResponseBodyAsString();
 	
 	String getResponseBodyAsString(Charset charset);
@@ -70,6 +74,11 @@ interface ClientResponseWrapper {
 		@Override
 		public MediaType getContentType() {
 			return ofNullable(entity.getHeaders()).map(HttpHeaders::getContentType).orElse(null);
+		}
+		
+		@Override
+		public Map<String, List<String>> getHeaders() {
+			return entity.getHeaders();
 		}
 		
 		@Override
@@ -104,6 +113,11 @@ interface ClientResponseWrapper {
 		@Override
 		public MediaType getContentType() {
 			return ofNullable(exception.getResponseHeaders()).map(HttpHeaders::getContentType).orElse(null);
+		}
+		
+		@Override
+		public Map<String, List<String>> getHeaders() {
+			return exception.getResponseHeaders();
 		}
 		
 		@Override

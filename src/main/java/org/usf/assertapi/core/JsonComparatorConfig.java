@@ -28,7 +28,7 @@ public final class JsonComparatorConfig implements TypeComparatorConfig<String> 
 	}
 	
 	@Override
-	public CompareResult compare(String expected, String actual) {
+	public CompareResult compare(String expected, String actual) throws JSONException {
 		try {
 			if(transformers != null) {
 				for(var t : transformers) {
@@ -40,8 +40,6 @@ public final class JsonComparatorConfig implements TypeComparatorConfig<String> 
 			return new CompareResult(expected, actual, true);
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
-		} catch (JSONException e) {
-			throw new ApiAssertionRuntimeException(e);
 		}
 	}
 

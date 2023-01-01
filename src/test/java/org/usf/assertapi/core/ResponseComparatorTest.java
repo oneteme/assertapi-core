@@ -125,12 +125,12 @@ class ResponseComparatorTest {
 	
 	@Test
 	void testCastConfig() {
-		var exp = new JsonComparatorConfig(null, null);
-		var act = assertDoesNotThrow(()-> castConfig(null, JsonComparatorConfig.class, ()-> exp));
+		var exp = new JsonContentComparator(null, null);
+		var act = assertDoesNotThrow(()-> castConfig(null, JsonContentComparator.class, ()-> exp));
 		assertEquals(exp, act);
-		act = assertDoesNotThrow(()-> castConfig(exp, JsonComparatorConfig.class, null));
+		act = assertDoesNotThrow(()-> castConfig(exp, JsonContentComparator.class, null));
 		assertEquals(exp, act);
-		assertThrows(ApiAssertionRuntimeException.class, ()-> castConfig(exp, CsvComparatorConfig.class, null));
+		assertThrows(ApiAssertionRuntimeException.class, ()-> castConfig(exp, CsvContentComparator.class, null));
 	}
 	
 	private void expectCurrentStage(CompareStage stage) {

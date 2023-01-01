@@ -83,7 +83,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		catch(RestClientResponseExceptionWrapper e) {
 			actual = e;
 		}
-		comparator.assertResponse(expected, actual, api.getTypeComparatorConfig());
+		comparator.assertResponse(expected, actual, api.getContentComparator());
 	}
     
     ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) {

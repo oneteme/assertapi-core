@@ -6,8 +6,8 @@ import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_KEY_TRANSFORMER;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_TRANSFORMER;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_VALUE_TRANSFORMER;
-import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.CSV;
-import static org.usf.assertapi.core.TypeComparatorConfig.ResponseType.JSON;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +35,8 @@ public final class Module {
 	static {
 		defaultMapper = json().build().registerModule(new ParameterNamesModule());
 		//register TypeComparatorConfig implementations
-		registerTypeComparatorConfig(JsonComparatorConfig.class, JSON.name());
-		registerTypeComparatorConfig(CsvComparatorConfig.class, CSV.name());
+		registerTypeComparatorConfig(JsonContentComparator.class, JSON.name());
+		registerTypeComparatorConfig(CsvContentComparator.class, CSV.name());
 		//register ResponseTransformer implementations
 		registerResponseTransformer(JsonXpathTransformer.class, XPATH_TRANSFORMER.name());
 		registerResponseTransformer(JsonXpathKeyTransformer.class, XPATH_KEY_TRANSFORMER.name());
@@ -46,7 +46,7 @@ public final class Module {
 		registerClientAuthenticator(BearerClientAuthenticator.class, BEARER.name());
 	}
 	
-	public static void registerTypeComparatorConfig(Class<? extends TypeComparatorConfig<?>> c, String name) {
+	public static void registerTypeComparatorConfig(Class<? extends ContentComparator<?>> c, String name) {
 		defaultMapper.registerSubtypes(new NamedType(c, name));
 	}
 

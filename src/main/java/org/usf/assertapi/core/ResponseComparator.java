@@ -47,7 +47,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, TypeComparatorConfig<?> config) throws Exception {
+	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ContentComparator<?> config) throws Exception {
 		assertElapsedTime(expect.getRequestExecution(), actual.getRequestExecution());
     	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
     	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
@@ -111,10 +111,10 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, TypeComparatorConfig<?> config) throws Exception {
+	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) throws Exception {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("jsonContent", expected, actual, true);
-		var cr = castConfig(config, JsonComparatorConfig.class, ()-> new JsonComparatorConfig(null, null)).compare(expected, actual);
+		var cr = castConfig(config, JsonContentComparator.class, ()-> new JsonContentComparator(null, null)).compare(expected, actual);
 		if(expected != cr.getExpected() || actual != cr.getActual()) {
 			logApiComparaison("newContent", cr.getExpected(), cr.getActual(), true);
 		}
@@ -146,7 +146,7 @@ public class ResponseComparator {
 				format("%s : stable=%s ~ latest=%s", currentStage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 	
-	static <T extends TypeComparatorConfig<?>> T castConfig(TypeComparatorConfig<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
+	static <T extends ContentComparator<?>> T castConfig(ContentComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
 		if(obj == null) {
 			return orElseGet.get();
 		}

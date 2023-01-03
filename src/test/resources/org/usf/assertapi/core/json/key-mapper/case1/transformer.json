@@ -1,0 +1,8 @@
+{
+  "xpath" : "$.features[*].properties",
+  "map":{
+    "prop0": "field0",
+    "prop1": "field1"
+  },
+  "@type": "JSON_KEY_MAPPER"
+}

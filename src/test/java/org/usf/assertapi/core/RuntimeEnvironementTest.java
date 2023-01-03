@@ -23,6 +23,7 @@ class RuntimeEnvironementTest {
 		setProperty("user.name", variables.get("$env-user"));
 		setProperty("os.name", variables.get("$env-os"));
 		setProperty("java.version", variables.get("$env-jre"));
+		//TODO mock try Runtime + InetAddress
 	}
 
 	@Test

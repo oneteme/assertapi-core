@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.usf.assertapi.core.ApiAssertionError.skippedAssertionError;
+import static org.usf.assertapi.core.ApiAssertionError.wasSkipped;
 import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
 import static org.usf.assertapi.core.CompareStage.ELAPSED_TIME;
 import static org.usf.assertapi.core.CompareStage.HEADER_CONTENT;
@@ -126,8 +127,7 @@ public class ResponseComparator {
 	public void assertionFail(Throwable t) {
 		log.error("Testing API fail : ", t);
 		if(t instanceof AssertionError) {
-			var status = t instanceof ApiAssertionError && ((ApiAssertionError)t).isSkipped() ? SKIP : FAIL;
-			finish(status);
+			finish(wasSkipped(t) ? SKIP : FAIL);
 			throw (AssertionError) t;
 		}
 		finish(ERROR);

@@ -31,4 +31,8 @@ public final class ApiAssertionError extends AssertionError {
 		return new ApiAssertionError(true, null, null, msg);
 	}
 	
+	public static boolean wasSkipped(Throwable t) {
+		return t instanceof ApiAssertionError && ((ApiAssertionError)t).isSkipped();
+	}
+	
 }

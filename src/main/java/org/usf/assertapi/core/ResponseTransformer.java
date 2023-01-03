@@ -3,7 +3,7 @@ package org.usf.assertapi.core;
 import static java.util.Objects.requireNonNullElse;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.stream.Stream;
 
 import lombok.Getter;
 
@@ -13,29 +13,23 @@ import lombok.Getter;
  * @since 1.0
  *
  */
-@JsonTypeInfo(
-	    use = JsonTypeInfo.Id.NAME,
-	    include = JsonTypeInfo.As.PROPERTY,
-	    property = "@type")
 @Getter
-public abstract class ResponseTransformer<T> {
+public abstract class ResponseTransformer<T> implements PolymorphicType {
 
-	private final ReleaseTarget target;
+	private final ReleaseTarget[] targets;
 	
-	ResponseTransformer(ReleaseTarget target) {
-		this.target = requireNonNullElse(target, STABLE);
+	ResponseTransformer(ReleaseTarget[] targets) {
+		this.targets = requireNonNullElse(targets, new ReleaseTarget[] {STABLE});
 	}
 	
-	public final T transform(T resp, ReleaseTarget rt) {
-		return resp == null || getTarget() != rt ? resp: transform(resp) ;
+	public boolean matchTarget(ReleaseTarget target) {
+		return Stream.of(target).anyMatch(target::equals);
 	}
 
-	abstract String getType();
-	
-	abstract T transform(T resp); //response can be byte[] | string
+	abstract void transform(T resp); //response can be byte[] | string
 	
 	enum TransformerType {
 		
-		XPATH_TRANSFORMER, XPATH_KEY_TRANSFORMER, XPATH_VALUE_TRANSFORMER; 
+		JSON_PATH_FILTER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 
 	}
 }

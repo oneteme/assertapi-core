@@ -11,7 +11,7 @@ import lombok.Getter;
  * @since 1.0
  *
  */
-public interface ClientAuthenticator {
+public interface ClientAuthenticator extends PolymorphicType {
 	
 	String getType();
 	

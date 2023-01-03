@@ -1,13 +1,15 @@
 package org.usf.assertapi.core;
 
+import static com.jayway.jsonpath.Configuration.defaultConfiguration;
+import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BASIC;
 import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_KEY_TRANSFORMER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_TRANSFORMER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.XPATH_VALUE_TRANSFORMER;
 import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
 import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,8 @@ import java.util.NoSuchElementException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ParseContext;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -30,17 +34,19 @@ import lombok.NoArgsConstructor;
 public final class Module {
 
 	private static final ObjectMapper defaultMapper;
+	private static final ParseContext jsonParser;
 	private static final Map<String, Class<? extends ClientAuthenticator>> clientAuthenticators = new HashMap<>();
 	
 	static {
 		defaultMapper = json().build().registerModule(new ParameterNamesModule());
+		jsonParser = JsonPath.using(defaultConfiguration().addOptions(SUPPRESS_EXCEPTIONS)); //renameKey skip err if not exists
 		//register TypeComparatorConfig implementations
 		registerTypeComparatorConfig(JsonContentComparator.class, JSON.name());
 		registerTypeComparatorConfig(CsvContentComparator.class, CSV.name());
 		//register ResponseTransformer implementations
-		registerResponseTransformer(JsonXpathTransformer.class, XPATH_TRANSFORMER.name());
-		registerResponseTransformer(JsonXpathKeyTransformer.class, XPATH_KEY_TRANSFORMER.name());
-		registerResponseTransformer(JsonXpathValueTransformer.class, XPATH_VALUE_TRANSFORMER.name());
+		registerResponseTransformer(JsonPathFilter.class, JSON_PATH_FILTER.name());
+		registerResponseTransformer(JsonKeyMapper.class, JSON_KEY_MAPPER.name());
+		registerResponseTransformer(JsonValueMapper.class, JSON_VALUE_MAPPER.name());
 		//register ClientAuthenticator implementations
 		registerClientAuthenticator(BasicClientAuthenticator.class, BASIC.name());
 		registerClientAuthenticator(BearerClientAuthenticator.class, BEARER.name());
@@ -60,6 +66,10 @@ public final class Module {
 	
 	public static ObjectMapper defaultMapper() {
 		return defaultMapper;
+	}
+	
+	public static ParseContext defaultJsonParser() {
+		return jsonParser;
 	}
 	
 	public static ClientAuthenticator getClientAuthenticator(String name) {

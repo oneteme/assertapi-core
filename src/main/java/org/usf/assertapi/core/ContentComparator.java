@@ -1,7 +1,5 @@
 package org.usf.assertapi.core;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,17 +9,11 @@ import lombok.RequiredArgsConstructor;
  * @since 1.0
  *
  */
-@JsonTypeInfo(
-	    use = JsonTypeInfo.Id.NAME,
-	    include = JsonTypeInfo.As.PROPERTY,
-	    property = "@type")
-public interface ContentComparator<T> {
-	
-	String getType();
+public interface ContentComparator<T> extends PolymorphicType {
 	
 	CompareResult compare(T expected, T actual) throws Exception;
 	
-	ResponseTransformer<T>[] getTransformers();
+	ResponseTransformer<?>[] getTransformers();
 	
 	enum ResponseType {
 		TXT, CSV, JSON, XML, ZIP;

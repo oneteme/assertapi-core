@@ -1,0 +1,7 @@
+{
+  "xpaths" : [
+    "$.features[*].properties.prop1.*",
+    "$.features[*].geometry.coordinates[0]"
+  ],
+  "@type": "JSON_PATH_FILTER"
+}

@@ -27,5 +27,5 @@ assertion = new ApiAssertionsFactory()
         .comparing(stableRelease, latestRelease)
         .using(responseComparator)
         .build();
-assertion.exec(api);
+assertion.assertApi(api);
 ```

@@ -1,0 +1,10 @@
+{
+  "xpath" : "$.features[?(@.geometry.type=='Polygon')].properties.prop0",
+  "map":{
+    "value0": 0,
+    "value1": 1,
+    "value2": 2,
+    "value3": 3
+  },
+  "@type": "JSON_VALUE_MAPPER"
+}

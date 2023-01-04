@@ -116,7 +116,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M3</version>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -127,6 +126,30 @@
             <goals>
               <goal>jar-no-fork</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+       <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.7</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <formats>
+                <format>XML</format>
+              </formats>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -165,42 +188,7 @@
       </plugin>
 		</plugins>
 	</build>
-	
-	<profiles>
-    <profile>
-    <id>coverage</id>
-    <build>
-     <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-       <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <goals>
-              <goal>report</goal>
-            </goals>
-            <configuration>
-              <formats>
-                <format>XML</format>
-              </formats>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-     </plugins>
-    </build>
-  </profile>
-  </profiles>
-	
-	  
+		  
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>

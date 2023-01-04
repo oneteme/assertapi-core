@@ -4,7 +4,6 @@ import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.usf.assertapi.core.Module.defaultJsonParser;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
@@ -25,27 +24,27 @@ class JsonValueMapperTest {
 	
 	@Test
 	void testJsonValueMapper_xpath() {
-		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, null, Map.of("key", "value"))); //xpaths null
-		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "", Map.of("key", "value"))); //xpaths empty
+		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, null, null, Map.of("key", "value"))); //xpaths null
+		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "", null, Map.of("key", "value"))); //xpaths empty
 	}
 
 	@Test
 	void testJsonValueMapper_map() {
-		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, "$.path", null)); //map null
-		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "$.path", emptyMap())); //map empty
+		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, "$.path", null, null)); //map null
+		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "$.path", null, emptyMap())); //map empty
 	}
 	
 	@Test
 	void testJsonValueMapper_targets() {
-		var jt = new JsonValueMapper(null, "$.path", Map.of("key", "value"));
+		var jt = new JsonValueMapper(null, "$.path", null, Map.of("key", "value"));
 		assertArrayEquals(new ReleaseTarget[] {STABLE}, jt.getTargets()); //STABLE by default
-		jt = new JsonValueMapper(new ReleaseTarget[] {STABLE, LATEST}, "$.path", Map.of("key", "value"));
+		jt = new JsonValueMapper(new ReleaseTarget[] {STABLE, LATEST}, "$.path", null, Map.of("key", "value"));
 		assertArrayEquals(new ReleaseTarget[] {STABLE, LATEST}, jt.getTargets());
 	}
 
 	@Test
 	void testGetType() {
-		assertEquals(JSON_VALUE_MAPPER.name(), new JsonValueMapper(null, "$.path", Map.of("key", "value")).getType());
+		assertEquals(JSON_VALUE_MAPPER.name(), new JsonValueMapper(null, "$.path", null, Map.of("key", "value")).getType());
 	}
 
 	@ParameterizedTest

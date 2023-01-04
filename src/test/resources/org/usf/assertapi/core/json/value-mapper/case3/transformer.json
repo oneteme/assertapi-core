@@ -1,0 +1,9 @@
+{
+  "xpath" : "$.features[*].geometry.type",
+  "regex" : "^([A-Z])\\w+([a-z]$)",
+  "map":{
+    "$1": "[$1]",
+    "$2": "($2)"
+  },
+  "@type": "JSON_VALUE_MAPPER"
+}

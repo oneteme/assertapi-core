@@ -42,3 +42,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn --no-transfer-progress -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-core -Dgpg.skip=true
+      - name: Coverage
+        run: mvn sonar:sonar -Pcoverage

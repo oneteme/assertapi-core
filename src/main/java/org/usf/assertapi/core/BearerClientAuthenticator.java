@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER;
@@ -40,7 +41,7 @@ public final class BearerClientAuthenticator implements ClientAuthenticator {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<Map<String, String>> resp = new RestTemplate().exchange(requireNonNull(auth.getAccessTokenUrl()), POST, request, 
         		new ParameterizedTypeReference<Map<String,String>>() {});
-        return resp.getBody().get("id_token");
+        return ofNullable(resp.getBody()).map(b-> b.get("id_token")).orElseThrow();
     }
 	
 	@Override

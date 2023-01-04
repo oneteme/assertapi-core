@@ -4,8 +4,8 @@
 ...
 
 ## Status
-
-[![Java CI with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/oneteme/assertapi-core/actions/workflows/maven-publish.yml)
+[![Java CI with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/build.yml/badge.svg)](https://github.com/oneteme/assertapi-core/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=oneteme_assertapi-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=oneteme_assertapi-core)
 
 
 ## MAVEN Integration

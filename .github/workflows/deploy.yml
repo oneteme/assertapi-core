@@ -23,10 +23,11 @@ jobs:
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-          java-version: '11'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+        java-version: '11'
+        distribution: 'temurin'
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
     - name: Publish package
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -38,4 +39,4 @@ jobs:
           --no-transfer-progress \
           --batch-mode \
           -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} \
-          clean deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-core 
+          clean deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-core

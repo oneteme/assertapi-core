@@ -3,7 +3,6 @@ package org.usf.assertapi.core;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpHeaders;
@@ -30,10 +29,5 @@ class BearerClientAuthenticatorTest {
 		new BearerClientAuthenticator().authorization(headers, auth);
 		assertEquals(1, headers.size()); //only one header
 		assertEquals(asList(expected), headers.get("Authorization"));
-	}
-
-	@Test
-	void testGetType() {
-		assertEquals("BEARER", new BearerClientAuthenticator().getType());
 	}
 }

@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNullElseGet;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
-import static org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod.BEARER;
 
 import java.util.Map;
 
@@ -44,8 +43,4 @@ public final class BearerClientAuthenticator implements ClientAuthenticator {
         return ofNullable(resp.getBody()).map(b-> b.get("id_token")).orElseThrow();
     }
 	
-	@Override
-	public String getType() {
-		return BEARER.name();
-	}
 }

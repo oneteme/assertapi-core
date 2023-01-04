@@ -1,10 +1,20 @@
 package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNull;
+import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
+import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
 
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -39,4 +49,15 @@ public final class Utils {
 		}
 	}
 	
+	public static ObjectMapper defaultMapper() {
+		var mapper = json().build().registerModule(new ParameterNamesModule());
+		//register TypeComparatorConfig implementations
+		mapper.registerSubtypes(new NamedType(JsonContentComparator.class, JSON.name()));
+		mapper.registerSubtypes(new NamedType(CsvContentComparator.class, CSV.name()));
+		//register ResponseTransformer implementations
+		mapper.registerSubtypes(new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name()));
+		mapper.registerSubtypes(new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name()));
+		mapper.registerSubtypes(new NamedType(JsonValueMapper.class, JSON_VALUE_MAPPER.name()));
+		return mapper;
+	}
 }

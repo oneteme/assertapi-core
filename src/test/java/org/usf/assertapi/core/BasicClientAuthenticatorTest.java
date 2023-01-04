@@ -45,9 +45,4 @@ class BasicClientAuthenticatorTest {
 		assertEquals(asList(expected), headers.get("Authorization"));
 	}
 
-	@Test
-	void testGetType() {
-		assertEquals("BASIC", new BasicClientAuthenticator().getType());
-	}
-
 }

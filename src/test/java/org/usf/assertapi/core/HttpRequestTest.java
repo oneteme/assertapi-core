@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.usf.assertapi.core.Module.defaultMapper;
+import static org.usf.assertapi.core.Utils.defaultMapper;
 
 import java.io.IOException;
 import java.util.Map;

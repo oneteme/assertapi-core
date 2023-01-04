@@ -4,7 +4,7 @@ import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.usf.assertapi.core.Module.defaultJsonParser;
+import static org.usf.assertapi.core.JsonContentComparator.jsonParser;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
@@ -50,7 +50,7 @@ class JsonKeyMapperTest {
 	@ParameterizedTest
 	@FolderSource(path="json/key-mapper")
 	void testTransform(@ConvertWith(JsonObjectMapper.class) JsonKeyMapper transformer, String origin, String expected) throws JSONException {
-		var json = defaultJsonParser().parse(origin);
+		var json = jsonParser.parse(origin);
 		transformer.transform(json);
 		JSONAssert.assertEquals(expected, json.jsonString(), true);
 	}

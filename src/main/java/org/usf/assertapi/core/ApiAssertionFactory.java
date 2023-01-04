@@ -1,7 +1,11 @@
 package org.usf.assertapi.core;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.usf.assertapi.core.RestTemplateBuilder.defaultAuthenticators;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import lombok.NonNull;
@@ -13,11 +17,17 @@ import lombok.NonNull;
  *
  */
 public final class ApiAssertionFactory {
-
+	
+	//init with default authenticators
+	private final Map<String, Class<? extends ClientAuthenticator>> clientAuthenticators = new HashMap<>(defaultAuthenticators);
 	private ResponseComparator comparator;
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
 	private BiConsumer<ComparableApi, ComparisonResult> tracer;
+	
+	public void register(@NonNull String name, @NonNull Class<? extends ClientAuthenticator> c) {
+		clientAuthenticators.put(name, c);
+	}
 	
 	public ApiAssertionFactory comparing(@NonNull ServerConfig stableRelease, @NonNull ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
@@ -41,7 +51,7 @@ public final class ApiAssertionFactory {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}
 		return new ApiDefaultAssertion(cmp,
-				RestTemplateBuilder.build(stableRelease),
-				RestTemplateBuilder.build(latestRelease));
+				RestTemplateBuilder.build(stableRelease, unmodifiableMap(clientAuthenticators)),
+				RestTemplateBuilder.build(latestRelease, unmodifiableMap(clientAuthenticators)));
 	}
 }

@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public final class ServerAuth extends HashMap<String, String> {
 
 	/**
-	 * Get the auth method type (<b>basic</b> | <b>token</b> | <b>nova_basic</b> | <b>nova_token</b>)
-	 * @return auth method type
+	 * 
+	 * @see org.usf.assertapi.core.ClientAuthenticator.ServerAuthMethod
 	 */
 	public String getAuthMethod() {
-		return get("type"); //basic|token|novabasic|nova_token
+		return get("type");
 	}
 
 	public String getToken() {

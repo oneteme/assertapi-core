@@ -34,7 +34,11 @@ public final class FolderArgumentsProvider implements ArgumentsProvider, Annotat
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		var method = context.getTestMethod().orElseThrow();
 		var clazz = context.getTestClass().orElseThrow();
-		var folders = new File(clazz.getResource(fs.path()).toURI()).listFiles(filter());
+		var root = clazz.getResource(fs.path());
+		if(root == null) {
+			return Stream.empty();
+		}
+		var folders = new File(root.toURI()).listFiles(filter());
 		if(method.getParameterCount() == 0) {
 			return Stream.of(folders).map(f-> arguments()); //no args
 		}

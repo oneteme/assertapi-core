@@ -12,16 +12,16 @@ import java.util.stream.Stream;
  */
 public interface ApiAssertion {
 
-	void assertApi(ComparableApi queries);
+	void assertApi(ComparableApi api);
 
-	void assertAllAsync(Supplier<Stream<? extends ComparableApi>> queries);
+	void assertAllAsync(Supplier<Stream<? extends ComparableApi>> stream);
 	
-	default void assertAll(List<? extends ComparableApi> queries) {
-		assertAll(queries.stream());
+	default void assertAll(List<? extends ComparableApi> list) {
+		assertAll(list.stream());
 	}
 
-	default void assertAll(Stream<? extends ComparableApi> queries) {
-		queries.forEach(q->{
+	default void assertAll(Stream<? extends ComparableApi> stream) {
+		stream.forEach(q->{
 			try {
 				assertApi(q);
 			}

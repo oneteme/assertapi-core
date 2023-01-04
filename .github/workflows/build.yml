@@ -9,7 +9,7 @@
 name: Java CI with Maven
 on:
   push:
-    branches: [ "develop", "main" ]
+    branches: [ "develop" ]
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [ "main" ]
@@ -25,8 +25,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Build and analyze
+      - name: Build & Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-core -Dgpg.skip=true --no-transfer-progress
+        run: mvn --batch-mode --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-core -Dgpg.skip=true

@@ -43,6 +43,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+    <sonar.organization>jarvis</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencies>
@@ -159,8 +161,7 @@
         </executions>
       </plugin>
 		</plugins>
-	</build>
-	
+	</build>	
 	  
   <distributionManagement>
     <snapshotRepository>

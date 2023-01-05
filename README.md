@@ -23,9 +23,32 @@
 ## Usage
 
 ```java
-assertion = new ApiAssertionsFactory()
+var assertion = new ApiAssertionFactory()
+        .comparing(stableRelease, latestRelease) 
+        .using(responseComparator) // ResponseComparator by default
+        .build()
+        .assertApi(api);
+```
+
+### Handle assertion result
+
+```java
+var assertion = new ApiAssertionFactory()
         .comparing(stableRelease, latestRelease)
         .using(responseComparator)
-        .build();
-assertion.assertApi(api);
+        .trace((api, res)-> log.debug("testing : {} => {}", api, res)) //log api compare result
+        .build()
+        .assertApi(api);
 ```
+
+### Register custom Client Authenticator
+
+```java
+var assertion = new ApiAssertionFactory()
+        .regiter("BASIC_TOKEN", customTokenAuthenticator) // customTokenAuthenticator must extends ClientAuthenticator
+        .comparing(stableRelease, latestRelease)
+        .using(responseComparator)
+        .build()
+        .assertApi(api);
+```
+

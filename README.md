@@ -24,10 +24,10 @@
 
 ```java
 var assertion = new ApiAssertionFactory()
-        .comparing(stableRelease, latestRelease) 
+        .comparing(stableRelease, latestRelease) //run api on stable and latest server
         .using(responseComparator) // ResponseComparator by default
-        .build()
-        .assertApi(api);
+        .build() 
+        .assertApi(api); // compare results each other
 ```
 
 ### Handle assertion result
@@ -45,10 +45,35 @@ var assertion = new ApiAssertionFactory()
 
 ```java
 var assertion = new ApiAssertionFactory()
-        .regiter("BASIC_TOKEN", customTokenAuthenticator) // customTokenAuthenticator must extends ClientAuthenticator
+        .regiter("BASIC_TOKEN", customTokenAuthenticator) // customTokenAuthenticator must implements ClientAuthenticator
         .comparing(stableRelease, latestRelease)
         .using(responseComparator)
         .build()
         .assertApi(api);
 ```
 
+### ApiRequest
+| Field             | Description             | default |
+| ----------------  | ----------------------- | ------- |
+| uri               | HTTP uri                |         |
+| method            | HTTP method             | GET     |
+| headers           | HTTP headers            | N/A     |
+| body              | HTTP body               | N/A     |
+| acceptableStatus  | HTTP expected status    | [200]   |
+| name              | API name                | N/A     |
+| version           | API version             | N/A     |
+| description       | API description         | N/A     |
+| contentComparator | Content comparator      | N/A     |
+| executionConfig   | Execution configuration | N/A     |
+
+### ContentComparator
+| Field             | Description             | default |
+| ----------------  | ----------------------- | ------- |
+| type              | Content comparator type | N/A     |
+| transformers      | Content transformers    | N/A     |
+
+### ExecutionConfig
+| Field             | Description             | default |
+| ----------------  | ----------------------- | ------- |
+| parallel          | API Parallel execution  | true    |
+| enabled           | API Assertion enabled   | true    |

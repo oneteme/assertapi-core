@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RestTemplateBuilder {
 	
-	static final Map<String, Class<? extends ClientAuthenticator>> defaultAuthenticators = Map.of(
+	static final Map<String, Class<? extends ClientAuthenticator>> defaultAuthenticators = Map.of(//unmodifiable
 			BASIC.name(), BasicClientAuthenticator.class,
 			BEARER.name(), BearerClientAuthenticator.class);
 	

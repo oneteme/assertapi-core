@@ -1,7 +1,9 @@
 package org.usf.assertapi.core.junit;
 
 import static java.nio.file.Files.readString;
+import static java.util.regex.Pattern.compile;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.File;
@@ -12,6 +14,7 @@ import java.lang.reflect.Parameter;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -24,10 +27,14 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 public final class FolderArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<FolderSource> {
 	
 	private FolderSource fs; //relative | absolute
+	private Predicate<String> filter;
 
 	@Override
 	public void accept(FolderSource ds) {
 		this.fs = ds;
+		this.filter = isEmpty(fs.pattern()) 
+				? s-> true
+				: compile(ds.pattern()).asMatchPredicate(); //validate regex parameter
 	}
 
 	@Override
@@ -58,7 +65,7 @@ public final class FolderArgumentsProvider implements ArgumentsProvider, Annotat
 			return null; //TODO primitive types ? 
 		}
 		if(res.length == 1) {
-			var type = arg.getAnnotation(ConvertWith.class) == null ? arg.getType() : fs.defaultType();
+			var type = findAnnotation(arg, ConvertWith.class) == null  ? arg.getType() : fs.defaultType();
 			return typeResolver(type).apply(res[0]);
 		}
 		throw new IllegalArgumentException(arg.getName() + " : to many resources found");
@@ -96,8 +103,6 @@ public final class FolderArgumentsProvider implements ArgumentsProvider, Annotat
 	}
 	
 	private FileFilter filter(){
-    	return isEmpty(fs.pattern()) ?
-    		f-> f.isDirectory() : 
-    		f-> f.isDirectory() && f.getName().matches(fs.pattern());
+    	return f-> f.isDirectory() && filter.test(f.getName());
 	}
 }

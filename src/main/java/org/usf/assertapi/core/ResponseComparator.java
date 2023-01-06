@@ -93,7 +93,7 @@ public class ResponseComparator {
 	
 	public void assertHeaders(Map<String, List<String>> expected, Map<String, List<String>> actual) {
     	this.currentStage = HEADER_CONTENT;
-		//do nothing
+    	logApiComparaison("headers", expected, actual, true);
 	}
 
 	public void assertByteContent(byte[] expected, byte[] actual) {
@@ -112,7 +112,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) throws Exception {
+	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("jsonContent", expected, actual, true);
 		var cr = castConfig(config, JsonContentComparator.class, ()-> new JsonContentComparator(null, null)).compare(expected, actual);
@@ -161,12 +161,13 @@ public class ResponseComparator {
 	}
 	
 	private static void logApiComparaison(String stage, Object expected, Object actual, boolean multiLine) {
+		String format = format("%-15s", "("+stage+")");
 		if(multiLine) {
-			log.info("Comparing API {} : stable={}", format("%-15s", "("+stage+")"), expected);
-			log.info("Comparing API {} : latest={}", format("%-15s", "("+stage+")"), actual);
+			log.info("Comparing API {} : stable={}", format, expected);
+			log.info("Comparing API {} : latest={}", format, actual);
 		}
 		else {
-			log.info("Comparing API {} : stable={} ~ latest={}", format("%-15s", "("+stage+")"), expected, actual);
+			log.info("Comparing API {} : stable={} ~ latest={}", format, expected, actual);
 		}
 	}
 }

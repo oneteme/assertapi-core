@@ -100,10 +100,10 @@ interface ClientResponseWrapper {
 	@Getter
 	@RequiredArgsConstructor
 	@SuppressWarnings("serial")
-	public final class RestClientResponseExceptionWrapper extends RuntimeException implements ClientResponseWrapper {
+	public final class RestClientResponseExceptionWrapper extends Exception implements ClientResponseWrapper {
 		
-		private final RestClientResponseException exception;
-		private final ExecutionInfo requestExecution;
+		private final transient RestClientResponseException exception;
+		private final transient ExecutionInfo requestExecution;
 		
 		@Override
 		public int getStatusCodeValue() {

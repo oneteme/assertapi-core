@@ -12,7 +12,7 @@ import lombok.Getter;
 @SuppressWarnings("serial")
 public final class ApiAssertionError extends AssertionError {
 
-	private final boolean skipped;
+	private final transient boolean skipped;
 	private final transient Object expected;
 	private final transient Object actual;
 

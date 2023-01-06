@@ -39,7 +39,7 @@ public final class JsonContentComparator implements ContentComparator<String> {
 	}
 	
 	@Override
-	public CompareResult compare(String expected, String actual) throws JSONException {
+	public CompareResult compare(String expected, String actual) {
 		try {
 			if(transformers != null) {
 				expected = transform(expected, STABLE);
@@ -49,6 +49,8 @@ public final class JsonContentComparator implements ContentComparator<String> {
 			return new CompareResult(expected, actual, true);
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
+		} catch (JSONException e) {
+			throw new ApiAssertionRuntimeException("error while parsing JSON content", e);
 		}
 	}
 	

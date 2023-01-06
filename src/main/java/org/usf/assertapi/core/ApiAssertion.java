@@ -25,7 +25,7 @@ public interface ApiAssertion {
 			try {
 				assertApi(q);
 			}
-	    	catch(Throwable e) {/* do nothing */} //Exception + Error
+	    	catch(Exception | AssertionError e) {/* do nothing */}
 		});
 	}
 }

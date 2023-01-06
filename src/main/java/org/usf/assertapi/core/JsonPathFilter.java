@@ -15,13 +15,11 @@ import com.jayway.jsonpath.DocumentContext;
  */
 public final class JsonPathFilter extends ResponseTransformer<DocumentContext> {
 
-	private final String[] xpaths;
-	private final boolean exclude;
+	private final String[] xpaths; //exclude | include ?
 	
 	public JsonPathFilter(ReleaseTarget[] targets, String[] xpaths) {
 		super(targets);
 		this.xpaths = requireNonEmpty(xpaths, ()-> getType() + " : require xpath");
-		this.exclude = true; //always true, TODO false not working
 	}
 	
 	@Override

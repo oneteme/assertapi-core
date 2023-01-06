@@ -49,7 +49,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		try {
 			assertOne(api);
 		}
-		catch (Throwable e) {//Exception | AssertionError
+		catch (Exception | AssertionError e) {
 			comparator.assertionFail(e);
 		}
 	}
@@ -86,7 +86,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		comparator.assertResponse(expected, actual, api.getContentComparator());
 	}
     
-    ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) {
+    ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) throws RestClientResponseExceptionWrapper {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
@@ -108,7 +108,7 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
     }
 	
-    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws Exception {
+    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseExceptionWrapper, ExecutionException, InterruptedException {
 		try {
 			return cf.get();
 		} catch (ExecutionException e) {

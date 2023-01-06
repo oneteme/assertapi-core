@@ -48,7 +48,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ContentComparator<?> config) throws Exception {
+	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ContentComparator<?> config) {
 		assertElapsedTime(expect.getRequestExecution(), actual.getRequestExecution());
     	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
     	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());

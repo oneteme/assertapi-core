@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.usf.assertapi.core.JsonContentComparator.jsonParser;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
@@ -10,13 +11,10 @@ import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PA
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.usf.assertapi.core.Utils.EmptyObjectException;
-import org.usf.assertapi.core.junit.FolderSource;
-import org.usf.assertapi.core.junit.JsonObjectMapper;
-
-import com.jayway.jsonpath.JsonPath;
+import org.usf.junit.addons.ConvertWithJsonParser;
+import org.usf.junit.addons.FolderSource;
 
 class JsonPathFilterTest {
 	
@@ -43,8 +41,9 @@ class JsonPathFilterTest {
 
 	@ParameterizedTest
 	@FolderSource(path="json/path-filter")
-	void testTransform(@ConvertWith(JsonObjectMapper.class) JsonPathFilter transformer, String origin, String expected) throws JSONException {
-		var json = JsonPath.parse(origin);
+	void testTransform(String origin, String expected,
+			@ConvertWithJsonParser(clazz=Utils.class, method="defaultMapper") JsonPathFilter transformer) throws JSONException {
+		var json = jsonParser.parse(origin);
 		transformer.transform(json);
 		JSONAssert.assertEquals(expected, json.jsonString(), true);
 	}

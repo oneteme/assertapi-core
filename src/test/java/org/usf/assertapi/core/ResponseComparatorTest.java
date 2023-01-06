@@ -101,7 +101,7 @@ class ResponseComparatorTest {
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //mismatch
 		expectCurrentStage(RESPONSE_CONTENT);
-		assertThrows(JSONException.class, ()-> comparator.assertJsonContent(
+		assertThrows(ApiAssertionRuntimeException.class, ()-> comparator.assertJsonContent(
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //bad json
 		expectCurrentStage(RESPONSE_CONTENT);

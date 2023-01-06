@@ -14,11 +14,10 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.usf.assertapi.core.Utils.EmptyObjectException;
-import org.usf.assertapi.core.junit.FolderSource;
-import org.usf.assertapi.core.junit.JsonObjectMapper;
+import org.usf.junit.addons.ConvertWithJsonParser;
+import org.usf.junit.addons.FolderSource;
 
 class JsonValueMapperTest {
 	
@@ -49,9 +48,12 @@ class JsonValueMapperTest {
 
 	@ParameterizedTest
 	@FolderSource(path="json/value-mapper")
-	void testTransform(@ConvertWith(JsonObjectMapper.class) JsonValueMapper transformer, String origin, String expected) throws JSONException {
+	void testTransform(String origin, String expected,
+			@ConvertWithJsonParser(clazz=Utils.class, method="defaultMapper") JsonValueMapper transformer) throws JSONException {
+		
 		var json = jsonParser.parse(origin);
 		transformer.transform(json);
 		JSONAssert.assertEquals(expected, json.jsonString(), true);
 	}
+	
 }

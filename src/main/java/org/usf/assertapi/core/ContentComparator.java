@@ -13,7 +13,7 @@ public interface ContentComparator<T> extends PolymorphicType {
 	
 	CompareResult compare(T expected, T actual) throws Exception;
 	
-	ResponseTransformer<?>[] getTransformers();
+	ResponseTransformer[] getTransformers();
 	
 	enum ResponseType {
 		TXT, CSV, JSON, XML, ZIP;

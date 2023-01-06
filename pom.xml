@@ -97,6 +97,11 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>      
+      <groupId>io.github.oneteme</groupId>
+      <artifactId>junit-addons</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
 	</dependencies>
 
 	<build>

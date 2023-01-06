@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.usf.assertapi.core.Utils.EmptyObjectException;
-import org.usf.assertapi.core.junit.ConvertWithJsonParser;
-import org.usf.assertapi.core.junit.FolderSource;
+import org.usf.junit.addons.ConvertWithJsonParser;
+import org.usf.junit.addons.FolderSource;
 
 class JsonValueMapperTest {
 	

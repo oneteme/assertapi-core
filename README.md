@@ -52,6 +52,16 @@ var assertion = new ApiAssertionFactory()
         .assertApi(api);
 ```
 
+### Comparison Stages
+
+  
+  1. ELAPSED_TIME
+  2. HTTP_CODE
+  3. CONTENT_TYPE
+  4. HEADER_CONTENT
+  5. RESPONSE_CONTENT
+
+
 ### ApiRequest
 | Field             | Description             | default |
 | ----------------  | ----------------------- | ------- |

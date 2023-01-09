@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.usf.assertapi.core.ClientResponseWrapper.ResponseEntityWrapper;
@@ -31,7 +32,7 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RequiredArgsConstructor
-public class ApiDefaultAssertion implements ApiAssertion {
+public class ApiDefaultAssertion implements ApiAssertion {//TD rename to AssertionExecutor
 	
 	private final ResponseComparator comparator;
 	private final RestTemplate stableReleaseTemp;
@@ -54,39 +55,36 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
 	}
 	
-	private void assertOne(ComparableApi api) throws Exception {
+	private void assertOne(ComparableApi api) {
 		comparator.prepare(api);
 		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
 
 		ClientResponseWrapper expected = null;
-		ClientResponseWrapper actual = null;
-		
-		var af = submit(api.getExecutionConfig().isParallel(), 
-				()-> exchange(latestReleaseTemp, api.latestApi()));
+		var af = submit(api.getExecutionConfig().isParallel(), ()-> exchange(latestReleaseTemp, api.latestApi()));
     	try {
         	expected = exchange(stableReleaseTemp, api.stableApi());
-    	}
-    	catch(RestClientResponseExceptionWrapper e) {
-    		expected = e;
+        	if(!api.stableApi().acceptStatus(expected.getStatusCodeValue())) {
+        		af.cancel(true); //may throw exception ?
+        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
+        	}
     	}
     	catch(Exception e) {
     		af.cancel(true); //may throw exception ?
     		throw e;
     	}
-    	if(!api.stableApi().acceptStatus(expected.getStatusCodeValue())) {
-    		af.cancel(true); //may throw exception ?
-    		throw new ApiAssertionRuntimeException("unexpected stable release response code");
-    	}
+		ClientResponseWrapper actual;
 		try {
-			actual = execute(af);
-		}
-		catch(RestClientResponseExceptionWrapper e) {
-			actual = e;
+			actual = af.get();
+		} catch (InterruptedException e) {
+			currentThread().interrupt();
+			throw new ApiAssertionRuntimeException("latest release execution was interrupted !", e);
+		} catch (ExecutionException e) {
+			throw new ApiAssertionRuntimeException("exception during latest release execution !", e);
 		}
 		comparator.assertResponse(expected, actual, api.getContentComparator());
 	}
     
-    ResponseEntityWrapper exchange(RestTemplate template, HttpRequest req) throws RestClientResponseExceptionWrapper {
+	ClientResponseWrapper exchange(RestTemplate template, HttpRequest req) {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
@@ -104,22 +102,10 @@ public class ApiDefaultAssertion implements ApiAssertion {
 		}
 		catch(RestClientResponseException e){
 			var exe = new ExecutionInfo(start, currentTimeMillis(), e.getRawStatusCode(), e.getResponseBodyAsByteArray().length);
-			throw new RestClientResponseExceptionWrapper(e, exe);
+			return new RestClientResponseExceptionWrapper(e, exe);
 		}
-    }
-	
-    private static ResponseEntityWrapper execute(Future<ResponseEntityWrapper> cf) throws RestClientResponseExceptionWrapper, ExecutionException, InterruptedException {
-		try {
-			return cf.get();
-		} catch (ExecutionException e) {
-			if(e.getCause() instanceof RestClientResponseExceptionWrapper) {
-				throw((RestClientResponseExceptionWrapper) e.getCause());
-			}
-			throw e;
-		}
-		catch (InterruptedException e) {
-			currentThread().interrupt();
-			throw e;
+		catch(RestClientException e) {
+			throw new ApiAssertionRuntimeException("Unreachable API", e);
 		}
     }
 	

@@ -1,5 +1,6 @@
 package org.usf.assertapi.core;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +57,7 @@ class HttpRequestTest {
 	void testHasHeaders() {
 		assertFalse(new HttpRequest("", null, null, null).hasHeaders());
 		assertFalse(new HttpRequest("", null, emptyMap(), null).hasHeaders());
-		assertTrue(new HttpRequest("", null, Map.of("hdr1", "value1"), null).hasHeaders());
+		assertTrue(new HttpRequest("", null, Map.of("hdr1", asList("value1")), null).hasHeaders());
 	}
 	
 	@ParameterizedTest
@@ -95,7 +96,7 @@ class HttpRequestTest {
 		assertEquals(expected.getUri(), hr.getUri());
 		assertEquals(expected.getMethod(), hr.getMethod());
 		assertEquals(expected.getHeaders(), hr.getHeaders());
-		JSONAssert.assertEquals(expected.getBody(), hr.getBody(), true);
+		JSONAssert.assertEquals(expected.bodyAsString(), hr.bodyAsString(), true);
 		assertArrayEquals(expected.getAcceptableStatus(), hr.getAcceptableStatus());
 	}
 	
@@ -113,13 +114,13 @@ class HttpRequestTest {
 								"uri", "/api", 
 								"method", "GET", 
 								"acceptableStatus", new int[] {200}))),
-				Arguments.of(new HttpRequest("/api", "POST", Map.of("hdr", "value"), null, 500), 
+				Arguments.of(new HttpRequest("/api", "POST", Map.of("hdr", asList("value")), null, 500), 
 						defaultMapper().writeValueAsString(Map.of(
 								"uri", "/api", 
 								"method", "POST", 
-								"headers", Map.of("hdr", "value"), 
+								"headers", Map.of("hdr", asList("value")), 
 								"acceptableStatus", new int[] {500}))),
-				Arguments.of(new HttpRequest("/api", "PUT", null, "{\"arrFld\":[\"v1\",\"v2\",\"v3\"],\"intFld\":1234,\"boolFld\":true,\"strFld\":\"value\"}", 200, 404), 
+				Arguments.of(new HttpRequest("/api", "PUT", null, "{\"arrFld\":[\"v1\",\"v2\",\"v3\"],\"intFld\":1234,\"boolFld\":true,\"strFld\":\"value\"}".getBytes(), 200, 404), 
 						defaultMapper().writeValueAsString(Map.of(
 								"uri", "/api", 
 								"method", "PUT", 

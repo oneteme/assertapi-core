@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.Optional.ofNullable;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.TEXT_HTML;
@@ -34,6 +35,14 @@ interface ClientResponseWrapper {
 
 	MediaType getContentType();
 	
+	Map<String, List<String>> getHeaders();
+	
+	String getResponseBodyAsString();
+	
+	String getResponseBodyAsString(Charset charset);
+	
+	byte[] getResponseBodyAsByteArray();
+	
 	default String getContentTypeValue() {
 		return ofNullable(getContentType()).map(MediaType::getType).orElse(null);
 	}
@@ -48,16 +57,7 @@ interface ClientResponseWrapper {
 	default boolean isJsonCompatible(){
 		return getContentType() != null 
 				&& APPLICATION_JSON.isCompatibleWith(getContentType());
-	}
-	
-	Map<String, List<String>> getHeaders();
-	
-	String getResponseBodyAsString();
-	
-	String getResponseBodyAsString(Charset charset);
-	
-	byte[] getResponseBodyAsByteArray();
-	
+	}	
 
 	@Getter
 	@RequiredArgsConstructor
@@ -135,5 +135,49 @@ interface ClientResponseWrapper {
 			return exception.getResponseBodyAsByteArray();
 		}
 	}
-	
+
+	@Getter
+	@RequiredArgsConstructor
+	public final class HttpRequestWrapper implements ClientResponseWrapper {
+		
+		private final HttpRequest request;
+		private final ExecutionInfo requestExecution;
+
+		@Override
+		public ExecutionInfo getRequestExecution() {
+			return requestExecution;
+		}
+
+		@Override
+		public int getStatusCodeValue() {
+			return request.requireUniqueStatus();
+		}
+
+		@Override
+		public MediaType getContentType() {
+			return ofNullable(request.getHeader(CONTENT_TYPE))
+					.map(MediaType::parseMediaType)
+					.orElse(null);
+		}
+
+		@Override
+		public Map<String, List<String>> getHeaders() {
+			return request.getHeaders();
+		}
+
+		@Override
+		public String getResponseBodyAsString() {
+			return request.bodyAsString();
+		}
+
+		@Override
+		public String getResponseBodyAsString(Charset charset) {
+			return new String(request.getBody(), charset);
+		}
+
+		@Override
+		public byte[] getResponseBodyAsByteArray() {
+			return request.getBody();
+		}
+	}
 }

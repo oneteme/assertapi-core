@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNullElseGet;
+import static java.util.Optional.ofNullable;
 import static org.usf.assertapi.core.RestTemplateBuilder.defaultAuthenticators;
 
 import java.util.HashMap;
@@ -29,7 +30,11 @@ public final class ApiAssertionFactory {
 		clientAuthenticators.put(name, c);
 	}
 	
-	public ApiAssertionFactory comparing(@NonNull ServerConfig stableRelease, @NonNull ServerConfig latestRelease) {
+	public ApiAssertionFactory comparingWithStaticResponse(@NonNull ServerConfig latestRelease) {
+		return comparing(null, latestRelease);
+	}
+	
+	public ApiAssertionFactory comparing(ServerConfig stableRelease, @NonNull ServerConfig latestRelease) {
 		this.stableRelease = stableRelease;
 		this.latestRelease = latestRelease;
 		return this;
@@ -45,13 +50,14 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertion build() {
+	public ApiAssertionExecutor build() {
 		var cmp = requireNonNullElseGet(comparator, ResponseComparator::new);
 		if(tracer != null) {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}
-		return new ApiDefaultAssertion(cmp,
-				RestTemplateBuilder.build(stableRelease, unmodifiableMap(clientAuthenticators)),
-				RestTemplateBuilder.build(latestRelease, unmodifiableMap(clientAuthenticators)));
+		var map = unmodifiableMap(clientAuthenticators);
+		var stableTemp = ofNullable(stableRelease).map(c-> RestTemplateBuilder.build(c, map)).orElse(null);
+		var latestTemp = RestTemplateBuilder.build(latestRelease, map);
+		return new ApiAssertionExecutor(cmp, stableTemp, latestTemp);
 	}
 }

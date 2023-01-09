@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
 import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
@@ -8,9 +9,9 @@ import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KE
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -22,42 +23,79 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utils {
 	
-	public static String requireNonEmpty(String s, Supplier<String> msg) {
-		return requireNonEmpty(s, String::isEmpty, msg);
+	public static int sizeOf(byte[] arr) {//arr is nullable
+		return ofNullable(arr).map(a-> a.length).orElse(0);
 	}
 	
-	public static <T> T[] requireNonEmpty(T[] map, Supplier<String> msg) {
-		return requireNonEmpty(map, arr-> arr.length == 0, msg);
+	public static boolean isEmpty(String str) {
+		return isNull(str) || str.isEmpty();
+	}
+	
+	public static boolean isEmpty(int[] arr) {
+		return isNull(arr) || arr.length == 0;
+	}
+	
+	public static <T> boolean isEmpty(T[] arr) {
+		return isNull(arr) || arr.length == 0;
+	}
+	
+	public static boolean isEmpty(Collection<?> map) {
+		return isNull(map) || map.isEmpty();
+	}
+	
+	public static boolean isEmpty(Map<?, ?> map) {
+		return isNull(map) || map.isEmpty();
+	}
+	
+	public static String requireNonEmpty(String str, String parent, String fieldName) {
+		return requireNonEmpty(str, Utils::isEmpty, parent, fieldName);
+	}
+	
+	public static int[] requireNonEmpty(int[] arr, String parent, String fieldName) {
+		return requireNonEmpty(arr, Utils::isEmpty, parent, fieldName);
+	}
+	
+	public static <T> T[] requireNonEmpty(T[] arr, String parent, String fieldName) {
+		return requireNonEmpty(arr, Utils::isEmpty, parent, fieldName);
 	}
 
-	public static <K,V> Map<K, V> requireNonEmpty(Map<K, V> map, Supplier<String> msg) {
-		return requireNonEmpty(map, Map::isEmpty, msg);
+	public static <K,V> Map<K, V> requireNonEmpty(Map<K, V> map, String parent, String fieldName) {
+		return requireNonEmpty(map, Utils::isEmpty, parent, fieldName);
 	}
 
-	private static <T> T requireNonEmpty(T o, Predicate<T> fn, Supplier<String> msg) {
-		if(fn.test(requireNonNull(o, msg))) {
-			throw new EmptyObjectException(msg.get());
+	private static <T> T requireNonEmpty(T o, Predicate<T> emptyFn, String parent, String fieldName) {
+		if(emptyFn.test(o)) {
+			throw new EmptyValueException(parent, fieldName);
 		}
 		return o;
 	}
 
 	@SuppressWarnings("serial")
-	public static class EmptyObjectException extends RuntimeException {
+	public static final class EmptyValueException extends RuntimeException {
 
-		public EmptyObjectException(String message) {
-			super(message);
+		public EmptyValueException(String parent, String fieldName) {
+			super(parent + " : require [" + fieldName + "] field");
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	public static final class TooManyValueException extends RuntimeException {
+
+		public TooManyValueException(String parent, String fieldName) {
+			super(parent + " : [" + fieldName + "] should take only one value");
 		}
 	}
 	
 	public static ObjectMapper defaultMapper() {
 		var mapper = json().build().registerModule(new ParameterNamesModule());
-		//register TypeComparatorConfig implementations
-		mapper.registerSubtypes(new NamedType(JsonContentComparator.class, JSON.name()));
-		mapper.registerSubtypes(new NamedType(CsvContentComparator.class, CSV.name()));
-		//register ResponseTransformer implementations
-		mapper.registerSubtypes(new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name()));
-		mapper.registerSubtypes(new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name()));
-		mapper.registerSubtypes(new NamedType(JsonValueMapper.class, JSON_VALUE_MAPPER.name()));
+		mapper.registerSubtypes(
+				//register TypeComparatorConfig implementations
+				new NamedType(JsonContentComparator.class, JSON.name())
+				, new NamedType(CsvContentComparator.class, CSV.name())
+				//register ResponseTransformer implementations
+				, new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name())
+				, new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name())
+				, new NamedType(JsonValueMapper.class, JSON_VALUE_MAPPER.name()));
 		return mapper;
 	}
 }

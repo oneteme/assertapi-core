@@ -12,7 +12,6 @@ import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
 import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 import static org.usf.assertapi.core.ResponseComparator.castConfig;
 
-import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -28,8 +27,7 @@ class ResponseComparatorTest {
 	@Test
 	void testPrepare() {
 		var api = new ApiRequest(null, null, null, null, "api", null, null, null, null, null, null, null);
-		this.comparator.currentStage = RESPONSE_CONTENT; //simulate previous api stage
-		assertDoesNotThrow(()-> comparator.prepare(api));
+		assertDoesNotThrow(()-> comparator.before(api));
 		expectCurrentStage(null);
 	}
 

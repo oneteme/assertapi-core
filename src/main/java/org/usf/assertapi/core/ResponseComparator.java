@@ -18,7 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.usf.assertapi.core.ApiAssertionExecutor.PairResponse;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +38,37 @@ public class ResponseComparator {
 	
 	CompareStage currentStage;
 	
-	public void prepare(ComparableApi api) {
-		this.currentStage = null; //important
+	public final void assertResponse(ComparableApi api, Function<ComparableApi, PairResponse> execution) {
+		this.currentStage = null; //important : init starting stage
+		try {
+			before(api);
+			assumeEnabled(api.getExecutionConfig().isEnabled());
+			var pair = execution.apply(api); //
+			assertElapsedTime(pair.getExpected().getRequestExecution(), pair.getActual().getRequestExecution());
+	    	assertStatusCode(pair.getExpected().getStatusCodeValue(), pair.getActual().getStatusCodeValue());
+	    	assertContentType(pair.getExpected().getContentTypeValue(), pair.getActual().getContentTypeValue());
+	    	assertHeaders(pair.getExpected().getHeaders(), pair.getActual().getHeaders());
+			if(pair.getExpected().isTextCompatible()) {
+		    	var eCont = pair.getExpected().getResponseBodyAsString();
+		    	var aCont = pair.getActual().getResponseBodyAsString();
+		    	if(pair.getExpected().isJsonCompatible()) {
+		    		assertJsonContent(eCont, aCont, api.getContentComparator());
+		    	}
+		    	else {
+		    		assertTextContent(eCont, aCont);
+		    	}
+			}
+			else {
+				assertByteContent(pair.getExpected().getResponseBodyAsByteArray(), pair.getActual().getResponseBodyAsByteArray());
+			}
+			finish(OK);
+		}
+		catch (Exception | AssertionError e) {
+			assertionFail(e);
+		}
+	}
+	
+	public void before(ComparableApi api) {
 		logApiComparaison("START <" + api + ">");
 		logApiComparaison("URL ", api.stableApi().toRequestUri(), api.latestApi().toRequestUri(), false);
 	}
@@ -46,27 +78,6 @@ public class ResponseComparator {
 			logApiComparaison("TEST " + SKIP);
 			throw skippedAssertionError("api assertion skipped");
 		}
-	}
-	
-	public final void assertResponse(ClientResponseWrapper expect, ClientResponseWrapper actual, ContentComparator<?> config) {
-		assertElapsedTime(expect.getRequestExecution(), actual.getRequestExecution());
-    	assertStatusCode(expect.getStatusCodeValue(), actual.getStatusCodeValue());
-    	assertContentType(expect.getContentTypeValue(), actual.getContentTypeValue());
-    	assertHeaders(expect.getHeaders(), actual.getHeaders());
-		if(expect.isTextCompatible()) {
-	    	var eCont = expect.getResponseBodyAsString();
-	    	var aCont = actual.getResponseBodyAsString();
-	    	if(expect.isJsonCompatible()) {
-	    		assertJsonContent(eCont, aCont, config);
-	    	}
-	    	else {
-	    		assertTextContent(eCont, aCont);
-	    	}
-		}
-		else {
-			assertByteContent(expect.getResponseBodyAsByteArray(), actual.getResponseBodyAsByteArray());
-		}
-		finish(OK);
 	}
 	
 	public void assertElapsedTime(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {

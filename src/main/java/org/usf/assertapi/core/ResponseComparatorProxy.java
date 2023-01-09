@@ -24,9 +24,9 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void prepare(ComparableApi api) {
+	public void before(ComparableApi api) {
 		this.currentApi = api; //current API
-		comparator.prepare(api);
+		comparator.before(api);
 	}
 	
 	@Override

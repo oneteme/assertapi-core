@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.usf.assertapi.core.Utils.EmptyObjectException;
+import org.usf.assertapi.core.Utils.EmptyValueException;
 import org.usf.junit.addons.ConvertWithJsonParser;
 import org.usf.junit.addons.FolderSource;
 
@@ -23,14 +23,14 @@ class JsonValueMapperTest {
 	
 	@Test
 	void testJsonValueMapper_xpath() {
-		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, null, null, Map.of("key", "value"))); //xpaths null
-		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "", null, Map.of("key", "value"))); //xpaths empty
+		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, null, null, Map.of("key", "value"))); //xpaths null
+		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "", null, Map.of("key", "value"))); //xpaths empty
 	}
 
 	@Test
 	void testJsonValueMapper_map() {
-		assertThrows(NullPointerException.class, ()-> new JsonValueMapper(null, "$.path", null, null)); //map null
-		assertThrows(EmptyObjectException.class, ()-> new JsonValueMapper(null, "$.path", null, emptyMap())); //map empty
+		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, null)); //map null
+		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, emptyMap())); //map empty
 	}
 	
 	@Test

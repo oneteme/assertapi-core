@@ -12,7 +12,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.usf.assertapi.core.Utils.EmptyObjectException;
+import org.usf.assertapi.core.Utils.EmptyValueException;
 import org.usf.junit.addons.ConvertWithJsonParser;
 import org.usf.junit.addons.FolderSource;
 
@@ -20,8 +20,8 @@ class JsonPathFilterTest {
 	
 	@Test
 	void testTransformDocumentContext_xpath() {
-		assertThrows(NullPointerException.class, ()-> new JsonPathFilter(null, null)); //xpaths null
-		assertThrows(EmptyObjectException.class, ()-> new JsonPathFilter(null, new String[] {})); //xpaths empty
+		assertThrows(EmptyValueException.class, ()-> new JsonPathFilter(null, null)); //xpaths null
+		assertThrows(EmptyValueException.class, ()-> new JsonPathFilter(null, new String[] {})); //xpaths empty
 	}
 
 	@Test

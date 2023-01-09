@@ -2,9 +2,9 @@ package org.usf.assertapi.core;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
-import static java.util.Optional.ofNullable;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static org.usf.assertapi.core.Utils.sizeOf;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -19,9 +19,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import org.usf.assertapi.core.ClientResponseWrapper.HttpRequestWrapper;
 import org.usf.assertapi.core.ClientResponseWrapper.ResponseEntityWrapper;
 import org.usf.assertapi.core.ClientResponseWrapper.RestClientResponseExceptionWrapper;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -32,39 +34,40 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RequiredArgsConstructor
-public class ApiDefaultAssertion implements ApiAssertion {//TD rename to AssertionExecutor
+public final class ApiAssertionExecutor {
 	
 	private final ResponseComparator comparator;
-	private final RestTemplate stableReleaseTemp;
+	private final RestTemplate stableReleaseTemp; //nullable => static response
 	private final RestTemplate latestReleaseTemp;
 	
 	private static ExecutorService executor;
 	private Future<?> async; //cancel ??
 	
-	@Override
 	public void assertAllAsync(@NonNull Supplier<Stream<? extends ComparableApi>> queries)  {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
-	public void assertApi(ComparableApi api) {
-		try {
-			assertOne(api);
-		}
-		catch (Exception | AssertionError e) {
-			comparator.assertionFail(e);
-		}
+	public void assertAll(Stream<? extends ComparableApi> stream) {
+		stream.forEach(q->{
+			try {
+				assertApi(q);
+			}
+	    	catch(Exception | AssertionError e) {/* do nothing exception must be logged before */}
+		});
 	}
 	
-	private void assertOne(ComparableApi api) {
-		comparator.prepare(api);
-		comparator.assumeEnabled(api.getExecutionConfig().isEnabled());
+	public void assertApi(ComparableApi api) {
+		comparator.assertResponse(api, this::execBoth);
+	}
 
-		ClientResponseWrapper expected = null;
+	private PairResponse execBoth(ComparableApi api) {
 		var af = submit(api.getExecutionConfig().isParallel(), ()-> exchange(latestReleaseTemp, api.latestApi()));
+		ClientResponseWrapper expected = null;
     	try {
-        	expected = exchange(stableReleaseTemp, api.stableApi());
+        	expected = stableReleaseTemp == null 
+        			? staticResponse(api.requireStaticResponse())
+        			: exchange(stableReleaseTemp, api.stableApi());
         	if(!api.stableApi().acceptStatus(expected.getStatusCodeValue())) {
-        		af.cancel(true); //may throw exception ?
         		throw new ApiAssertionRuntimeException("unexpected stable release response code");
         	}
     	}
@@ -72,42 +75,44 @@ public class ApiDefaultAssertion implements ApiAssertion {//TD rename to Asserti
     		af.cancel(true); //may throw exception ?
     		throw e;
     	}
-		ClientResponseWrapper actual;
 		try {
-			actual = af.get();
+			return new PairResponse(expected, af.get());
 		} catch (InterruptedException e) {
 			currentThread().interrupt();
 			throw new ApiAssertionRuntimeException("latest release execution was interrupted !", e);
 		} catch (ExecutionException e) {
 			throw new ApiAssertionRuntimeException("exception during latest release execution !", e);
 		}
-		comparator.assertResponse(expected, actual, api.getContentComparator());
 	}
     
-	ClientResponseWrapper exchange(RestTemplate template, HttpRequest req) {
+	static ClientResponseWrapper exchange(RestTemplate template, HttpRequest req) {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
-			for(var e : req.getHeaders().entrySet()) {
-				headers.add(e.getKey(), e.getValue());
-			}
-//			headers.setContentType(APPLICATION_JSON); // ??
+			headers.putAll(req.getHeaders());
 		}
 		var entity = new HttpEntity<>(req.getBody(), headers);
+		var method = HttpMethod.valueOf(req.getMethod());
 		var start = currentTimeMillis();
 		try {
-			var res = template.exchange(req.getUri(), HttpMethod.valueOf(req.getMethod()), entity, byte[].class);
-			var exe = new ExecutionInfo(start, currentTimeMillis(), res.getStatusCodeValue(), ofNullable(res.getBody()).map(a-> a.length).orElse(0));
+			var res = template.exchange(req.getUri(), method, entity, byte[].class);
+			var exe = new ExecutionInfo(start, currentTimeMillis(), res.getStatusCodeValue(), sizeOf(res.getBody()));
 			return new ResponseEntityWrapper(res, exe);
 		}
 		catch(RestClientResponseException e){
-			var exe = new ExecutionInfo(start, currentTimeMillis(), e.getRawStatusCode(), e.getResponseBodyAsByteArray().length);
+			var exe = new ExecutionInfo(start, currentTimeMillis(), e.getRawStatusCode(), sizeOf(e.getResponseBodyAsByteArray()));
 			return new RestClientResponseExceptionWrapper(e, exe);
 		}
 		catch(RestClientException e) {
 			throw new ApiAssertionRuntimeException("Unreachable API", e);
 		}
     }
+	
+	static ClientResponseWrapper staticResponse(HttpRequest req) {
+		var ms = currentTimeMillis();
+		var exe = new ExecutionInfo(ms, ms, req.requireUniqueStatus(), sizeOf(req.getBody()));
+		return new HttpRequestWrapper(req, exe);
+	}
 	
 	private static ExecutorService executor() {
 		if(executor == null) {
@@ -116,9 +121,18 @@ public class ApiDefaultAssertion implements ApiAssertion {//TD rename to Asserti
 		return executor;
 	}
 	
-	private static final <T> Future<T> submit(boolean parallel, Callable<T> callable) {
+	private static <T> Future<T> submit(boolean parallel, Callable<T> callable) {
 		return parallel 
 				? commonPool().submit(callable)
 				: new SequentialFuture<>(callable);
 	}
+	
+	@Getter
+	@RequiredArgsConstructor
+	final class PairResponse {
+		
+		private final ClientResponseWrapper expected;
+		private final ClientResponseWrapper actual;
+	}
+	
 }

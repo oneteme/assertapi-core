@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpHeaders;
-import org.usf.assertapi.core.Utils.EmptyObjectException;
+import org.usf.assertapi.core.Utils.EmptyValueException;
 
 class BasicClientAuthenticatorTest {
 	
@@ -18,13 +18,13 @@ class BasicClientAuthenticatorTest {
 		var headers = new HttpHeaders();
 		var auth = new ServerAuth();
 		var authenticator = new BasicClientAuthenticator();
-		assertThrows(NullPointerException.class, ()-> authenticator.authorization(headers, auth)); //username null
+		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //username null
 		auth.put("username", "");
-		assertThrows(EmptyObjectException.class, ()-> authenticator.authorization(headers, auth)); //username empty
+		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //username empty
 		auth.put("username", "dummyUser");
-		assertThrows(NullPointerException.class, ()-> authenticator.authorization(headers, auth)); //password null
+		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //password null
 		auth.put("password", "");
-		assertThrows(EmptyObjectException.class, ()-> authenticator.authorization(headers, auth)); //password empty
+		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //password empty
 		auth.put("password", "dummyPass");
 		assertDoesNotThrow(()-> new BasicClientAuthenticator().authorization(headers, auth));
 	}

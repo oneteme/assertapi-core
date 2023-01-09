@@ -18,4 +18,5 @@ public interface ComparableApi {
 
 	ContentComparator getContentComparator();
 
+	HttpRequest requireStaticResponse();
 }

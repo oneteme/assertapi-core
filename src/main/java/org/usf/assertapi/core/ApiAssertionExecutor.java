@@ -52,11 +52,11 @@ public final class ApiAssertionExecutor {
 			try {
 				assertApi(q);
 			}
-	    	catch(Exception | AssertionError e) {/* do nothing exception must be logged before */}
+	    	catch(Exception | AssertionError e) {/* do nothing exception already logged */}
 		});
 	}
 	
-	public void assertApi(ComparableApi api) {
+	public void assertApi(@NonNull ComparableApi api) {
 		comparator.assertResponse(api, this::execBoth);
 	}
 
@@ -67,7 +67,7 @@ public final class ApiAssertionExecutor {
         	expected = stableReleaseTemp == null 
         			? staticResponse(api.requireStaticResponse())
         			: exchange(stableReleaseTemp, api.stableApi());
-        	if(!api.stableApi().acceptStatus(expected.getStatusCodeValue())) {
+        	if(!api.latestApi().acceptStatus(expected.getStatusCodeValue())) {
         		throw new ApiAssertionRuntimeException("unexpected stable release response code");
         	}
     	}
@@ -129,7 +129,7 @@ public final class ApiAssertionExecutor {
 	
 	@Getter
 	@RequiredArgsConstructor
-	final class PairResponse {
+	static class PairResponse {
 		
 		private final ClientResponseWrapper expected;
 		private final ClientResponseWrapper actual;

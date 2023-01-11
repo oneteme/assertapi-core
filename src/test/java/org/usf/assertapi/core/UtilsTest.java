@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.usf.assertapi.core.Utils.defaultMapper;
+import static org.usf.assertapi.core.Utils.requireNonEmpty;
 import static org.usf.junit.addons.AssertExt.assertThrowsMessage;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import org.usf.assertapi.core.Utils.EmptyValueException;
 
 class UtilsTest {
 	
-	private String msg = "object : require [field] field";
+	private String msg = "object : require [name] field";
 
 	@Test
 	void testSizeOf() {
@@ -63,29 +65,37 @@ class UtilsTest {
 	
 	@Test
 	void testRequireNonEmpty_string_map() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty((String)null, "object", "field"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty("", "object", "field"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String)null, "object", "name"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty("", "object", "name"));
 		assertDoesNotThrow(()-> Utils.requireNonEmpty("1", null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_int_array() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty((int[])null, "object", "field"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty(new int[] {}, "object", "field"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((int[])null, "object", "name"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new int[] {}, "object", "name"));
 		assertDoesNotThrow(()-> Utils.requireNonEmpty(new int[] {1}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_string_array() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty((String[])null, "object", "field"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty(new String[]{}, "object", "field"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String[])null, "object", "name"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new String[]{}, "object", "name"));
 		assertDoesNotThrow(()-> Utils.requireNonEmpty(new String[] {"1"}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_map() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty((Map<?,?>)null, "object", "field"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> Utils.requireNonEmpty(new HashMap<>(), "object", "field"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((Map<?,?>)null, "object", "name"));
+		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new HashMap<>(), "object", "name"));
 		assertDoesNotThrow(()-> Utils.requireNonEmpty(Map.of(1, "1"), null, null));
 	}
+
+	@Test
+	void testDefaultMapper() {
+		var mapper = defaultMapper();
+		assertTrue(mapper.getRegisteredModuleIds().stream().anyMatch("AssertapiModule"::equals)); //AssertapiModule module loaded
+		assertTrue(mapper.getRegisteredModuleIds().stream().anyMatch("jackson-module-parameter-names"::equals)); //ParameterNamesModule module loaded
+	}
+	
 }

@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import lombok.AccessLevel;
@@ -86,9 +87,8 @@ public final class Utils {
 		}
 	}
 	
-	public static ObjectMapper defaultMapper() {
-		var mapper = json().build().registerModule(new ParameterNamesModule());
-		mapper.registerSubtypes(
+	public static SimpleModule defaultModule() {
+		return new SimpleModule("AssertapiModule").registerSubtypes(
 				//register TypeComparatorConfig implementations
 				new NamedType(JsonContentComparator.class, JSON.name())
 				, new NamedType(CsvContentComparator.class, CSV.name())
@@ -96,6 +96,10 @@ public final class Utils {
 				, new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name())
 				, new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name())
 				, new NamedType(JsonValueMapper.class, JSON_VALUE_MAPPER.name()));
-		return mapper;
+		
+	}
+	
+	public static ObjectMapper defaultMapper() {
+		return json().build().registerModules(new ParameterNamesModule(), defaultModule());
 	}
 }

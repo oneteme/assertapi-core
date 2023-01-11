@@ -88,7 +88,7 @@ public final class Utils {
 	}
 	
 	public static SimpleModule defaultModule() {
-		return new SimpleModule("AssertapiModule").registerSubtypes(
+		return new SimpleModule("assertapi").registerSubtypes(
 				//register TypeComparatorConfig implementations
 				new NamedType(JsonContentComparator.class, JSON.name())
 				, new NamedType(CsvContentComparator.class, CSV.name())

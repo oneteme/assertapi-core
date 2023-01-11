@@ -94,7 +94,7 @@ class UtilsTest {
 	@Test
 	void testDefaultMapper() {
 		var mapper = defaultMapper();
-		assertTrue(mapper.getRegisteredModuleIds().stream().anyMatch("AssertapiModule"::equals)); //AssertapiModule module loaded
+		assertTrue(mapper.getRegisteredModuleIds().stream().anyMatch("assertapi"::equals)); //AssertapiModule module loaded
 		assertTrue(mapper.getRegisteredModuleIds().stream().anyMatch("jackson-module-parameter-names"::equals)); //ParameterNamesModule module loaded
 	}
 	

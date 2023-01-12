@@ -3,11 +3,11 @@ package org.usf.assertapi.core;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.usf.assertapi.core.JsonContentComparator.jsonParser;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
 import java.util.Map;
 
@@ -23,14 +23,16 @@ class JsonValueMapperTest {
 	
 	@Test
 	void testJsonValueMapper_xpath() {
-		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, null, null, Map.of("key", "value"))); //xpaths null
-		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "", null, Map.of("key", "value"))); //xpaths empty
+		var msg = "JSON_VALUE_MAPPER : require [xpath] field";
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonValueMapper(null, null, null, Map.of("key", "value"))); //xpaths null
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonValueMapper(null, "", null, Map.of("key", "value"))); //xpaths empty
 	}
 
 	@Test
 	void testJsonValueMapper_map() {
-		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, null)); //map null
-		assertThrows(EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, emptyMap())); //map empty
+		var msg = "JSON_VALUE_MAPPER : require [Map<oldValue,newValue>] field";
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, null)); //map null
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonValueMapper(null, "$.path", null, emptyMap())); //map empty
 	}
 	
 	@Test

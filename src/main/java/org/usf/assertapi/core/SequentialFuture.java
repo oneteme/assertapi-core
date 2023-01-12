@@ -29,16 +29,16 @@ final class SequentialFuture<T> implements Future<T> {
 
 	@Override
 	public boolean isCancelled() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("unsupported");
 	}
 
 	@Override
 	public boolean isDone() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("unsupported");
 	}
 
 	@Override
 	public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("unsupported");
 	}
 }

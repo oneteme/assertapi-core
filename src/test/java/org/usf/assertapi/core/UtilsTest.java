@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.usf.assertapi.core.Utils.defaultMapper;
+import static org.usf.assertapi.core.Utils.isEmpty;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
-import static org.usf.junit.addons.AssertExt.assertThrowsMessage;
+import static org.usf.assertapi.core.Utils.sizeOf;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,72 +25,72 @@ class UtilsTest {
 
 	@Test
 	void testSizeOf() {
-		assertEquals(0, Utils.sizeOf(null));
-		assertEquals(0, Utils.sizeOf(new byte[] {}));
-		assertEquals(1, Utils.sizeOf(new byte[] {1}));
+		assertEquals(0, sizeOf(null));
+		assertEquals(0, sizeOf(new byte[] {}));
+		assertEquals(1, sizeOf(new byte[] {1}));
 	}
 	
 	@Test
 	void testIsEmpty_string() {
-		assertTrue(Utils.isEmpty((String)null));
-		assertTrue(Utils.isEmpty(""));
-		assertFalse(Utils.isEmpty("1"));
+		assertTrue(isEmpty((String)null));
+		assertTrue(isEmpty(""));
+		assertFalse(isEmpty("1"));
 	}
 	
 	@Test
 	void testIsEmpty_int_array() {
-		assertTrue(Utils.isEmpty((int[])null));
-		assertTrue(Utils.isEmpty(new int[] {}));
-		assertFalse(Utils.isEmpty(new int[] {1}));
+		assertTrue(isEmpty((int[])null));
+		assertTrue(isEmpty(new int[] {}));
+		assertFalse(isEmpty(new int[] {1}));
 	}
 
 	@Test
 	void testIsEmpty_string_array() {
-		assertTrue(Utils.isEmpty((String[])null));
-		assertTrue(Utils.isEmpty(new String[] {}));
-		assertFalse(Utils.isEmpty(new String[] {"1"}));
+		assertTrue(isEmpty((String[])null));
+		assertTrue(isEmpty(new String[] {}));
+		assertFalse(isEmpty(new String[] {"1"}));
 	}
 	
 	@Test
 	void testIsEmpty_string_list() {
-		assertTrue(Utils.isEmpty((List<?>)null));
-		assertTrue(Utils.isEmpty(new ArrayList<>()));
-		assertFalse(Utils.isEmpty(Arrays.asList(1)));
+		assertTrue(isEmpty((List<?>)null));
+		assertTrue(isEmpty(new ArrayList<>()));
+		assertFalse(isEmpty(Arrays.asList(1)));
 	}
 	
 	@Test
 	void testIsEmpty_map() {
-		assertTrue(Utils.isEmpty((Map<?,?>)null));
-		assertTrue(Utils.isEmpty(new HashMap<>()));
-		assertFalse(Utils.isEmpty(Map.of(1, "1")));
+		assertTrue(isEmpty((Map<?,?>)null));
+		assertTrue(isEmpty(new HashMap<>()));
+		assertFalse(isEmpty(Map.of(1, "1")));
 	}
 	
 	@Test
 	void testRequireNonEmpty_string_map() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String)null, "object", "name"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty("", "object", "name"));
-		assertDoesNotThrow(()-> Utils.requireNonEmpty("1", null, null));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String)null, "object", "name"));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty("", "object", "name"));
+		assertDoesNotThrow(()-> requireNonEmpty("1", null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_int_array() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((int[])null, "object", "name"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new int[] {}, "object", "name"));
-		assertDoesNotThrow(()-> Utils.requireNonEmpty(new int[] {1}, null, null));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((int[])null, "object", "name"));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new int[] {}, "object", "name"));
+		assertDoesNotThrow(()-> requireNonEmpty(new int[] {1}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_string_array() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String[])null, "object", "name"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new String[]{}, "object", "name"));
-		assertDoesNotThrow(()-> Utils.requireNonEmpty(new String[] {"1"}, null, null));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String[])null, "object", "name"));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new String[]{}, "object", "name"));
+		assertDoesNotThrow(()-> requireNonEmpty(new String[] {"1"}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_map() {
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((Map<?,?>)null, "object", "name"));
-		assertThrowsMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new HashMap<>(), "object", "name"));
-		assertDoesNotThrow(()-> Utils.requireNonEmpty(Map.of(1, "1"), null, null));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((Map<?,?>)null, "object", "name"));
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new HashMap<>(), "object", "name"));
+		assertDoesNotThrow(()-> requireNonEmpty(Map.of(1, "1"), null, null));
 	}
 
 	@Test

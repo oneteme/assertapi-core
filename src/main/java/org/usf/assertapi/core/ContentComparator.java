@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 public interface ContentComparator<T> extends PolymorphicType {
 	
-	CompareResult compare(T expected, T actual) throws Exception;
+	CompareResult compare(T expected, T actual);
 	
 	ResponseTransformer[] getTransformers();
 	

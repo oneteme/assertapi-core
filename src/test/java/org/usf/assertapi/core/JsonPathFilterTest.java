@@ -2,11 +2,11 @@ package org.usf.assertapi.core;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.usf.assertapi.core.JsonContentComparator.jsonParser;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,9 @@ class JsonPathFilterTest {
 	
 	@Test
 	void testTransformDocumentContext_xpath() {
-		assertThrows(EmptyValueException.class, ()-> new JsonPathFilter(null, null)); //xpaths null
-		assertThrows(EmptyValueException.class, ()-> new JsonPathFilter(null, new String[] {})); //xpaths empty
+		var msg = "JSON_PATH_FILTER : require [xpath] field";
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonPathFilter(null, null)); //xpaths null
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonPathFilter(null, new String[] {})); //xpaths empty
 	}
 
 	@Test

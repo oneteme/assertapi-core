@@ -40,8 +40,8 @@ public final class Utils {
 		return isNull(arr) || arr.length == 0;
 	}
 	
-	public static boolean isEmpty(Collection<?> map) {
-		return isNull(map) || map.isEmpty();
+	public static boolean isEmpty(Collection<?> c) {
+		return isNull(c) || c.isEmpty();
 	}
 	
 	public static boolean isEmpty(Map<?, ?> map) {

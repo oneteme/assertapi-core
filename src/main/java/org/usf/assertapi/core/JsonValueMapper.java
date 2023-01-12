@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.DocumentContext;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 /**

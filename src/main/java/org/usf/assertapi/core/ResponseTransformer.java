@@ -23,7 +23,7 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 	}
 	
 	public boolean matchTarget(ReleaseTarget target) {
-		return Stream.of(target).anyMatch(target::equals);
+		return Stream.of(targets).anyMatch(target::equals);
 	}
 
 	abstract void transform(T resp); //response can be byte[] | string

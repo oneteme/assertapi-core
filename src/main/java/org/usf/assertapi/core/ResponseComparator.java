@@ -75,7 +75,6 @@ public class ResponseComparator {
 	
 	public void assumeEnabled(boolean enabled) {
 		if(!enabled) {
-			logApiComparaison("TEST " + SKIP);
 			throw skippedAssertionError("api assertion skipped");
 		}
 	}

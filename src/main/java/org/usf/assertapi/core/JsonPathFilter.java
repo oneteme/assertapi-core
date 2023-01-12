@@ -7,12 +7,15 @@ import java.util.stream.Stream;
 
 import com.jayway.jsonpath.DocumentContext;
 
+import lombok.Getter;
+
 /**
  * 
  * @author u$f
  * @since 1.0
  *
  */
+@Getter
 public final class JsonPathFilter extends ResponseTransformer<DocumentContext> {
 
 	private final String[] xpaths; //exclude | include ?

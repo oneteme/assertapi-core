@@ -129,7 +129,7 @@ public final class ApiAssertionExecutor {
 	
 	@Getter
 	@RequiredArgsConstructor
-	static class PairResponse {
+	static final class PairResponse {
 		
 		private final ClientResponseWrapper expected;
 		private final ClientResponseWrapper actual;

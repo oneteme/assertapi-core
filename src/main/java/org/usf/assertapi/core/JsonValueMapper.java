@@ -9,12 +9,16 @@ import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.DocumentContext;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 /**
  * 
  * @author u$f
  * @since 1.0
  *
  */
+@Getter
 public final class JsonValueMapper extends ResponseTransformer<DocumentContext> {
 	
 	private final String xpath;

@@ -7,12 +7,15 @@ import java.util.Map;
 
 import com.jayway.jsonpath.DocumentContext;
 
+import lombok.Getter;
+
 /**
  * 
  * @author u$f
  * @since 1.0
  *
  */
+@Getter
 public final class JsonKeyMapper extends ResponseTransformer<DocumentContext> {
 
 	private final String xpath; //to object

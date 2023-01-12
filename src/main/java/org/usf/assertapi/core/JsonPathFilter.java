@@ -19,7 +19,7 @@ public final class JsonPathFilter extends ResponseTransformer<DocumentContext> {
 	
 	public JsonPathFilter(ReleaseTarget[] targets, String[] xpaths) {
 		super(targets);
-		this.xpaths = requireNonEmpty(xpaths, ()-> getType() + " : require xpath");
+		this.xpaths = requireNonEmpty(xpaths, getType(), "xpath");
 	}
 	
 	@Override

@@ -16,7 +16,7 @@ public final class BasicClientAuthenticator implements ClientAuthenticator {
 	@Override
 	public void authorization(HttpHeaders headers, ServerAuth auth) {
 		headers.setBasicAuth(
-				requireNonEmpty(auth.getUsername(), ()-> BASIC + " require username"), 
-				requireNonEmpty(auth.getPassword(), ()-> BASIC + " require password"));
+				requireNonEmpty(auth.getUsername(), BASIC.name(), "username"), 
+				requireNonEmpty(auth.getPassword(), BASIC.name(), "password"));
 	}
 }

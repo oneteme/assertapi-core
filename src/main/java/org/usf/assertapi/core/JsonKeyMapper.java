@@ -20,8 +20,8 @@ public final class JsonKeyMapper extends ResponseTransformer<DocumentContext> {
 	
 	public JsonKeyMapper(ReleaseTarget[] targets, String xpath, Map<String, String> map) {
 		super(targets);
-		this.xpath = requireNonEmpty(xpath, ()-> getType() + " : require xpath");
-		this.map = requireNonEmpty(map, ()->  getType() + " : require Map<oldKey,newKey>");
+		this.xpath = requireNonEmpty(xpath, getType(), "xpath");
+		this.map = requireNonEmpty(map, getType(), "Map<oldKey,newKey>");
 	}
 	
 	@Override

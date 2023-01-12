@@ -4,7 +4,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Objects.requireNonNullElseGet;
 import static java.util.Optional.ofNullable;
 
+import java.util.List;
 import java.util.Map;
+
+import org.usf.assertapi.core.Utils.EmptyValueException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -30,7 +33,7 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 	private final HttpRequest stableApi;
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
-			String uri, String method, Map<String, String> headers, @JsonDeserialize(using = JsonStringDeserializer.class) String body, 
+			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, 
 			int[] acceptableStatus, ExecutionConfig executionConfig, ContentComparator<?> contentComparator, HttpRequest statbleApi) {
 		super(uri, method, headers, body, acceptableStatus);
 		this.id = id;
@@ -50,6 +53,14 @@ public final class ApiRequest extends HttpRequest implements ComparableApi {
 	@Override
 	public HttpRequest latestApi() {
 		return this;
+	}
+	
+	@Override
+	public HttpRequest requireStaticResponse() {
+		if(stableApi != null) {
+			return stableApi;
+		}
+		throw new EmptyValueException("ApiRequest", "stableApi");
 	}
 	
 	@Override

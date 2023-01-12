@@ -11,11 +11,12 @@ import static org.usf.assertapi.core.CompareStage.HEADER_CONTENT;
 import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
 import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
 import static org.usf.assertapi.core.ResponseComparator.castConfig;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
-import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.usf.junit.addons.AssertExt;
 
 class ResponseComparatorTest {
 	
@@ -28,8 +29,7 @@ class ResponseComparatorTest {
 	@Test
 	void testPrepare() {
 		var api = new ApiRequest(null, null, null, null, "api", null, null, null, null, null, null, null);
-		this.comparator.currentStage = RESPONSE_CONTENT; //simulate previous api stage
-		assertDoesNotThrow(()-> comparator.prepare(api));
+		assertDoesNotThrow(()-> comparator.before(api));
 		expectCurrentStage(null);
 	}
 
@@ -109,11 +109,11 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertionFail() {
-		assertThrows(AssertionError.class, ()-> comparator.assertionFail(new AssertionError()));
-		assertThrows(ApiAssertionError.class, ()-> comparator.assertionFail(new ApiAssertionError(null, null, "")));
-		assertThrows(ApiAssertionError.class, ()-> comparator.assertionFail(skippedAssertionError("")));
-		assertThrows(RuntimeException.class,  ()-> comparator.assertionFail(new RuntimeException()));
-		assertThrows(ApiAssertionRuntimeException.class,  ()-> comparator.assertionFail(new Exception()));
+		assertThrowsWithMessage("", AssertionError.class, ()-> comparator.assertionFail(new AssertionError("")));
+		assertThrowsWithMessage("assertion fail", ApiAssertionError.class, ()-> comparator.assertionFail(new ApiAssertionError(null, null, "assertion fail")));
+		assertThrowsWithMessage("skiped", ApiAssertionError.class, ()-> comparator.assertionFail(skippedAssertionError("skiped")));
+		assertThrowsWithMessage("dummy msg", RuntimeException.class,  ()-> comparator.assertionFail(new RuntimeException("dummy msg")));
+		assertThrowsWithMessage("Error while testing api", ApiAssertionRuntimeException.class,  ()-> comparator.assertionFail(new Exception("unkonwn")));
 		
 	}
 

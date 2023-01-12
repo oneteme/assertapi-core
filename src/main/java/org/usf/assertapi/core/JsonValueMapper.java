@@ -23,9 +23,9 @@ public final class JsonValueMapper extends ResponseTransformer<DocumentContext> 
 
 	public JsonValueMapper(ReleaseTarget[] targets, String xpath, String regex, Map<String, Object> map) {
 		super(targets);
-		this.xpath = requireNonEmpty(xpath, ()-> getType() + " : require xpath");
+		this.xpath = requireNonEmpty(xpath, getType(), "xpath");
 		this.regex = regex;
-		this.map   = requireNonEmpty(map,   ()-> getType() + " : require Map<oldValue,newValue>");
+		this.map   = requireNonEmpty(map, getType(), "Map<oldValue,newValue>");
 	}
 
 	@Override

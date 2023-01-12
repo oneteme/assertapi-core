@@ -29,7 +29,7 @@ class ServerConfigTest {
 	@CsvSource({
 	    "80, http://localhost/",
 	    "443, https://localhost/",
-	    "9001, http://localhost:9001/",
+	    "9001, http://localhost:9001/"
 	})
 	void testLocalServer(int port, String expected) {
 		assertEquals(localServer(port).buildRootUrl(), expected);

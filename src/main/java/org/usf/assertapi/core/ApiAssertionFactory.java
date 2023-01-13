@@ -24,7 +24,7 @@ public final class ApiAssertionFactory {
 	private ResponseComparator comparator;
 	private ServerConfig stableRelease;
 	private ServerConfig latestRelease;
-	private BiConsumer<ComparableApi, ComparisonResult> tracer;
+	private BiConsumer<ApiRequest, ComparisonResult> tracer;
 	
 	public void register(@NonNull String name, @NonNull Class<? extends ClientAuthenticator> c) {
 		clientAuthenticators.put(name, c);
@@ -45,7 +45,7 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory trace(@NonNull BiConsumer<ComparableApi, ComparisonResult> tracer) {
+	public ApiAssertionFactory trace(@NonNull BiConsumer<ApiRequest, ComparisonResult> tracer) {
 		this.tracer = tracer;
 		return this;
 	}

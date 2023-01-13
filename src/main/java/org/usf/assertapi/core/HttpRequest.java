@@ -3,13 +3,9 @@ package org.usf.assertapi.core;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.ofNullable;
 import static org.usf.assertapi.core.Utils.isEmpty;
-import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
-
-import org.usf.assertapi.core.Utils.TooManyValueException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,34 +22,25 @@ import lombok.Getter;
 @Getter
 @JsonInclude(NON_NULL)
 public class HttpRequest {
+	
+	static final int DEFAULT_STATUS = 200;
+	static final String DEFAULT_METHOD = "GET";
 
 	private final String uri;
 	private final String method;
 	private final Map<String, List<String>> headers;
 	@JsonSerialize(using = StringBytesSerializer.class )
-	private final byte[] body; //TD change type => Object | byte[]
-	private final int[] acceptableStatus;
+	private final byte[] body;
+	private final String lazyBody;
 	
 	public HttpRequest(String uri, String method, Map<String, List<String>> headers, 
-			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, int... acceptableStatus) {
+			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) {
 		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
 				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
-		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse("GET");
+		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse(DEFAULT_METHOD);
 		this.headers = headers;
 		this.body = body;
-		this.acceptableStatus = acceptableStatus == null || acceptableStatus.length == 0 ? new int[] {200} : acceptableStatus; //OK or may be NotFound ?
-	}
-
-	public boolean acceptStatus(int status) {
-		return IntStream.of(acceptableStatus).anyMatch(v-> v == status);
-	}
-	
-	public int requireUniqueStatus() {
-		var status = requireNonEmpty(acceptableStatus, "HttpRequest", "acceptableStatus");
-		if(status.length == 1) {
-			return status[0];
-		}
-		throw new TooManyValueException("HttpRequest", "acceptableStatus");
+		this.lazyBody = lazyBody;
 	}
 	
 	public boolean hasHeaders() {

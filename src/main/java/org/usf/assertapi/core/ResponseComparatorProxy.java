@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseComparatorProxy extends ResponseComparator {
 	
 	private final ResponseComparator comparator;
-	private final BiConsumer<ComparableApi, ComparisonResult> tracer;
+	private final BiConsumer<ApiRequest, ComparisonResult> tracer;
 
-	private ComparableApi currentApi;
+	private ApiRequest currentApi;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
 	@Override
-	public void before(ComparableApi api) {
+	public void before(ApiRequest api) {
 		this.currentApi = api; //current API
 		comparator.before(api);
 	}

@@ -26,8 +26,8 @@ public final class JsonValueMapper extends ResponseTransformer<DocumentContext> 
 
 	public JsonValueMapper(ReleaseTarget[] targets, String xpath, String regex, Map<String, Object> map) {
 		super(targets);
-		this.xpath = requireNonEmpty(xpath, getType(), "xpath");
 		this.regex = regex;
+		this.xpath = requireNonEmpty(xpath, getType(), "xpath");
 		this.map   = requireNonEmpty(map, getType(), "Map<oldValue,newValue>");
 	}
 
@@ -49,7 +49,7 @@ public final class JsonValueMapper extends ResponseTransformer<DocumentContext> 
 		if (regex != null && strValue.matches(regex)) {
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(strValue);
-			if (matcher.find()) { //TODO while !
+			if (matcher.find()) {
 				if (matcher.groupCount() == 0) {
 					return groupValue(0, strValue);
 				}

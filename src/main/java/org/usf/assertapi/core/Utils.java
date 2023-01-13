@@ -7,6 +7,7 @@ import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
 import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_MOVER;
 import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
 
 import java.util.Collection;
@@ -94,6 +95,7 @@ public final class Utils {
 				, new NamedType(CsvContentComparator.class, CSV.name())
 				//register ResponseTransformer implementations
 				, new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name())
+				, new NamedType(JsonPathMover.class, JSON_PATH_MOVER.name())
 				, new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name())
 				, new NamedType(JsonValueMapper.class, JSON_VALUE_MAPPER.name()));
 		

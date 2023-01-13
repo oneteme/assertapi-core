@@ -38,7 +38,7 @@ public class ResponseComparator {
 	
 	CompareStage currentStage;
 	
-	public final void assertResponse(ComparableApi api, Function<ComparableApi, PairResponse> execution) {
+	public final void assertResponse(ApiRequest api, Function<ApiRequest, PairResponse> execution) {
 		this.currentStage = null; //important : init starting stage
 		try {
 			before(api);
@@ -68,7 +68,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void before(ComparableApi api) {
+	public void before(ApiRequest api) {
 		logApiComparaison("START <" + api + ">");
 		logApiComparaison("URL ", api.stableApi().toRequestUri(), api.latestApi().toRequestUri(), false);
 	}
@@ -110,7 +110,7 @@ public class ResponseComparator {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("byteContent", expected, actual, true); //just reference
 		if(!Arrays.equals(expected, actual)) {
-			throw failNotEqual(expected, actual);
+			throw failNotEqual(Arrays.toString(expected), Arrays.toString(actual));
 		}
 	}
 

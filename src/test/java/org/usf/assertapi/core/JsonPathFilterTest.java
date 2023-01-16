@@ -20,7 +20,7 @@ class JsonPathFilterTest {
 	
 	@Test
 	void testTransformDocumentContext_xpath() {
-		var msg = "JSON_PATH_FILTER : require [xpath] field";
+		var msg = "JSON_PATH_FILTER : require [xpaths] field";
 		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonPathFilter(null, null)); //xpaths null
 		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonPathFilter(null, new String[] {})); //xpaths empty
 	}

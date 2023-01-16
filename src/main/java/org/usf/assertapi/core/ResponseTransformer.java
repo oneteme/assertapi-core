@@ -30,6 +30,6 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 	
 	enum TransformerType {
 		
-		JSON_PATH_FILTER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 
+		JSON_PATH_FILTER, JSON_PATH_MOVER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 
 	}
 }

@@ -14,7 +14,6 @@ public class JsonPathMover extends ResponseTransformer<DocumentContext> {
 	private final String targetXpath;
 	private final Map<String, String> map;
 	
-
 	public JsonPathMover(ReleaseTarget[] targets, String originXpath, String targetXpath, Map<String, String> map) {
 		super(targets);
 		this.originXpath = originXpath;
@@ -25,27 +24,23 @@ public class JsonPathMover extends ResponseTransformer<DocumentContext> {
 	@Override
 	void transform(DocumentContext json) {
 		var o = json.read(originXpath);
-		if(o instanceof Map) {
-			@SuppressWarnings("unchecked")
-			var copy = new LinkedHashMap<>((Map<String, Object>) o); 
-			if(isEmpty(map)) {
-				for(var e : copy.entrySet()){
-					json.put(targetXpath, e.getKey(), e.getValue());
-					json.delete(originXpath + "." + e.getKey());
-				}
+		@SuppressWarnings("unchecked")
+		var copy = new LinkedHashMap<>((Map<String, Object>) o); 
+		if(isEmpty(map)) {
+			for(var e : copy.entrySet()){
+				json.put(targetXpath, e.getKey(), e.getValue());
+				json.delete(originXpath + "." + e.getKey());
+			}
 //				json.delete(originXpath);
-			}
-			else {
-				for(var e : map.entrySet()){
-					json.put(targetXpath, e.getValue(), copy.get(e.getKey()));
-					json.delete(originXpath + "." + e.getKey());
-				}
-			}
 		}
 		else {
-			//if list ? 
-			throw new ApiAssertionRuntimeException(originXpath + " is not object");
+			for(var e : map.entrySet()){
+				json.put(targetXpath, e.getValue(), copy.get(e.getKey()));
+				json.delete(originXpath + "." + e.getKey());
+			}
 		}
+		//if list ? 
+		//throw new ApiAssertionRuntimeException(originXpath + " is not object");
 	}
 	
 	@Override

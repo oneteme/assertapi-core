@@ -3,6 +3,13 @@
     "features": [
         {
             "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    102.0,
+                    0.5
+                ]
+            },
             "properties": {
                 "prop0": "value0"
             }
@@ -67,12 +74,7 @@
             "properties": {
                 "prop0": "value0",
                 "prop1": {
-                    "this": "that",
-                    "type": "Point",
-                    "coordinates": [
-                        102.0,
-                        0.5
-                    ]
+                    "this": "that"
                 }
             }
         }

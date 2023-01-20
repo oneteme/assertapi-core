@@ -1,7 +1,7 @@
 {
-  "originXpath" : "$.features[0].geometry",
+  "originXpath" : "$.features[1].geometry.coordinates",
   "targetXpath" : "$.features[1].properties",
-  "map": {"coordinates": "prop2"},
+  "map": {"$[0]": "arr102", "$[2]": "arr104"},
   "removeOrigin": "false",
   "@type": "JSON_PATH_MOVER"
 }

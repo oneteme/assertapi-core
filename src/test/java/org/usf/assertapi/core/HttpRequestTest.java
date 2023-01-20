@@ -31,33 +31,33 @@ class HttpRequestTest {
 	
 	@Test
 	void testContructor_uri() {
-		assertThrows(IllegalArgumentException.class, ()-> new HttpRequest(null, null, null, null));
-		assertEquals("/",  new HttpRequest("", null, null, null).getUri());
-		assertEquals("/", new HttpRequest("\t", null, null, null).getUri());
-		assertEquals("/api", new HttpRequest("api", null, null, null).getUri());
-		assertEquals("/api", new HttpRequest("\tapi", null, null, null).getUri());
-		assertEquals("/api", new HttpRequest("/api\t", null, null, null).getUri());
+		assertThrows(IllegalArgumentException.class, ()-> new HttpRequest(null, null, null, null, null));
+		assertEquals("/",  new HttpRequest("", null, null, null, null).getUri());
+		assertEquals("/", new HttpRequest("\t", null, null, null, null).getUri());
+		assertEquals("/api", new HttpRequest("api", null, null, null, null).getUri());
+		assertEquals("/api", new HttpRequest("\tapi", null, null, null, null).getUri());
+		assertEquals("/api", new HttpRequest("/api\t", null, null, null, null).getUri());
 	}
 	
 	@Test
 	void testContructor_method() {
-		assertEquals("GET",  new HttpRequest("", "get", null, null).getMethod());
-		assertEquals("POST", new HttpRequest("", "\tPost", null, null).getMethod());
-		assertEquals("DELETE", new HttpRequest("", "DELETE\t", null, null).getMethod());
+		assertEquals("GET",  new HttpRequest("", "get", null, null, null).getMethod());
+		assertEquals("POST", new HttpRequest("", "\tPost", null, null, null).getMethod());
+		assertEquals("DELETE", new HttpRequest("", "DELETE\t", null, null, null).getMethod());
 	}
 	
-	@Test
-	void testContructor_acceptableStatus() {
-		assertArrayEquals(new int[] {200},  new HttpRequest("", null, null, null).getAcceptableStatus());
-		assertArrayEquals(new int[] {200},  new HttpRequest("", null, null, null, new int[]{}).getAcceptableStatus());
-		assertArrayEquals(new int[] {200,404}, new HttpRequest("", null, null, null, new int[] {200,404}).getAcceptableStatus());
-	}
+//	@Test
+//	void testContructor_acceptableStatus() {
+//		assertArrayEquals(new int[] {200},  new HttpRequest("", null, null, null).getAcceptableStatus());
+//		assertArrayEquals(new int[] {200},  new HttpRequest("", null, null, null, new int[]{}).getAcceptableStatus());
+//		assertArrayEquals(new int[] {200,404}, new HttpRequest("", null, null, null, new int[] {200,404}).getAcceptableStatus());
+//	}
 
 	@Test
 	void testHasHeaders() {
-		assertFalse(new HttpRequest("", null, null, null).hasHeaders());
-		assertFalse(new HttpRequest("", null, emptyMap(), null).hasHeaders());
-		assertTrue(new HttpRequest("", null, Map.of("hdr1", asList("value1")), null).hasHeaders());
+		assertFalse(new HttpRequest("", null, null, null, null).hasHeaders());
+		assertFalse(new HttpRequest("", null, emptyMap(), null, null).hasHeaders());
+		assertTrue(new HttpRequest("", null, Map.of("hdr1", asList("value1")), null, null).hasHeaders());
 	}
 	
 	@ParameterizedTest
@@ -66,21 +66,21 @@ class HttpRequestTest {
 	    "post  , v2/api/exemple,[POST] /v2/api/exemple",
 	    "Delete, v3/resource/r1,[DELETE] /v3/resource/r1"})
 	void testToRequestUri(String method, String uri, String expected) {
-		var req = new HttpRequest(uri, method, null, null);
+		var req = new HttpRequest(uri, method, null, null, null);
 		assertEquals(expected, req.toRequestUri());
 		assertEquals(expected, req.toString());
 	}
 	
-	@ParameterizedTest
-	@CsvSource({
-	    "500,500,true",
-	    "500,200,false",
-	    "200;404,200,true",
-	    "200;404,500,false"})
-	void testAcceptStatus(@ConvertWith(IntArrayConverter.class) int[] arr, int code, boolean expected) {
-		var req = new HttpRequest("", null, null, null, arr);
-		assertEquals(expected, req.acceptStatus(code));
-	}
+//	@ParameterizedTest
+//	@CsvSource({
+//	    "500,500,true",
+//	    "500,200,false",
+//	    "200;404,200,true",
+//	    "200;404,500,false"})
+//	void testAcceptStatus(@ConvertWith(IntArrayConverter.class) int[] arr, int code, boolean expected) {
+//		var req = new HttpRequest("", null, null, null, arr);
+//		assertEquals(expected, req.acceptStatus(code));
+//	}
 	
 	@ParameterizedTest
 	@MethodSource("serializeTestcases")
@@ -97,7 +97,7 @@ class HttpRequestTest {
 		assertEquals(expected.getMethod(), hr.getMethod());
 		assertEquals(expected.getHeaders(), hr.getHeaders());
 		JSONAssert.assertEquals(expected.bodyAsString(), hr.bodyAsString(), true);
-		assertArrayEquals(expected.getAcceptableStatus(), hr.getAcceptableStatus());
+//		assertArrayEquals(expected.getAcceptableStatus(), hr.getAcceptableStatus());
 	}
 	
 	static class IntArrayConverter implements ArgumentConverter {
@@ -109,28 +109,25 @@ class HttpRequestTest {
 	
 	static Stream<Arguments> serializeTestcases() throws JsonProcessingException {
 		return Stream.of(
-				Arguments.of(new HttpRequest("/api", null, null, null),
+				Arguments.of(new HttpRequest("/api", null, null, null, null),
 						defaultMapper().writeValueAsString(Map.of(
 								"uri", "/api", 
-								"method", "GET", 
-								"acceptableStatus", new int[] {200}))),
-				Arguments.of(new HttpRequest("/api", "POST", Map.of("hdr", asList("value")), null, 500), 
+								"method", "GET"))),
+				Arguments.of(new HttpRequest("/api", "POST", Map.of("hdr", asList("value")), null, null), 
 						defaultMapper().writeValueAsString(Map.of(
 								"uri", "/api", 
 								"method", "POST", 
-								"headers", Map.of("hdr", asList("value")), 
-								"acceptableStatus", new int[] {500}))),
-				Arguments.of(new HttpRequest("/api", "PUT", null, "{\"arrFld\":[\"v1\",\"v2\",\"v3\"],\"intFld\":1234,\"boolFld\":true,\"strFld\":\"value\"}".getBytes(), 200, 404), 
+								"headers", Map.of("hdr", asList("value"))))),
+				Arguments.of(new HttpRequest("/api", "PUT", null, "{\"arrFld\":[\"v1\",\"v2\",\"v3\"],\"intFld\":1234,\"boolFld\":true,\"strFld\":\"value\"}".getBytes(), null), 
 						defaultMapper().writeValueAsString(Map.of(
 								"uri", "/api", 
 								"method", "PUT", 
-								"body", Map.of("arrFld", new String[] {"v1", "v2", "v3"}, "intFld", 1234, "boolFld", true, "strFld", "value"), 
-								"acceptableStatus", new int[] {200, 404})))
+								"body", Map.of("arrFld", new String[] {"v1", "v2", "v3"}, "intFld", 1234, "boolFld", true, "strFld", "value"))))
 		);
 	}
 	
 	static Stream<Arguments> deserializeTestcases() throws JsonProcessingException {
-		return Stream.of(Arguments.of(new HttpRequest("/api", "GET", null, null, 200), defaultMapper().writeValueAsString(Map.of("uri", "/api"))));
+		return Stream.of(Arguments.of(new HttpRequest("/api", "GET", null, null, null), defaultMapper().writeValueAsString(Map.of("uri", "/api"))));
 	}
 	
 }

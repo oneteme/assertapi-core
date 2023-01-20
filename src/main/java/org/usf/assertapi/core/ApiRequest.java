@@ -1,14 +1,15 @@
 package org.usf.assertapi.core;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
-import static java.util.Optional.ofNullable;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
-import org.usf.assertapi.core.Utils.EmptyValueException;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -22,45 +23,56 @@ import lombok.Getter;
  */
 @Getter
 @JsonInclude(NON_NULL)
-public final class ApiRequest extends HttpRequest implements ComparableApi {
+@JsonIgnoreProperties(value = "location")
+public final class ApiRequest extends HttpRequest  {
 
 	private final Long id;
 	private final String name;
 	private final Integer version;
 	private final String description; //case description
+	private final int[] acceptableStatus;
 	private final ContentComparator<?> contentComparator; //nullable
 	private final ExecutionConfig executionConfig;
-	private final HttpRequest stableApi;
+	private final HttpRequest remoteApi;
+	private final StaticResponse staticResponse;
+	
+	private URI location; //must be injected after deserialization
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
-			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, 
-			int[] acceptableStatus, ExecutionConfig executionConfig, ContentComparator<?> contentComparator, HttpRequest statbleApi) {
-		super(uri, method, headers, body, acceptableStatus);
+			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody, 
+			int[] acceptableStatus, ExecutionConfig executionConfig, ContentComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
+		
+		super(uri, method, headers, body, lazyBody);
 		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.description = description;
+		this.acceptableStatus = acceptableStatus == null || acceptableStatus.length == 0 ? new int[] {DEFAULT_STATUS} : acceptableStatus; //OK or may be NotFound ?
 		this.contentComparator = contentComparator;
-		this.stableApi = statbleApi;
 		this.executionConfig = requireNonNullElseGet(executionConfig, ExecutionConfig::new);
+		this.remoteApi = remoteApi;
+		this.staticResponse = staticResponse;
 	}
-
-	@Override
-	public HttpRequest stableApi() {
-		return ofNullable(stableApi).orElse(this); 
-	}
-
-	@Override
+	
 	public HttpRequest latestApi() {
 		return this;
 	}
 	
-	@Override
-	public HttpRequest requireStaticResponse() {
-		if(stableApi != null) {
-			return stableApi;
-		}
-		throw new EmptyValueException("ApiRequest", "stableApi");
+	public HttpRequest stableApi() {
+		return requireNonNullElse(remoteApi, this); // RUN : TNR == MIGRATION
+	}
+	
+	public StaticResponse staticResponse() {
+		return staticResponse;
+	}
+
+	public boolean acceptStatus(int status) {
+		return IntStream.of(acceptableStatus).anyMatch(v-> v == status);
+	}
+	
+	public ApiRequest withLocation(URI location) {
+		this.location = location;
+		return this;
 	}
 	
 	@Override

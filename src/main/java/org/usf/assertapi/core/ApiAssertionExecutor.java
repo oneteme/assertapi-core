@@ -2,10 +2,16 @@ package org.usf.assertapi.core;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static java.nio.file.Files.readAllBytes;
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.usf.assertapi.core.Utils.sizeOf;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -43,11 +49,11 @@ public final class ApiAssertionExecutor {
 	private static ExecutorService executor;
 	private Future<?> async; //cancel ??
 	
-	public void assertAllAsync(@NonNull Supplier<Stream<? extends ComparableApi>> queries)  {
+	public void assertAllAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
 		this.async = executor().submit(()-> assertAll(queries.get()));
 	}
 	
-	public void assertAll(Stream<? extends ComparableApi> stream) {
+	public void assertAll(Stream<ApiRequest> stream) {
 		stream.forEach(q->{
 			try {
 				assertApi(q);
@@ -56,19 +62,19 @@ public final class ApiAssertionExecutor {
 		});
 	}
 	
-	public void assertApi(@NonNull ComparableApi api) {
+	public void assertApi(@NonNull ApiRequest api) {
 		comparator.assertResponse(api, this::execBoth);
 	}
 
-	private PairResponse execBoth(ComparableApi api) {
-		var af = submit(api.getExecutionConfig().isParallel(), ()-> exchange(latestReleaseTemp, api.latestApi()));
+	private PairResponse execBoth(ApiRequest api) {
+		var af = submit(api.getExecutionConfig().isParallel(), ()-> exchange(latestReleaseTemp, api.latestApi(), api.getLocation()));
 		ClientResponseWrapper expected = null;
     	try {
         	expected = stableReleaseTemp == null 
-        			? staticResponse(api.requireStaticResponse())
-        			: exchange(stableReleaseTemp, api.stableApi());
-        	if(!api.latestApi().acceptStatus(expected.getStatusCodeValue())) {
-        		throw new ApiAssertionRuntimeException("unexpected stable release response code");
+        			? staticResponse(api.staticResponse(), api.getLocation())
+        			: exchange(stableReleaseTemp, api.stableApi(), api.getLocation());
+        	if(!api.acceptStatus(expected.getStatusCodeValue())) {
+        		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
         	}
     	}
     	catch(Exception e) {
@@ -85,13 +91,13 @@ public final class ApiAssertionExecutor {
 		}
 	}
     
-	static ClientResponseWrapper exchange(RestTemplate template, HttpRequest req) {
+	static ClientResponseWrapper exchange(RestTemplate template, HttpRequest req, URI location) {
 		HttpHeaders headers = null;
 		if(req.hasHeaders()) {
 			headers = new HttpHeaders();
 			headers.putAll(req.getHeaders());
 		}
-		var entity = new HttpEntity<>(req.getBody(), headers);
+		var entity = new HttpEntity<>(loadBody(req, location), headers);
 		var method = HttpMethod.valueOf(req.getMethod());
 		var start = currentTimeMillis();
 		try {
@@ -104,14 +110,38 @@ public final class ApiAssertionExecutor {
 			return new RestClientResponseExceptionWrapper(e, exe);
 		}
 		catch(RestClientException e) {
-			throw new ApiAssertionRuntimeException("Unreachable API", e);
+			throw new ApiAssertionRuntimeException("unreachable API", e);
 		}
     }
 	
-	static ClientResponseWrapper staticResponse(HttpRequest req) {
+	static ClientResponseWrapper staticResponse(StaticResponse res, URI location) {
+		if(res == null) {
+			throw new Utils.EmptyValueException("ApiRequest", "staticResponse");
+		}
 		var ms = currentTimeMillis();
-		var exe = new ExecutionInfo(ms, ms, req.requireUniqueStatus(), sizeOf(req.getBody()));
-		return new HttpRequestWrapper(req, exe);
+		res = res.withBody(loadBody(res, location));
+		var exe = new ExecutionInfo(ms, currentTimeMillis(), res.getStatus(), sizeOf(res.getBody()));
+		return new HttpRequestWrapper(res, exe);
+	}
+	
+	private static byte[] loadBody(HttpRequest req, URI location) {
+		if(req.getBody() == null && req.getLazyBody() != null) {
+			if(req.getLazyBody().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server 
+				//TODO REST call
+			}
+			else {
+				var f = new File(requireNonNull(location).resolve(req.getLazyBody()));
+				if(!f.exists()) {
+					throw new NoSuchElementException("file not found : " + f.toURI());
+				}
+				try {
+					return readAllBytes(f.toPath());
+				} catch (IOException e) {
+					throw new ApiAssertionRuntimeException("cannot read file : " + f, e);
+				}
+			}
+		}
+		return req.getBody();
 	}
 	
 	private static ExecutorService executor() {
@@ -129,10 +159,9 @@ public final class ApiAssertionExecutor {
 	
 	@Getter
 	@RequiredArgsConstructor
-	static class PairResponse {
+	static final class PairResponse {
 		
 		private final ClientResponseWrapper expected;
 		private final ClientResponseWrapper actual;
 	}
-	
 }

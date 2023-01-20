@@ -140,7 +140,7 @@ interface ClientResponseWrapper {
 	@RequiredArgsConstructor
 	public final class HttpRequestWrapper implements ClientResponseWrapper {
 		
-		private final HttpRequest request;
+		private final StaticResponse response;
 		private final ExecutionInfo requestExecution;
 
 		@Override
@@ -150,34 +150,34 @@ interface ClientResponseWrapper {
 
 		@Override
 		public int getStatusCodeValue() {
-			return request.requireUniqueStatus();
+			return response.getStatus();
 		}
 
 		@Override
 		public MediaType getContentType() {
-			return ofNullable(request.getHeader(CONTENT_TYPE))
+			return ofNullable(response.getHeader(CONTENT_TYPE))
 					.map(MediaType::parseMediaType)
 					.orElse(null);
 		}
 
 		@Override
 		public Map<String, List<String>> getHeaders() {
-			return request.getHeaders();
+			return response.getHeaders();
 		}
 
 		@Override
 		public String getResponseBodyAsString() {
-			return request.bodyAsString();
+			return response.bodyAsString();
 		}
 
 		@Override
 		public String getResponseBodyAsString(Charset charset) {
-			return new String(request.getBody(), charset);
+			return new String(response.getBody(), charset);
 		}
 
 		@Override
 		public byte[] getResponseBodyAsByteArray() {
-			return request.getBody();
+			return response.getBody();
 		}
 	}
 }

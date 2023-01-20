@@ -23,13 +23,13 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 	}
 	
 	public boolean matchTarget(ReleaseTarget target) {
-		return Stream.of(target).anyMatch(target::equals);
+		return Stream.of(targets).anyMatch(target::equals);
 	}
 
 	abstract void transform(T resp); //response can be byte[] | string
 	
 	enum TransformerType {
 		
-		JSON_PATH_FILTER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 
+		JSON_PATH_FILTER, JSON_PATH_MOVER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 
 	}
 }

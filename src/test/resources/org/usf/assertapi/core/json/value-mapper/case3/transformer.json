@@ -1,9 +1,8 @@
 {
-  "xpath" : "$.features[*].geometry.type",
-  "regex" : "^([A-Z])\\w+([a-z]$)",
+  "xpath" : "$.columns[*].isActive",
   "map":{
-    "$1": "[$1]",
-    "$2": "($2)"
+  	"false": 0,
+  	"true": 1
   },
   "@type": "JSON_VALUE_MAPPER"
 }

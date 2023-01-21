@@ -1,7 +1,5 @@
 {
-  "originXpath" : "$.features[1].geometry.coordinates",
-  "targetXpath" : "$.features[1].properties",
-  "map": {"$[0]": "arr102", "$[2]": "arr104"},
-  "removeOrigin": "false",
+  "originXpath" : "$.columns[0].id",
+  "targetXpath" : "$.default.defaultSortParams",
   "@type": "JSON_PATH_MOVER"
 }

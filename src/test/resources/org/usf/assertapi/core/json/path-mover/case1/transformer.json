@@ -1,7 +1,5 @@
 {
-  "originXpath" : "$.features[0].geometry",
-  "targetXpath" : "$.features[1].properties",
-  "map": {"coordinates": "prop2"},
-  "removeOrigin": "false",
+  "originXpath" : "$.default",
+  "targetXpath" : "$.sorting",
   "@type": "JSON_PATH_MOVER"
 }

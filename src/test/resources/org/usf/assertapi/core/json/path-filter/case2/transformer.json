@@ -1,7 +1,4 @@
 {
-  "xpaths" : [
-    "$.features[*].properties.prop1.*",
-    "$.features[*].geometry.coordinates[0]"
-  ],
+  "xpaths" : ["$.order[?(@ contains 'name')]"],
   "@type": "JSON_PATH_FILTER"
 }

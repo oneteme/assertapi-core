@@ -1,0 +1,10 @@
+{
+  "originXpath" : "$.sorting",
+  "targetXpath" : "$.default",
+  "map": {
+  	"id": "ref",
+  	"lastname": "title"
+  },
+  "removeOrigin": false,
+  "@type": "JSON_PATH_MOVER"
+}

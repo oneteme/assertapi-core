@@ -1,0 +1,4 @@
+{
+  "xpaths" : ["$.columns[*].name"],
+  "@type": "JSON_PATH_FILTER"
+}

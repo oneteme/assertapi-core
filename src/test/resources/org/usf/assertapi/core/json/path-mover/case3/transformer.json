@@ -1,5 +1,5 @@
 {
-  "originXpath" : "$.order[1]",
+  "originXpath" : "$.columns[0].id",
   "targetXpath" : "$.default.defaultSortParams",
   "@type": "JSON_PATH_MOVER"
 }

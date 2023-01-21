@@ -1,0 +1,8 @@
+{
+  "xpaths" : [
+    "$.order[?(@ == 'firstname')]",
+    "$.columns[?(@.id=='firstname')]",
+    "$.default.defaultSortParams[?(@ == 'firstname')]"
+  ],
+  "@type": "JSON_PATH_FILTER"
+}

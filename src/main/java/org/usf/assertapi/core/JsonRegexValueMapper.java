@@ -18,13 +18,13 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonValueMapper extends ResponseTransformer<DocumentContext> {
+public final class JsonRegexValueMapper extends ResponseTransformer<DocumentContext> {
 	
 	private final String xpath;
 	private final String regex;
 	private final Map<String, Object> map;
 
-	public JsonValueMapper(ReleaseTarget[] targets, String xpath, String regex, Map<String, Object> map) {
+	public JsonRegexValueMapper(ReleaseTarget[] targets, String xpath, String regex, Map<String, Object> map) {
 		super(targets);
 		this.regex = regex;
 		this.xpath = requireNonEmpty(xpath, getType(), "xpath");

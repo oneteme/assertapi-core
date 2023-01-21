@@ -1,0 +1,10 @@
+{
+  "xpath" : "$",
+  "map":{
+  	"order": "tabOrder",
+  	"sorting": "tabSorting",
+  	"columns": "tabColumns",
+  	"default": "tabDefault"
+  },  
+  "@type": "JSON_KEY_MAPPER"
+}

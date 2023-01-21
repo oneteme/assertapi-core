@@ -1,8 +1,5 @@
 {
-  "xpath" : "$.features[*].geometry.coordinates[*][*]",
-  "map":{
-    "1.0": 0.9999999,
-    "0.0": 0.0000001
-  },
+  "xpath" : "$.sorting.id",
+  "map":{"number": "string"},
   "@type": "JSON_VALUE_MAPPER"
 }

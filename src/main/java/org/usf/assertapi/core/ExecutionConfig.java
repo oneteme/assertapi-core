@@ -26,6 +26,7 @@ public final class ExecutionConfig {
 		this.enabled = requireNonNullElse(enable, true);
 		this.parallel = requireNonNullElse(parallel, true);
 	}
+	
 	public ExecutionConfig disable() {
 		this.enabled = false;
 		return this;

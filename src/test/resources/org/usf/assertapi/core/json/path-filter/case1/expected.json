@@ -1,78 +1,22 @@
 {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    102.0,
-                    0.5
-                ]
-            },
-            "properties": {
-                "prop0": "value0"
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        102.0,
-                        0.0
-                    ],
-                    [
-                        103.0,
-                        1.0
-                    ],
-                    [
-                        104.0,
-                        0.0
-                    ],
-                    [
-                        105.0,
-                        1.0
-                    ]
-                ]
-            },
-            "properties": {
-                "prop0": "value0"
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            100.0,
-                            0.0
-                        ],
-                        [
-                            101.0,
-                            0.0
-                        ],
-                        [
-                            101.0,
-                            1.0
-                        ],
-                        [
-                            100.0,
-                            1.0
-                        ],
-                        [
-                            100.0,
-                            0.0
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "prop0": "value0"
-            }
-        }
-    ]
+  "order": [
+    "selected",
+    "id",
+    "lastname",
+    "firstname"
+  ],
+  "sorting": {
+    "lastname": "string",
+    "firstname": "string"
+  },
+  "columns": [
+    { "id": "selected", "name": "Selected", "isActive": false },
+    { "id": "id", "name": "Event Id", "isActive": true },
+    { "id": "lastname", "name": "Last", "isActive": true },
+    { "id": "firstname", "name": "First", "isActive": true }
+  ],
+  "default": {
+    "defaultSortParams": [ "lastname", "firstname" ],
+    "defaultSortDirs": [ "asc", "asc" ]
+  }
 }

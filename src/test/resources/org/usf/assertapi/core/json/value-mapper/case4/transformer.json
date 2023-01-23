@@ -1,8 +1,10 @@
 {
-  "xpath" : "$.features[*].geometry.type",
-  "regex" : "^\\w+$",
-  "map":{
-    "$0": "Ext$0"
+  "xpath" : "$.columns[*].id",
+  "regex" : "^[a-z](\\w+)(name)$",
+  "map" : {
+  	"$1": "",
+  	"$2": "_name",
+  	"id": "client_id"
   },
   "@type": "JSON_VALUE_MAPPER"
 }

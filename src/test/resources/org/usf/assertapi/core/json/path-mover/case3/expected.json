@@ -1,7 +1,9 @@
 {
   "order": [
     "selected",
-    "id"
+    "id",
+    "lastname",
+    "firstname"
   ],
   "sorting": {
     "id": "number",
@@ -9,13 +11,13 @@
     "firstname": "string"
   },
   "columns": [
-    { "id": "selected", "name": "Selected", "isActive": false },
+    { "name": "Selected", "isActive": false },
     { "id": "id", "name": "Event Id", "isActive": true },
     { "id": "lastname", "name": "Last", "isActive": true },
     { "id": "firstname", "name": "First", "isActive": true }
   ],
   "default": {
-    "defaultSortParams": [ "lastname", "firstname" ],
+    "defaultSortParams": [ "lastname", "firstname", "selected" ],
     "defaultSortDirs": [ "asc", "asc" ]
   }
 }

@@ -1,12 +1,11 @@
 package org.usf.assertapi.core;
 
-import static java.util.Objects.requireNonNullElse;
-import static org.usf.assertapi.core.ReleaseTarget.STABLE;
+import lombok.Getter;
 
 import java.util.stream.Stream;
 
-import com.jayway.jsonpath.DocumentContext;
-import lombok.Getter;
+import static java.util.Objects.requireNonNullElse;
+import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
 /**
  * 

@@ -1,6 +1,6 @@
 {
   "originXpath" : "$.default.defaultSortParams",
-  "targetXpath" : "$.columns[0]",
+  "targetXpath" : "$.columns[?(@.type='DISTRIB')][0]",
   "map": {
   	"$[0]": "prop1",
   	"$[1]": "prop2"

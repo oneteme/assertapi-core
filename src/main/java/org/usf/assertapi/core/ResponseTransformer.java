@@ -1,11 +1,11 @@
 package org.usf.assertapi.core;
 
-import static java.util.Objects.requireNonNullElse;
-import static org.usf.assertapi.core.ReleaseTarget.STABLE;
+import lombok.Getter;
 
 import java.util.stream.Stream;
 
-import lombok.Getter;
+import static java.util.Objects.requireNonNullElse;
+import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
 /**
  * 
@@ -18,7 +18,7 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 
 	private final ReleaseTarget[] targets;
 	
-	ResponseTransformer(ReleaseTarget[] targets) {
+	protected ResponseTransformer(ReleaseTarget[] targets) {
 		this.targets = requireNonNullElse(targets, new ReleaseTarget[] {STABLE});
 	}
 	
@@ -26,8 +26,8 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 		return Stream.of(targets).anyMatch(target::equals);
 	}
 
-	abstract void transform(T resp); //response can be byte[] | string
-	
+	protected abstract void transform(T resp); //response can be byte[] | string
+
 	enum TransformerType {
 		
 		JSON_PATH_FILTER, JSON_PATH_MOVER, JSON_KEY_MAPPER, JSON_VALUE_MAPPER; 

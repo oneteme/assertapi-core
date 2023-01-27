@@ -26,12 +26,12 @@ public class JsonPathMover extends ResponseTransformer<DocumentContext> {
 		this.originXpath = originXpath;
 		this.targetXpath = targetXpath;
 		this.map = map;
-		this.removeOrigin = requireNonNullElse(removeOrigin, true);
+		this.removeOrigin = requireNonNullElse(removeOrigin, false);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	void transform(DocumentContext json) {
+	protected void transform(DocumentContext json) {
 		var origin = json.read(originXpath);
 		var target = json.read(targetXpath);
 		if(isArray(target)) {

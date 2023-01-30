@@ -1,0 +1,5 @@
+{
+  "path" : "$.order[*]",
+  "map" : { "(\\w+)name" : "static"},
+  "@type": "JSON_VALUE_MAPPER"
+}

@@ -1,0 +1,6 @@
+{
+  "origin" : "$.sorting",
+  "target" : "$.default",
+  "action": "ADD",
+  "@type": "JSON_PATH_MOVER"
+}

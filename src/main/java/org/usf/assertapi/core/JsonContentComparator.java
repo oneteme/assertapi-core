@@ -31,9 +31,9 @@ public final class JsonContentComparator implements ContentComparator<String> {
 	static final ParseContext jsonParser = using(defaultConfiguration().addOptions(SUPPRESS_EXCEPTIONS));
 
 	private final boolean strict;
-	private final ResponseTransformer<DocumentContext>[] transformers;
+	private final ResponseTransformer<DocumentContext, DocumentContext>[] transformers;
 
-	public JsonContentComparator(Boolean strict, ResponseTransformer<DocumentContext>[] transformers) {
+	public JsonContentComparator(Boolean strict, ResponseTransformer<DocumentContext, DocumentContext>[] transformers) {
 		this.strict = requireNonNullElse(strict, true);
 		this.transformers = transformers;
 	}
@@ -61,7 +61,9 @@ public final class JsonContentComparator implements ContentComparator<String> {
 					.collect(toList());
 			if(!list.isEmpty()) {
 				var json = jsonParser.parse(resp);
-				list.forEach(t-> t.transform(json));
+				for(var t : list) {
+					json = t.transform(json);
+				}
 				return json.jsonString();
 			}
 		}

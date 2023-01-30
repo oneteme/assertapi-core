@@ -1,0 +1,8 @@
+{
+  "path" : "$.default",
+  "map":{
+  	"defaultSortDirs": "default_sort_dirs",
+  	"defaultSortParams": "default_sort_params"
+  },  
+  "@type": "JSON_KEY_MAPPER"
+}

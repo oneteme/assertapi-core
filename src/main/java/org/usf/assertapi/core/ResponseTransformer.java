@@ -14,11 +14,11 @@ import lombok.Getter;
  *
  */
 @Getter
-public abstract class ResponseTransformer<T> implements PolymorphicType {
+public abstract class ResponseTransformer<T,R> implements PolymorphicType {
 
 	private final ReleaseTarget[] targets;
 	
-	ResponseTransformer(ReleaseTarget[] targets) {
+	protected ResponseTransformer(ReleaseTarget[] targets) {
 		this.targets = requireNonNullElse(targets, new ReleaseTarget[] {STABLE});
 	}
 	
@@ -26,7 +26,7 @@ public abstract class ResponseTransformer<T> implements PolymorphicType {
 		return Stream.of(targets).anyMatch(target::equals);
 	}
 
-	abstract void transform(T resp); //response can be byte[] | string
+	protected abstract R transform(T resp); //response can be byte[] | string
 	
 	enum TransformerType {
 		

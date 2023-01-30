@@ -1,0 +1,4 @@
+{
+	"type": "java.lang.IllegalAccessError",
+	"message": "$['sorting']['id'] is not an array"
+}

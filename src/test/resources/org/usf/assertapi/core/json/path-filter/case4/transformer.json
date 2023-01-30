@@ -1,6 +1,6 @@
 {
-  "xpaths" : [
-    "$.order[?(@ == 'firstname')]",
+  "paths": [
+    "$.order[?(@=='firstname')]",
     "$.columns[?(@.id=='firstname')]",
     "$.default.defaultSortParams[?(@ == 'firstname')]"
   ],

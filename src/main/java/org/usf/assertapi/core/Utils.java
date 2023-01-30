@@ -97,7 +97,7 @@ public final class Utils {
 				, new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name())
 				, new NamedType(JsonPathMover.class, JSON_PATH_MOVER.name())
 				, new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name())
-				, new NamedType(JsonRegexValueMapper.class, JSON_VALUE_MAPPER.name()));
+				, new NamedType(JsonDefaultValueMapper.class, JSON_VALUE_MAPPER.name()));
 		
 	}
 	

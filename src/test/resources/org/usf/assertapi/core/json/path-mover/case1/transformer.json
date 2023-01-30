@@ -1,5 +1,0 @@
-{
-  "originXpath" : "$.default",
-  "targetXpath" : "$.sorting",
-  "@type": "JSON_PATH_MOVER"
-}

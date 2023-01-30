@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor //keep one default constructor
 public final class CsvContentComparator implements ContentComparator<String> {
 	
-	private final ResponseTransformer<String>[] transformers;
+	private final ResponseTransformer<String, String>[] transformers;
 
 	@Override
 	public CompareResult compare(String expected, String actual){

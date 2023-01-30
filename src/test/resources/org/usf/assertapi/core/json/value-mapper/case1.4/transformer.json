@@ -1,0 +1,11 @@
+{
+  "path": "$.columns[*].id",
+  "map": {
+    "id": "identifier",
+    "selected": "checked",
+    "firstname": "title",
+    "lastname": "description",
+    "address": "not_exist_field"
+  },
+  "@type": "JSON_VALUE_MAPPER"
+}

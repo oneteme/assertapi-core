@@ -19,7 +19,7 @@ class SequentialFutureTest {
 		assertEquals(10, assertDoesNotThrow(()-> new SequentialFuture<>(()-> 10).get()));
 		assertEquals("", assertDoesNotThrow(()-> new SequentialFuture<>(()-> "").get()));
 		var exp = new IOException();
-		AssertExt.assertThrowsWithCause(exp, ExecutionException.class, ()-> new SequentialFuture<>(()-> {throw exp;}).get());
+		AssertExt.assertThrowsWithCause(ExecutionException.class, exp, ()-> new SequentialFuture<>(()-> {throw exp;}).get());
 	}
 
 	@Test
@@ -30,17 +30,17 @@ class SequentialFutureTest {
 
 	@Test
 	void testIsCancelled() {
-		assertThrowsWithMessage("unsupported", UnsupportedOperationException.class, ()-> new SequentialFuture<>(null).isCancelled());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).isCancelled());
 	}
 
 	@Test
 	void testIsDone() {
-		assertThrowsWithMessage("unsupported", UnsupportedOperationException.class, ()-> new SequentialFuture<>(null).isDone());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).isDone());
 	}
 
 	@Test
 	void testGet_timeout() {
-		assertThrowsWithMessage("unsupported", UnsupportedOperationException.class, ()-> new SequentialFuture<>(null).get(100l, SECONDS));
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).get(100l, SECONDS));
 	}
 
 }

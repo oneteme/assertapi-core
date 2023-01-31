@@ -1,7 +1,9 @@
 {
   "order": [
     "selected",
-    "id"
+    "id",
+    "lastName",
+    "firstName"
   ],
   "sorting": {
     "id": "number",

@@ -1,5 +1,0 @@
-{
-  "path" : "$.columns[*].name",
-  "map" : { "(\\w+)\\s(\\w+)" : "$1_$2"},
-  "@type": "JSON_VALUE_MAPPER"
-}

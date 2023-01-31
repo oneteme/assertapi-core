@@ -1,4 +1,0 @@
-{
-	"type": "java.lang.UnsupportedOperationException",
-	"message": "cannot merge array $['columns'] with object $['sorting']"
-}

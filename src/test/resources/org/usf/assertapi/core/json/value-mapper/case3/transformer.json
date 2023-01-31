@@ -1,0 +1,8 @@
+{
+  "xpath" : "$.columns[*].isActive",
+  "map":{
+  	"false": 0,
+  	"true": 1
+  },
+  "@type": "JSON_VALUE_MAPPER"
+}

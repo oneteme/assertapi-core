@@ -1,10 +1,12 @@
 {
   "order": [
     "selected",
-    "id"
+    "id",
+    "lastname",
+    "firstname"
   ],
   "sorting": {
-    "id": "number",
+    "id": "string",
     "lastname": "string",
     "firstname": "string"
   },

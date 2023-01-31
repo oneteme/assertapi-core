@@ -1,6 +1,0 @@
-{
-  "origin" : "$.default.defaultSortParams",
-  "target" : "$.columns",
-  "action": "ADD",
-  "@type": "JSON_PATH_MOVER"
-}

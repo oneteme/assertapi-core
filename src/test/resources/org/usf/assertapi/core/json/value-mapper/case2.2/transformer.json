@@ -1,5 +1,0 @@
-{
-  "path" : "$.order[*]",
-  "map" : { "(\\w+)(name|Name)" : "[$1]$2"},
-  "@type": "JSON_VALUE_MAPPER"
-}

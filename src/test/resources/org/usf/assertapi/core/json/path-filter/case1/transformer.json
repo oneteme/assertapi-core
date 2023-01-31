@@ -1,4 +1,4 @@
 {
-  "paths": ["$.sorting.id"],
+  "xpaths" : ["$.sorting.id"],
   "@type": "JSON_PATH_FILTER"
 }

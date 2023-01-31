@@ -24,15 +24,15 @@ class JsonKeyMapperTest {
 	@Test
 	void testJsonKeyMapper_xpath() {
 		var msg = "JSON_KEY_MAPPER : require [xpath] field";
-		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, null, Map.of("key", "value"))); //xpaths null
-		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, "", Map.of("key", "value"))); //xpaths empty
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonKeyMapper(null, null, Map.of("key", "value"))); //xpaths null
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonKeyMapper(null, "", Map.of("key", "value"))); //xpaths empty
 	}
 
 	@Test
 	void testJsonKeyMapper_map() {
 		var msg = "JSON_KEY_MAPPER : require [Map<oldKey,newKey>] field";
-		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, "$.path", null)); //map null
-		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, "$.path", emptyMap())); //map empty
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonKeyMapper(null, "$.path", null)); //map null
+		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> new JsonKeyMapper(null, "$.path", emptyMap())); //map empty
 	}
 
 	@Test

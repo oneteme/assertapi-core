@@ -1,11 +1,11 @@
 package org.usf.assertapi.core;
 
-import lombok.Getter;
+import static java.util.Objects.requireNonNullElse;
+import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNullElse;
-import static org.usf.assertapi.core.ReleaseTarget.STABLE;
+import lombok.Getter;
 
 /**
  * 
@@ -14,11 +14,11 @@ import static org.usf.assertapi.core.ReleaseTarget.STABLE;
  *
  */
 @Getter
-public abstract class ResponseTransformer<T,R> implements PolymorphicType {
+public abstract class ResponseTransformer<T> implements PolymorphicType {
 
 	private final ReleaseTarget[] targets;
 	
-	protected ResponseTransformer(ReleaseTarget[] targets) {
+	ResponseTransformer(ReleaseTarget[] targets) {
 		this.targets = requireNonNullElse(targets, new ReleaseTarget[] {STABLE});
 	}
 	
@@ -26,7 +26,7 @@ public abstract class ResponseTransformer<T,R> implements PolymorphicType {
 		return Stream.of(targets).anyMatch(target::equals);
 	}
 
-	protected abstract R transform(T resp); //response can be byte[] | string
+	abstract void transform(T resp); //response can be byte[] | string
 	
 	enum TransformerType {
 		

@@ -1,7 +1,8 @@
 {
   "order": [
     "selected",
-    "id"
+    "lastname",
+    "firstname"
   ],
   "sorting": {
     "id": "number",
@@ -15,7 +16,7 @@
     { "id": "firstname", "name": "First", "isActive": true }
   ],
   "default": {
-    "defaultSortParams": [ "lastname", "firstname" ],
+    "defaultSortParams": [ "lastname", "firstname", "id" ],
     "defaultSortDirs": [ "asc", "asc" ]
   }
 }

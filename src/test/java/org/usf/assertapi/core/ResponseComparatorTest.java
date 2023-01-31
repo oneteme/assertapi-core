@@ -108,11 +108,11 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertionFail() {
-		assertThrowsWithMessage(AssertionError.class, "", ()-> comparator.assertionFail(new AssertionError("")));
-		assertThrowsWithMessage(ApiAssertionError.class, "assertion fail", ()-> comparator.assertionFail(new ApiAssertionError(null, null, "assertion fail")));
-		assertThrowsWithMessage(ApiAssertionError.class, "skiped", ()-> comparator.assertionFail(skippedAssertionError("skiped")));
-		assertThrowsWithMessage(RuntimeException.class,  "dummy msg", ()-> comparator.assertionFail(new RuntimeException("dummy msg")));
-		assertThrowsWithMessage(ApiAssertionRuntimeException.class, "Error while testing api", ()-> comparator.assertionFail(new Exception("unkonwn")));
+		assertThrowsWithMessage("", AssertionError.class, ()-> comparator.assertionFail(new AssertionError("")));
+		assertThrowsWithMessage("assertion fail", ApiAssertionError.class, ()-> comparator.assertionFail(new ApiAssertionError(null, null, "assertion fail")));
+		assertThrowsWithMessage("skiped", ApiAssertionError.class, ()-> comparator.assertionFail(skippedAssertionError("skiped")));
+		assertThrowsWithMessage("dummy msg", RuntimeException.class,  ()-> comparator.assertionFail(new RuntimeException("dummy msg")));
+		assertThrowsWithMessage("Error while testing api", ApiAssertionRuntimeException.class,  ()-> comparator.assertionFail(new Exception("unkonwn")));
 		
 	}
 

@@ -11,10 +11,10 @@
     "firstname": "string"
   },
   "columns": [
-    { "id": "selected", "name": "Selected", "isActive": false },
-    { "id": "id", "name": "Event Id", "isActive": true },
-    { "id": "lastname", "name": "Last", "isActive": true },
-    { "id": "firstname", "name": "First", "isActive": true }
+    { "id": "selected", "name": "Selected", "isActive": 0 },
+    { "id": "id", "name": "Event Id", "isActive": 1 },
+    { "id": "lastname", "name": "Last", "isActive": 1 },
+    { "id": "firstname", "name": "First", "isActive": 1 }
   ],
   "default": {
     "defaultSortParams": [ "lastname", "firstname" ],

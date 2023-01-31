@@ -1,5 +1,5 @@
 {
-  "path" : "$",
+  "xpath" : "$",
   "map":{"default": "init"},
   "@type": "JSON_KEY_MAPPER"
 }

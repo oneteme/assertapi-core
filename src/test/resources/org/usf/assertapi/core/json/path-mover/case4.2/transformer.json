@@ -1,6 +1,0 @@
-{
-  "origin" : "$.columns[*].name",
-  "target" : "$.order",
-  "action": "MERGE",
-  "@type": "JSON_PATH_MOVER"
-}

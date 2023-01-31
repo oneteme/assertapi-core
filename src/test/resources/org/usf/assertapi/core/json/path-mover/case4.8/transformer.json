@@ -1,6 +1,0 @@
-{
-  "origin" : "$.order",
-  "target" : "$.sorting.id",
-  "action": "MERGE",
-  "@type": "JSON_PATH_MOVER"
-}

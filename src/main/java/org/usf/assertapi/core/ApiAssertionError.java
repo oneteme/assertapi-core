@@ -16,7 +16,7 @@ public final class ApiAssertionError extends AssertionError {
 	private final transient Object expected;
 	private final transient Object actual;
 
-	ApiAssertionError(Object expected, Object actual, String msg) {
+	public ApiAssertionError(Object expected, Object actual, String msg) {
 		this(false, expected, actual, msg);
 	}
 	

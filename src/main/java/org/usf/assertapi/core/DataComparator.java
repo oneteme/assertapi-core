@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
  * @since 1.0
  *
  */
-public interface ContentComparator<T> extends PolymorphicType {
+public interface DataComparator<T> extends PolymorphicType {
 	
 	CompareResult compare(T expected, T actual);
 	
-	ResponseTransformer[] getTransformers();
+	DataTransformer[] getTransformers();
 	
 	enum ResponseType {
 		TXT, CSV, JSON, XML, ZIP;

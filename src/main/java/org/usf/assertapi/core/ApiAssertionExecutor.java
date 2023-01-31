@@ -74,7 +74,7 @@ public final class ApiAssertionExecutor {
         			? staticResponse(api.staticResponse(), api.getLocation())
         			: exchange(stableReleaseTemp, api.stableApi(), api.getLocation());
         	if(!api.acceptStatus(expected.getStatusCodeValue())) {
-        		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
+        		throw new AssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
         	}
     	}
     	catch(Exception e) {
@@ -85,9 +85,9 @@ public final class ApiAssertionExecutor {
 			return new PairResponse(expected, af.get());
 		} catch (InterruptedException e) {
 			currentThread().interrupt();
-			throw new ApiAssertionRuntimeException("latest release execution was interrupted !", e);
+			throw new AssertionRuntimeException("latest release execution was interrupted !", e);
 		} catch (ExecutionException e) {
-			throw new ApiAssertionRuntimeException("exception during latest release execution !", e);
+			throw new AssertionRuntimeException("exception during latest release execution !", e);
 		}
 	}
     
@@ -110,7 +110,7 @@ public final class ApiAssertionExecutor {
 			return new RestClientResponseExceptionWrapper(e, exe);
 		}
 		catch(RestClientException e) {
-			throw new ApiAssertionRuntimeException("unreachable API", e);
+			throw new AssertionRuntimeException("unreachable API", e);
 		}
     }
 	
@@ -127,7 +127,7 @@ public final class ApiAssertionExecutor {
 	private static byte[] loadBody(HttpRequest req, URI location) {
 		if(req.getBody() == null && req.getLazyBody() != null) {
 			if(req.getLazyBody().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server 
-				//TODO REST call
+				//TODO REST call 
 			}
 			else {
 				var f = new File(requireNonNull(location).resolve(req.getLazyBody()));
@@ -137,7 +137,7 @@ public final class ApiAssertionExecutor {
 				try {
 					return readAllBytes(f.toPath());
 				} catch (IOException e) {
-					throw new ApiAssertionRuntimeException("cannot read file : " + f, e);
+					throw new AssertionRuntimeException("cannot read file : " + f, e);
 				}
 			}
 		}

@@ -1,11 +1,16 @@
 package org.usf.assertapi.core.exception;
 
-public class TransformerException extends RuntimeException {
-    public TransformerException(String msg) {
-        super(msg);
-    }
+import org.usf.assertapi.core.AssertionRuntimeException;
 
-    public TransformerException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+@Deprecated(forRemoval = true)
+@SuppressWarnings("serial")
+public final class TransformerException extends AssertionRuntimeException {
+
+	public TransformerException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public TransformerException(String message) {
+		super(message);
+	}
 }

@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_FILTER;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.stream.Stream;
@@ -17,13 +17,13 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonPathFilter extends ResponseTransformer<DocumentContext, DocumentContext> {
+public final class JsonPathFilter extends DataTransformer<DocumentContext, DocumentContext> {
 
 	private final Stream<JsonPath> paths; //exclude | include ?
 	
-	public JsonPathFilter(ReleaseTarget[] targets, String[] paths) {
-		super(targets);
-		this.paths = Stream.of(requireNonEmpty(paths, getType(), "xpaths"))
+	public JsonPathFilter(ReleaseTarget[] applyOn, String[] paths) {
+		super(applyOn);
+		this.paths = Stream.of(requireNonEmpty(paths, getType(), "paths"))
 				.map(JsonPath::compile);
 	}
 	

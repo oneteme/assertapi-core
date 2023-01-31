@@ -1,6 +1,6 @@
 {
-  "origin" : "$.columns",
-  "target" : "$",
+  "from" : "$.columns",
+  "to" : "$",
   "action": "SET",
   "@type": "JSON_PATH_MOVER"
 }

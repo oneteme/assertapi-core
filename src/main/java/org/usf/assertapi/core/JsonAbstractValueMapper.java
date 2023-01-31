@@ -8,13 +8,13 @@ import java.util.Arrays;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
-public abstract class JsonAbstractValueMapper extends ResponseTransformer<DocumentContext, DocumentContext>  {
+public abstract class JsonAbstractValueMapper extends DataTransformer<DocumentContext, DocumentContext>  {
 
-	private final JsonPath path; //to object
+	private final JsonPath path;
 
-	protected JsonAbstractValueMapper(ReleaseTarget[] targets, String path) {
-		super(targets);
-		this.path = compile(requireNonEmpty(path, getType(), "xpath"));
+	protected JsonAbstractValueMapper(ReleaseTarget[] applyOn, String path) {
+		super(applyOn);
+		this.path = compile(requireNonEmpty(path, getType(), "path"));
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public abstract class JsonAbstractValueMapper extends ResponseTransformer<Docume
 	
 	@Override
 	public String toString() {
-		return Arrays.toString(getTargets()) + " : " + path;
+		return Arrays.toString(getApplyOn()) + " : " + getType() + " " + path;
 	}
 
 }

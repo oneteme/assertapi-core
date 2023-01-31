@@ -1,7 +1,7 @@
 package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_KEY_MAPPER;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;
@@ -18,14 +18,14 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonKeyMapper extends ResponseTransformer<DocumentContext, DocumentContext> {
+public final class JsonKeyMapper extends DataTransformer<DocumentContext, DocumentContext> {
 
 	private final JsonPath path; //to object
 	private final Map<String, String> map;
 	
-	public JsonKeyMapper(ReleaseTarget[] targets, String path, Map<String, String> map) {
-		super(targets);
-		this.path = compile(requireNonEmpty(path, getType(), "xpath"));
+	public JsonKeyMapper(ReleaseTarget[] applyOn, String path, Map<String, String> map) {
+		super(applyOn);
+		this.path = compile(requireNonEmpty(path, getType(), "path"));
 		this.map = requireNonEmpty(map, getType(), "Map<oldKey,newKey>");
 	}
 	

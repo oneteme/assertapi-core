@@ -6,7 +6,7 @@ import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
+import static org.usf.assertapi.core.DataComparator.ResponseType.JSON;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
@@ -26,31 +26,31 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonContentComparator implements ContentComparator<String> {
+public final class JsonDataComparator implements DataComparator<String> {
 	
 	static final ParseContext jsonParser = using(defaultConfiguration().addOptions(SUPPRESS_EXCEPTIONS));
 
 	private final boolean strict;
-	private final ResponseTransformer<DocumentContext, DocumentContext>[] transformers;
+	private final DataTransformer<DocumentContext, DocumentContext>[] transformers;
 
-	public JsonContentComparator(Boolean strict, ResponseTransformer<DocumentContext, DocumentContext>[] transformers) {
+	public JsonDataComparator(Boolean strict, DataTransformer<DocumentContext, DocumentContext>[] transformers) {
 		this.strict = requireNonNullElse(strict, true);
 		this.transformers = transformers;
 	}
 	
 	@Override
 	public CompareResult compare(String expected, String actual) {
+		if(transformers != null) {
+			expected = transform(expected, STABLE);
+			actual = transform(actual, LATEST);
+		}
 		try {
-			if(transformers != null) {
-				expected = transform(expected, STABLE);
-				actual = transform(actual, LATEST);
-			}
 			assertEquals(expected, actual, strict);
 			return new CompareResult(expected, actual, true);
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
 		} catch (JSONException e) {
-			throw new ApiAssertionRuntimeException("error while parsing JSON content", e);
+			throw new AssertionRuntimeException("error while parsing JSON content", e);
 		}
 	}
 	
@@ -60,11 +60,11 @@ public final class JsonContentComparator implements ContentComparator<String> {
 					.filter(t-> t.matchTarget(target))
 					.collect(toList());
 			if(!list.isEmpty()) {
-				var json = jsonParser.parse(resp);
+				var doc = jsonParser.parse(resp);
 				for(var t : list) {
-					json = t.transform(json);
+					doc = t.transform(doc);
 				}
-				return json.jsonString();
+				resp = doc.jsonString();
 			}
 		}
 		return resp;

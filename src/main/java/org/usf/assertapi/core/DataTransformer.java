@@ -14,16 +14,16 @@ import static org.usf.assertapi.core.ReleaseTarget.STABLE;
  *
  */
 @Getter
-public abstract class ResponseTransformer<T,R> implements PolymorphicType {
+public abstract class DataTransformer<T,R> implements PolymorphicType {
 
-	private final ReleaseTarget[] targets;
+	private final ReleaseTarget[] applyOn;
 	
-	protected ResponseTransformer(ReleaseTarget[] targets) {
-		this.targets = requireNonNullElse(targets, new ReleaseTarget[] {STABLE});
+	protected DataTransformer(ReleaseTarget[] applyOn) {
+		this.applyOn = requireNonNullElse(applyOn, new ReleaseTarget[] {STABLE});
 	}
 	
 	public boolean matchTarget(ReleaseTarget target) {
-		return Stream.of(targets).anyMatch(target::equals);
+		return Stream.of(applyOn).anyMatch(target::equals);
 	}
 
 	protected abstract R transform(T resp); //response can be byte[] | string

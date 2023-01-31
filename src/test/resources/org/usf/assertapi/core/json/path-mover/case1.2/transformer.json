@@ -1,6 +1,6 @@
 {
-  "origin" : "$.sorting",
-  "target" : "$",
+  "from" : "$.sorting",
+  "to" : "$",
   "action": "SET",
   "@type": "JSON_PATH_MOVER"
 }

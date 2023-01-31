@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
+import static org.usf.assertapi.core.DataComparator.ResponseType.CSV;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,18 +13,17 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor //keep one default constructor
-public final class CsvContentComparator implements ContentComparator<String> {
+public final class CsvDataComparator implements DataComparator<String> {
 	
-	private final ResponseTransformer<String, String>[] transformers;
+	private final DataTransformer<String, String>[] transformers;
 
 	@Override
 	public CompareResult compare(String expected, String actual){
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("not yet implemented");
 	}
 	
 	@Override
 	public String getType() {
 		return CSV.name();
 	}
-
 }

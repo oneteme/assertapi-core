@@ -1,6 +1,6 @@
 {
-  "origin" : "$.columns",
-  "target" : "$.sorting",
+  "from" : "$.columns",
+  "to" : "$.sorting",
   "action": "MERGE",
   "@type": "JSON_PATH_MOVER"
 }

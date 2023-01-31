@@ -1,6 +1,6 @@
 {
-  "origin" : "$.sorting.id",
-  "target" : "$.default",
+  "from" : "$.sorting.id",
+  "to" : "$.default",
   "action": "MERGE",
   "@type": "JSON_PATH_MOVER"
 }

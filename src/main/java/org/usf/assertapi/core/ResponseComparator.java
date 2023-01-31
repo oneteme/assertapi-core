@@ -122,10 +122,10 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) {
+	public void assertJsonContent(String expected, String actual, DataComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("jsonContent", expected, actual, true);
-		var cr = castConfig(config, JsonContentComparator.class, ()-> new JsonContentComparator(null, null)).compare(expected, actual);
+		var cr = castConfig(config, JsonDataComparator.class, ()-> new JsonDataComparator(null, null)).compare(expected, actual);
 		if(expected != cr.getExpected() || actual != cr.getActual()) {
 			logApiComparaison("newContent", cr.getExpected(), cr.getActual(), true);
 		}
@@ -144,7 +144,7 @@ public class ResponseComparator {
 		if(t instanceof RuntimeException) {
 			throw (RuntimeException) t;
 		}
-		throw new ApiAssertionRuntimeException("Error while testing api", t);
+		throw new AssertionRuntimeException("Error while testing api", t);
 	}
 	
 	public void finish(CompareStatus status) { 
@@ -156,14 +156,14 @@ public class ResponseComparator {
 				format("%s : stable=%s ~ latest=%s", currentStage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 	
-	static <T extends ContentComparator<?>> T castConfig(ContentComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
+	static <T extends DataComparator<?>> T castConfig(DataComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
 		if(obj == null) {
 			return orElseGet.get();
 		}
 		if(expectedClass.isInstance(obj)) {
 			return expectedClass.cast(obj);
 		}
-		throw new ApiAssertionRuntimeException("mismatch API configuration");
+		throw new AssertionRuntimeException("mismatch API configuration");
 	}
 
 	private static void logApiComparaison(String msg) {

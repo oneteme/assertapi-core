@@ -100,7 +100,7 @@ class ResponseComparatorTest {
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //mismatch
 		expectCurrentStage(RESPONSE_CONTENT);
-		assertThrows(ApiAssertionRuntimeException.class, ()-> comparator.assertJsonContent(
+		assertThrows(AssertionRuntimeException.class, ()-> comparator.assertJsonContent(
 				"{\"name\":\"John\",\"age\":30,\"car\":null}", 
 				"{{\"name\":\"John\",\"age\":30,\"car\":\"\"}", null)); //bad json
 		expectCurrentStage(RESPONSE_CONTENT);
@@ -112,7 +112,7 @@ class ResponseComparatorTest {
 		assertThrowsWithMessage(ApiAssertionError.class, "assertion fail", ()-> comparator.assertionFail(new ApiAssertionError(null, null, "assertion fail")));
 		assertThrowsWithMessage(ApiAssertionError.class, "skiped", ()-> comparator.assertionFail(skippedAssertionError("skiped")));
 		assertThrowsWithMessage(RuntimeException.class,  "dummy msg", ()-> comparator.assertionFail(new RuntimeException("dummy msg")));
-		assertThrowsWithMessage(ApiAssertionRuntimeException.class, "Error while testing api", ()-> comparator.assertionFail(new Exception("unkonwn")));
+		assertThrowsWithMessage(AssertionRuntimeException.class, "Error while testing api", ()-> comparator.assertionFail(new Exception("unkonwn")));
 		
 	}
 
@@ -124,12 +124,12 @@ class ResponseComparatorTest {
 	
 	@Test
 	void testCastConfig() {
-		var exp = new JsonContentComparator(null, null);
-		var act = assertDoesNotThrow(()-> castConfig(null, JsonContentComparator.class, ()-> exp));
+		var exp = new JsonDataComparator(null, null);
+		var act = assertDoesNotThrow(()-> castConfig(null, JsonDataComparator.class, ()-> exp));
 		assertEquals(exp, act);
-		act = assertDoesNotThrow(()-> castConfig(exp, JsonContentComparator.class, null));
+		act = assertDoesNotThrow(()-> castConfig(exp, JsonDataComparator.class, null));
 		assertEquals(exp, act);
-		assertThrows(ApiAssertionRuntimeException.class, ()-> castConfig(exp, CsvContentComparator.class, null));
+		assertThrows(AssertionRuntimeException.class, ()-> castConfig(exp, CsvDataComparator.class, null));
 	}
 	
 	private void expectCurrentStage(CompareStage stage) {

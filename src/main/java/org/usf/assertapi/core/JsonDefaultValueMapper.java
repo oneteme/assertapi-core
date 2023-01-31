@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_VALUE_MAPPER;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;
@@ -15,9 +15,9 @@ public final class JsonDefaultValueMapper extends JsonAbstractValueMapper {
 	
 	private final Map<String, Object> map;
 	
-	public JsonDefaultValueMapper(ReleaseTarget[] targets, String path, Map<String, Object> map) {
-		super(targets, path);
-		this.map = requireNonEmpty(map, getType(), "Map<oldValue,newValue>");
+	public JsonDefaultValueMapper(ReleaseTarget[] applyOn, String path, Map<String, Object> map) {
+		super(applyOn, path);
+		this.map = requireNonEmpty(map, getType(), "Map<oldValue|regex,newValue>");
 	}
 
 	protected Object transformValue(Object value) {

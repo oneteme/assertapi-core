@@ -6,7 +6,7 @@ package org.usf.assertapi.core;
  * @since 1.0
  *
  */
-public enum CompareStage {
+public enum ComparisonStage {
 	
 	ELAPSED_TIME,
 	HTTP_CODE, 

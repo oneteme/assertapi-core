@@ -77,7 +77,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 		
 	@Override
-	public void finish(CompareStatus status) {
+	public void finish(ComparisonStatus status) {
 		var result = new ComparisonResult(
 				stableReleaseExec,
 				latestReleaseExec,
@@ -92,7 +92,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 	
 	@Override
-	public CompareStage getCurrentStage() {
+	public ComparisonStage getCurrentStage() {
 		return comparator.getCurrentStage();
 	}
 	

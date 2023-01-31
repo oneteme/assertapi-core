@@ -9,6 +9,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.usf.assertapi.core.DataComparator.ResponseType.JSON;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
+import static org.usf.assertapi.core.Utils.isEmpty;
 
 import java.util.stream.Stream;
 
@@ -40,7 +41,7 @@ public final class JsonDataComparator implements DataComparator<String> {
 	
 	@Override
 	public CompareResult compare(String expected, String actual) {
-		if(transformers != null) {
+		if(!isEmpty(transformers)) {
 			expected = transform(expected, STABLE);
 			actual = transform(actual, LATEST);
 		}
@@ -50,7 +51,7 @@ public final class JsonDataComparator implements DataComparator<String> {
 		} catch (AssertionError e) {
 			return new CompareResult(expected, actual, false);
 		} catch (JSONException e) {
-			throw new AssertionRuntimeException("error while parsing JSON content", e);
+			throw new ApiAssertionRuntimeException("error while parsing JSON content", e);
 		}
 	}
 	

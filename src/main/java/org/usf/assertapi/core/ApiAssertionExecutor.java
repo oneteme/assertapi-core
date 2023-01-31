@@ -74,7 +74,7 @@ public final class ApiAssertionExecutor {
         			? staticResponse(api.staticResponse(), api.getLocation())
         			: exchange(stableReleaseTemp, api.stableApi(), api.getLocation());
         	if(!api.acceptStatus(expected.getStatusCodeValue())) {
-        		throw new AssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
+        		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
         	}
     	}
     	catch(Exception e) {
@@ -85,9 +85,9 @@ public final class ApiAssertionExecutor {
 			return new PairResponse(expected, af.get());
 		} catch (InterruptedException e) {
 			currentThread().interrupt();
-			throw new AssertionRuntimeException("latest release execution was interrupted !", e);
+			throw new ApiAssertionRuntimeException("latest release execution was interrupted !", e);
 		} catch (ExecutionException e) {
-			throw new AssertionRuntimeException("exception during latest release execution !", e);
+			throw new ApiAssertionRuntimeException("exception during latest release execution !", e);
 		}
 	}
     
@@ -110,7 +110,7 @@ public final class ApiAssertionExecutor {
 			return new RestClientResponseExceptionWrapper(e, exe);
 		}
 		catch(RestClientException e) {
-			throw new AssertionRuntimeException("unreachable API", e);
+			throw new ApiAssertionRuntimeException("unreachable API", e);
 		}
     }
 	
@@ -119,7 +119,10 @@ public final class ApiAssertionExecutor {
 			throw new Utils.EmptyValueException("ApiRequest", "staticResponse");
 		}
 		var ms = currentTimeMillis();
-		res = res.withBody(loadBody(res, location));
+		var body = loadBody(res, location);
+		if(body != res.getBody()) {
+			res = res.withBody(body);
+		}
 		var exe = new ExecutionInfo(ms, currentTimeMillis(), res.getStatus(), sizeOf(res.getBody()));
 		return new HttpRequestWrapper(res, exe);
 	}
@@ -137,7 +140,7 @@ public final class ApiAssertionExecutor {
 				try {
 					return readAllBytes(f.toPath());
 				} catch (IOException e) {
-					throw new AssertionRuntimeException("cannot read file : " + f, e);
+					throw new ApiAssertionRuntimeException("cannot read file : " + f, e);
 				}
 			}
 		}

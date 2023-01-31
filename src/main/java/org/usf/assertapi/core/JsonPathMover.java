@@ -2,10 +2,10 @@ package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static java.util.Objects.requireNonNullElse;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_MOVER;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.assertapi.core.JsonPathMover.Action.PUT;
 import static org.usf.assertapi.core.JsonPathMover.Action.SET;
-import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_MOVER;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;

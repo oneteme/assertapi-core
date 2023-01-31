@@ -6,7 +6,7 @@ package org.usf.assertapi.core;
  * @since 1.0
  *
  */
-public enum CompareStatus {
+public enum ComparisonStatus {
 	
 	SKIP, ERROR, FAIL, OK;
 }

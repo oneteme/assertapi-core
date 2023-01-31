@@ -15,8 +15,8 @@ public final class ComparisonResult {
 	
 	private final ExecutionInfo stableApiExecution;
 	private final ExecutionInfo latestApiExecution;
-	private final CompareStatus status;
-	private final CompareStage step;
+	private final ComparisonStatus status;
+	private final ComparisonStage step;
 	
 	@Override
 	public String toString() {

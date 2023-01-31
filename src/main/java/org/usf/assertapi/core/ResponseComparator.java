@@ -4,15 +4,15 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.usf.assertapi.core.ApiAssertionError.skippedAssertionError;
 import static org.usf.assertapi.core.ApiAssertionError.wasSkipped;
-import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
-import static org.usf.assertapi.core.CompareStage.ELAPSED_TIME;
-import static org.usf.assertapi.core.CompareStage.HEADER_CONTENT;
-import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
-import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
-import static org.usf.assertapi.core.CompareStatus.ERROR;
-import static org.usf.assertapi.core.CompareStatus.FAIL;
-import static org.usf.assertapi.core.CompareStatus.OK;
-import static org.usf.assertapi.core.CompareStatus.SKIP;
+import static org.usf.assertapi.core.ComparisonStage.CONTENT_TYPE;
+import static org.usf.assertapi.core.ComparisonStage.ELAPSED_TIME;
+import static org.usf.assertapi.core.ComparisonStage.HEADER_CONTENT;
+import static org.usf.assertapi.core.ComparisonStage.HTTP_CODE;
+import static org.usf.assertapi.core.ComparisonStage.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.ComparisonStatus.ERROR;
+import static org.usf.assertapi.core.ComparisonStatus.FAIL;
+import static org.usf.assertapi.core.ComparisonStatus.OK;
+import static org.usf.assertapi.core.ComparisonStatus.SKIP;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
-	CompareStage currentStage;
+	ComparisonStage currentStage;
 	
 	public final void assertResponse(ApiRequest api, Function<ApiRequest, PairResponse> execution) {
 		this.currentStage = null; //important : init starting stage
@@ -144,10 +144,10 @@ public class ResponseComparator {
 		if(t instanceof RuntimeException) {
 			throw (RuntimeException) t;
 		}
-		throw new AssertionRuntimeException("Error while testing api", t);
+		throw new ApiAssertionRuntimeException("Error while testing api", t);
 	}
 	
-	public void finish(CompareStatus status) { 
+	public void finish(ComparisonStatus status) { 
 		logApiComparaison("TEST " + status);
 	}
 
@@ -163,7 +163,7 @@ public class ResponseComparator {
 		if(expectedClass.isInstance(obj)) {
 			return expectedClass.cast(obj);
 		}
-		throw new AssertionRuntimeException("mismatch API configuration");
+		throw new ApiAssertionRuntimeException("mismatch API configuration");
 	}
 
 	private static void logApiComparaison(String msg) {

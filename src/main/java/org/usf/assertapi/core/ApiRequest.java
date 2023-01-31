@@ -84,7 +84,6 @@ public final class ApiRequest extends HttpRequest {
 		if(description != null) {
 			sb.append(description);
 		}
-		var s = sb.toString();
-		return s.isEmpty() ? super.toString() : s;
+		return sb.length() == 0 ? super.toString() : sb.toString(); //isEmpty java15
 	}
 }

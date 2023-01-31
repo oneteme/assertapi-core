@@ -1,0 +1,4 @@
+{
+	"type": "java.lang.IllegalAccessError",
+	"message": "$['default'] is not an object"
+}

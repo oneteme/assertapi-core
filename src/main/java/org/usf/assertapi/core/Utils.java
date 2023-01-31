@@ -3,12 +3,12 @@ package org.usf.assertapi.core;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
-import static org.usf.assertapi.core.ContentComparator.ResponseType.CSV;
-import static org.usf.assertapi.core.ContentComparator.ResponseType.JSON;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_KEY_MAPPER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_MOVER;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_VALUE_MAPPER;
+import static org.usf.assertapi.core.DataComparator.ResponseType.CSV;
+import static org.usf.assertapi.core.DataComparator.ResponseType.JSON;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_KEY_MAPPER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_FILTER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_MOVER;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_VALUE_MAPPER;
 
 import java.util.Collection;
 import java.util.Map;
@@ -91,13 +91,13 @@ public final class Utils {
 	public static SimpleModule defaultModule() {
 		return new SimpleModule("assertapi").registerSubtypes(
 				//register TypeComparatorConfig implementations
-				new NamedType(JsonContentComparator.class, JSON.name())
-				, new NamedType(CsvContentComparator.class, CSV.name())
+				new NamedType(JsonDataComparator.class, JSON.name())
+				, new NamedType(CsvDataComparator.class, CSV.name())
 				//register ResponseTransformer implementations
 				, new NamedType(JsonPathFilter.class, JSON_PATH_FILTER.name())
 				, new NamedType(JsonPathMover.class, JSON_PATH_MOVER.name())
 				, new NamedType(JsonKeyMapper.class, JSON_KEY_MAPPER.name())
-				, new NamedType(JsonRegexValueMapper.class, JSON_VALUE_MAPPER.name()));
+				, new NamedType(JsonDefaultValueMapper.class, JSON_VALUE_MAPPER.name()));
 		
 	}
 	

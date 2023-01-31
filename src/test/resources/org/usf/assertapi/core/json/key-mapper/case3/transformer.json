@@ -1,5 +1,5 @@
 {
-  "xpath" : "$",
+  "path" : "$",
   "map":{
   	"order": "tabOrder",
   	"sorting": "tabSorting",

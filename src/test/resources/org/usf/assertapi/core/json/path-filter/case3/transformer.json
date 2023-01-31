@@ -1,4 +1,4 @@
 {
-  "xpaths" : ["$.columns[*].name"],
+  "paths": ["$.order[?(@ contains 'name')]"],
   "@type": "JSON_PATH_FILTER"
 }

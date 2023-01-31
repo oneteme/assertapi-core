@@ -4,15 +4,15 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.usf.assertapi.core.ApiAssertionError.skippedAssertionError;
 import static org.usf.assertapi.core.ApiAssertionError.wasSkipped;
-import static org.usf.assertapi.core.CompareStage.CONTENT_TYPE;
-import static org.usf.assertapi.core.CompareStage.ELAPSED_TIME;
-import static org.usf.assertapi.core.CompareStage.HEADER_CONTENT;
-import static org.usf.assertapi.core.CompareStage.HTTP_CODE;
-import static org.usf.assertapi.core.CompareStage.RESPONSE_CONTENT;
-import static org.usf.assertapi.core.CompareStatus.ERROR;
-import static org.usf.assertapi.core.CompareStatus.FAIL;
-import static org.usf.assertapi.core.CompareStatus.OK;
-import static org.usf.assertapi.core.CompareStatus.SKIP;
+import static org.usf.assertapi.core.ComparisonStage.CONTENT_TYPE;
+import static org.usf.assertapi.core.ComparisonStage.ELAPSED_TIME;
+import static org.usf.assertapi.core.ComparisonStage.HEADER_CONTENT;
+import static org.usf.assertapi.core.ComparisonStage.HTTP_CODE;
+import static org.usf.assertapi.core.ComparisonStage.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.ComparisonStatus.ERROR;
+import static org.usf.assertapi.core.ComparisonStatus.FAIL;
+import static org.usf.assertapi.core.ComparisonStatus.OK;
+import static org.usf.assertapi.core.ComparisonStatus.SKIP;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
-	CompareStage currentStage;
+	ComparisonStage currentStage;
 	
 	public final void assertResponse(ApiRequest api, Function<ApiRequest, PairResponse> execution) {
 		this.currentStage = null; //important : init starting stage
@@ -122,10 +122,10 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, ContentComparator<?> config) {
+	public void assertJsonContent(String expected, String actual, DataComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("jsonContent", expected, actual, true);
-		var cr = castConfig(config, JsonContentComparator.class, ()-> new JsonContentComparator(null, null)).compare(expected, actual);
+		var cr = castConfig(config, JsonDataComparator.class, ()-> new JsonDataComparator(null, null)).compare(expected, actual);
 		if(expected != cr.getExpected() || actual != cr.getActual()) {
 			logApiComparaison("newContent", cr.getExpected(), cr.getActual(), true);
 		}
@@ -147,7 +147,7 @@ public class ResponseComparator {
 		throw new ApiAssertionRuntimeException("Error while testing api", t);
 	}
 	
-	public void finish(CompareStatus status) { 
+	public void finish(ComparisonStatus status) { 
 		logApiComparaison("TEST " + status);
 	}
 
@@ -156,7 +156,7 @@ public class ResponseComparator {
 				format("%s : stable=%s ~ latest=%s", currentStage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 	
-	static <T extends ContentComparator<?>> T castConfig(ContentComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
+	static <T extends DataComparator<?>> T castConfig(DataComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
 		if(obj == null) {
 			return orElseGet.get();
 		}

@@ -26,8 +26,9 @@ public final class ApiAssertionFactory {
 	private ServerConfig latestRelease;
 	private BiConsumer<ApiRequest, ComparisonResult> tracer;
 	
-	public void register(@NonNull String name, @NonNull Class<? extends ClientAuthenticator> c) {
+	public ApiAssertionFactory register(@NonNull String name, @NonNull Class<? extends ClientAuthenticator> c) {
 		clientAuthenticators.put(name, c);
+		return this;
 	}
 	
 	public ApiAssertionFactory comparingWithStaticResponse(@NonNull ServerConfig latestRelease) {

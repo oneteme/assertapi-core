@@ -1,0 +1,17 @@
+{
+  "order": [
+    "selected",
+    "id",
+    "lastname",
+    "firstname"
+  ],
+  "sorting": {
+    "id": "number",
+    "lastname": "string",
+    "firstname": "string"
+  },
+  "columns": [ "lastname", "firstname" ],
+  "default": {
+    "defaultSortDirs": [ "asc", "asc" ]
+  }
+}

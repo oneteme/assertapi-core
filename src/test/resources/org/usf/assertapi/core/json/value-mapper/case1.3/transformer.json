@@ -1,0 +1,10 @@
+{
+  "path": "$.order[*]",
+  "map": {
+    "id"				: {"key":"id"},       
+    "selected"  : {"key":"selected"}, 
+    "lastname"  : {"key":"lastname"}, 
+    "firstname" : {"key":"firstname"} 
+  },
+  "@type": "JSON_VALUE_MAPPER"
+}

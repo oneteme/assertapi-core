@@ -1,0 +1,23 @@
+{
+  "order": [
+    "selected",
+    "id",
+    "lastname",
+    "firstname"
+  ],
+  "sorting": {
+    "id": "number",
+    "lastname": "string",
+    "firstname": "string"
+  },
+  "columns": [
+    { "id": "checked", "name": "Selected", "isActive": false },
+    { "id": "identifier", "name": "Event Id", "isActive": true },
+    { "id": "description", "name": "Last", "isActive": true },
+    { "id": "title", "name": "First", "isActive": null }
+  ],
+  "default": {
+    "defaultSortParams": [ "lastname", "firstname" ],
+    "defaultSortDirs": [ "asc", "asc" ]
+  }
+}

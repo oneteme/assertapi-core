@@ -1,5 +1,5 @@
 {
-  "xpath" : "$.columns[*]",
+  "path" : "$.columns[*]",
   "map":{"id": "ID"},
   "@type": "JSON_KEY_MAPPER"
 }

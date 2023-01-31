@@ -1,0 +1,6 @@
+{
+  "from" : "$.columns[*].name",
+  "to" : "$.order",
+  "action": "MERGE",
+  "@type": "JSON_PATH_MOVER"
+}

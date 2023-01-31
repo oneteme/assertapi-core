@@ -1,89 +1,115 @@
 package org.usf.assertapi.core;
 
+import static com.jayway.jsonpath.JsonPath.compile;
 import static java.util.Objects.requireNonNullElse;
-import static org.usf.assertapi.core.JsonContentComparator.jsonParser;
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_MOVER;
-import static org.usf.assertapi.core.Utils.isEmpty;
+import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_MOVER;
+import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
+import static org.usf.assertapi.core.JsonPathMover.Action.PUT;
+import static org.usf.assertapi.core.JsonPathMover.Action.SET;
+import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import net.minidev.json.JSONArray;
 
-public class JsonPathMover extends ResponseTransformer<DocumentContext> {
+public class JsonPathMover extends DataTransformer<DocumentContext, DocumentContext> {
 
-	private final String originXpath;
-	private final String targetXpath;
-	private final Map<String, String> map;
-	private final boolean removeOrigin;
+	private final JsonPath fromPath;
+	private final JsonPath toPath;
+	private final Action action;
+	private final String key;
 	
-	public JsonPathMover(ReleaseTarget[] targets, String originXpath, String targetXpath, Map<String, String> map, Boolean removeOrigin) {
-		super(targets);
-		this.originXpath = originXpath;
-		this.targetXpath = targetXpath;
-		this.map = map;
-		this.removeOrigin = requireNonNullElse(removeOrigin, true);
+	public JsonPathMover(ReleaseTarget[] applyOn, String from, String to, Action action, String key) {
+		super(applyOn);
+		this.fromPath = compile(from);
+		this.toPath = compile(to);
+		this.action = requireNonNullElse(action, SET);
+		this.key = action == PUT ? requireNonEmpty(key, getType(), "field") : key; //else unused key
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	void transform(DocumentContext json) {
-		var origin = json.read(originXpath);
-		var target = json.read(targetXpath);
+	protected DocumentContext transform(DocumentContext json) {
+		switch (action) {
+		case SET  : return setOrigin(json);
+		case ADD  : return addOrigin(json);
+		case PUT  : return putOrigin(json);
+		case MERGE: return mergeOrigin(json);
+		default: throw new UnsupportedOperationException("unsupported action " + action);
+		}
+	}
+	
+	private DocumentContext setOrigin(DocumentContext json) { //warn key
+		var origin = json.read(fromPath);
+		if(toPath.getPath().equals("$")) {//root
+			return jsonParser.parse(origin);
+		}
+		else {
+			json.set(toPath, origin);
+			return json.delete(fromPath);
+		}
+	}
+	
+	private DocumentContext addOrigin(DocumentContext json) {
+		if(isArray(json.read(toPath))) {
+			json.add(toPath, json.read(fromPath));
+			return json.delete(fromPath);
+		}
+		throw new IllegalArgumentException(toPath.getPath() + " : is not array");
+	}
+
+	private DocumentContext putOrigin(DocumentContext json) {
+		if(isObject(json.read(toPath))) {
+			json.put(toPath, key, json.read(fromPath));
+			return json.delete(fromPath);
+		}
+		throw new IllegalArgumentException(toPath.getPath()  + " : is not object");
+	}
+
+	private DocumentContext mergeOrigin(DocumentContext json) {
+		var origin = json.read(fromPath);
+		var target = json.read(toPath);
 		if(isArray(target)) {
-			if(isEmpty(map)) {
-				json.add(targetXpath, origin);
+			if(isArray(origin)) {
+				((JSONArray)origin).forEach(o-> json.add(toPath, o)); //filter items
+			}
+			else if(isObject(origin)) {
+				throw new UnsupportedOperationException("cannot merge object " + fromPath.getPath() + " with array " + toPath.getPath());
 			}
 			else {
-				throw new ApiAssertionRuntimeException("moving any => array : doesn't support map configuration");
+				throw expectArray(fromPath);
 			}
 		}
-		else if(isObject(target)) {
+		else if(isObject(target))  {
 			if(isObject(origin)) {
-				moveObject(json, (Map<String, Object>) origin);
+				((Map<String, ?>)origin).entrySet()
+				.forEach(e-> json.put(toPath, e.getKey(), e.getValue()));//filter fields
 			}
 			else if(isArray(origin)) {
-				moveArray(json, (JSONArray) origin);
+				throw new UnsupportedOperationException("cannot merge array " + fromPath.getPath() + " with object " + toPath.getPath());
 			}
 			else {
-				throw new ApiAssertionRuntimeException(originXpath + " is not object");
+				throw expectObject(toPath);
 			}
 		}
 		else {
-			throw new ApiAssertionRuntimeException("targetXpath must be an array or object");
+			throw expectArrayOrObject(toPath);
 		}
-		if(removeOrigin) {
-			json.delete(originXpath);
-		}
+		return json.delete(fromPath);
 	}
 	
-	private void moveObject(DocumentContext json, Map<String, Object> o) {
-		Map<String, ?> entries;
-		Consumer<Entry<String, ?>> consumer;
-		if(isEmpty(map)) {
-			entries = new LinkedHashMap<>(o); //copy : read/write
-			consumer = e-> json.put(targetXpath, e.getKey(), e.getValue());
-		}
-		else {
-			entries = map;
-			consumer = e-> json.put(targetXpath, e.getValue().toString(), o.get(e.getKey())); 
-		}
-		if(!removeOrigin) {
-			consumer = consumer.andThen(e-> json.delete(originXpath + "." + e.getKey()));
-		} //else remove parent
-		entries.entrySet().forEach(consumer);
+	private static IllegalAccessError expectObject(JsonPath path) {
+		return new IllegalAccessError(path.getPath() + " is not an object");
 	}
 
-	private void moveArray(DocumentContext json, JSONArray arr) {
-		if(isEmpty(map)) {
-			throw new ApiAssertionRuntimeException("moving array => object : require Map<xpath, newKey> configuration");
-		}
-		var doc = jsonParser.parse(arr);
-		map.entrySet().forEach(e-> json.put(targetXpath, e.getValue(), doc.read(e.getKey())));
+	private static IllegalAccessError expectArray(JsonPath path) {
+		return new IllegalAccessError(path.getPath() + " is not an array");
+	}
+	
+	private IllegalAccessError expectArrayOrObject(JsonPath path) {
+		return new IllegalAccessError(path.getPath() + " must be an object or array");
 	}
 	
 	private static boolean isObject(Object o) {
@@ -97,6 +123,10 @@ public class JsonPathMover extends ResponseTransformer<DocumentContext> {
 	@Override
 	public String getType() {
 		return JSON_PATH_MOVER.name();
+	}	
+	
+	public enum Action {
+		SET, PUT, ADD, MERGE;
 	}
 	
 }

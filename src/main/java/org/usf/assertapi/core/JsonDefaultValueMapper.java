@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * @since 1.0
  *
  */
-public final class JsonDefaultValueMapper extends JsonAbstractValueMapper {
+public final class JsonDefaultValueMapper extends JsonAbstractValueMapper { //convert to sdt function
 	
 	private final Map<String, Object> map;
 	

@@ -42,7 +42,7 @@ jobs:
       id: projectVersion
       run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
     - name: Deploy SNAPSHOT
-      if: endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
+#       if: endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: echo  ${{ steps.projectVersion.outputs.version }}
     - name: Deploy RELEASE
-      if: github.ref == 'refs/heads/main' && ${{ !endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
+#       if: github.ref == 'refs/heads/main' && ${{ !endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}

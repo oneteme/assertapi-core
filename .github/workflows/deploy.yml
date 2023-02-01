@@ -27,7 +27,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn clean
+      run: mvn --batch-mode --no-transfer-progress -Pdeploy verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-server -Dgpg.skip=true
   deploy:
     needs: build
     if: github.event_name == 'push'
@@ -46,22 +46,18 @@ jobs:
         server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
-    - name: Extract project Maven version
+    - name: Extract Maven version
       id: projectVersion
       run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
-    - name: Deploy SNAPSHOT
+    - name: Publish SNAPSHOT
       if: endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: echo  ${{ steps.projectVersion.outputs.version }}
-    - name: Deploy RELEASE
+      run: mvn --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -Pdeploy clean deploy
+    - name: Publish RELEASE
       if: ${{ github.ref == 'refs/heads/main' && !endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: echo ${{ steps.projectVersion.outputs.version }}
+      run: mvn --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -Pdeploy clean deploy

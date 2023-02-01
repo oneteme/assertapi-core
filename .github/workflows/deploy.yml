@@ -16,7 +16,7 @@ jobs:
     steps:
     - id: formatGPG
       name: Install gpg secret key
-      run: echo "gpg=$(echo -e secrets.MAVEN_GPG_PRIVATE_KEY)" >>$GITHUB_OUTPUT
+      run: echo "gpg=$(echo -e ${{ secrets.MAVEN_GPG_PRIVATE_KEY }})" >>$GITHUB_OUTPUT
     - name: check
       run: echo ${{ steps.formatGPG.outputs.gpg }}
     - uses: actions/checkout@v3

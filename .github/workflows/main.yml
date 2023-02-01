@@ -29,13 +29,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn --batch-mode --no-transfer-progress -Pdeploy verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_${{ github.event.repository.name }} -Dgpg.skip=true
+      run: mvn --batch-mode --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_${{ github.event.repository.name }}
   deploy:
     needs: build
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
     - name: Install gpg secret key
+      if: github.ref == 'refs/heads/main' 
       run: |
         cat <(echo -e "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}") | gpg --batch --import
         gpg --list-secret-keys --keyid-format LONG

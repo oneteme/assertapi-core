@@ -4,6 +4,7 @@ import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_VALUE_
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -18,6 +19,7 @@ public final class JsonDefaultValueMapper extends JsonAbstractValueMapper {
 	public JsonDefaultValueMapper(ReleaseTarget[] applyOn, String path, Map<String, Object> map) {
 		super(applyOn, path);
 		this.map = requireNonEmpty(map, getType(), "Map<oldValue|regex,newValue>");
+		this.map.keySet().forEach(Pattern::compile); // verify regex 
 	}
 
 	protected Object transformValue(Object value) {

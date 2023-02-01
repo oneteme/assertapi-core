@@ -30,7 +30,7 @@ jobs:
         server-password: MAVEN_PASSWORD
     - name: Extract project Maven version
       id: projectVersion
-      run: echo "version=$(./mvn org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
+      run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
     - name: Publish package
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}

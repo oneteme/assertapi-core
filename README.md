@@ -4,7 +4,7 @@
 ...
 
 ## Status
-[![Java CI with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/build.yml/badge.svg)](https://github.com/oneteme/assertapi-core/actions/workflows/build.yml)
+[![Java CI/CD with Maven](https://github.com/oneteme/assertapi-core/actions/workflows/deploy.yml/badge.svg?branch=develop)](https://github.com/oneteme/assertapi-core/actions/workflows/deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=oneteme_assertapi-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=oneteme_assertapi-core)
 
 

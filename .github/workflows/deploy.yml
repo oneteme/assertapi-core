@@ -59,7 +59,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: echo  ${{ steps.projectVersion.outputs.version }}
     - name: Deploy RELEASE
-      if: github.ref == 'refs/heads/main' && ${{ !endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
+      if: ${{ github.ref == 'refs/heads/main' && !endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}

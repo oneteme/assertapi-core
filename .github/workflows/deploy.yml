@@ -11,8 +11,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [ "main", "develop" ]
+    paths-ignore: [ "README.md"]
   push:
     branches: [ "main", "develop" ]
+    paths-ignore: [ "README.md"]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +29,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn --batch-mode --no-transfer-progress -Pdeploy verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_assertapi-server -Dgpg.skip=true
+      run: mvn --batch-mode --no-transfer-progress -Pdeploy verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oneteme_${{ github.event.repository.name }} -Dgpg.skip=true
   deploy:
     needs: build
     if: github.event_name == 'push'

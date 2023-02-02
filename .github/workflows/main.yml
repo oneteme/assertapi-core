@@ -10,7 +10,7 @@ name: CI/CD
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
     paths-ignore: [ "README.md"]
   push:
     branches: [ "main", "develop" ]

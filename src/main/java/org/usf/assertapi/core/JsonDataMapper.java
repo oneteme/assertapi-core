@@ -2,9 +2,8 @@ package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.Utils.flow;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
-
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jayway.jsonpath.DocumentContext;
@@ -16,21 +15,25 @@ import com.jayway.jsonpath.JsonPath;
  * @since 1.0
  *
  */
-@JsonTypeName("JSON_KEY_MAPPER")
-public final class JsonKeyMapper extends AbstractModelTransformer<DocumentContext> {
+@JsonTypeName("JSON_VALUE_MAPPER")
+public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 
-	private final JsonPath path; //to object
-	private final Map<String, String> map;
-	
-	public JsonKeyMapper(ReleaseTarget[] applyOn, String path, Map<String, String> map) {
+	private final JsonPath path;
+	private final DataTransformer[] transformers;
+
+	protected JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers) {
 		super(applyOn);
 		this.path = compile(requireNonEmpty(path, typeName(this.getClass()), "path"));
-		this.map = requireNonEmpty(map, typeName(this.getClass()), "Map<oldKey,newKey>");
+		this.transformers = transformers;
 	}
 	
 	@Override
 	public DocumentContext transform(DocumentContext json) {
-		map.entrySet().forEach(e-> json.renameKey(path, e.getKey(), e.getValue())); //require string value
-		return json;
-    }
+		return json.map(path, (o, c)-> flow(o, DataTransformer::transform, transformers));
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " " + path;
+	}
 }

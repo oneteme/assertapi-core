@@ -4,13 +4,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithCause;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
-import org.usf.junit.addons.AssertExt;
 
 class SequentialFutureTest {
 
@@ -19,7 +19,7 @@ class SequentialFutureTest {
 		assertEquals(10, assertDoesNotThrow(()-> new SequentialFuture<>(()-> 10).get()));
 		assertEquals("", assertDoesNotThrow(()-> new SequentialFuture<>(()-> "").get()));
 		var exp = new IOException();
-		AssertExt.assertThrowsWithCause(ExecutionException.class, exp, ()-> new SequentialFuture<>(()-> {throw exp;}).get());
+		assertThrowsWithCause(ExecutionException.class, exp, ()-> new SequentialFuture<>(()-> {throw exp;}).get());
 	}
 
 	@Test

@@ -2,20 +2,24 @@ package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static java.util.Objects.requireNonNullElse;
-import static org.usf.assertapi.core.DataTransformer.TransformerType.JSON_PATH_MOVER;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.assertapi.core.JsonPathMover.Action.PUT;
 import static org.usf.assertapi.core.JsonPathMover.Action.SET;
+import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.Utils.isJsonArray;
+import static org.usf.assertapi.core.Utils.isJsonObject;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
 import net.minidev.json.JSONArray;
 
-public class JsonPathMover extends DataTransformer<DocumentContext, DocumentContext> {
+@JsonTypeName("JSON_PATH_MOVER")
+public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 
 	private final JsonPath fromPath;
 	private final JsonPath toPath;
@@ -27,11 +31,11 @@ public class JsonPathMover extends DataTransformer<DocumentContext, DocumentCont
 		this.fromPath = compile(from);
 		this.toPath = compile(to);
 		this.action = requireNonNullElse(action, SET);
-		this.key = action == PUT ? requireNonEmpty(key, getType(), "field") : key; //else unused key
+		this.key = action == PUT ? requireNonEmpty(key, typeName(this.getClass()), "key") : null; //else unused key
 	}
 	
 	@Override
-	protected DocumentContext transform(DocumentContext json) {
+	public DocumentContext transform(DocumentContext json) {
 		switch (action) {
 		case SET  : return setOrigin(json);
 		case ADD  : return addOrigin(json);
@@ -53,7 +57,7 @@ public class JsonPathMover extends DataTransformer<DocumentContext, DocumentCont
 	}
 	
 	private DocumentContext addOrigin(DocumentContext json) {
-		if(isArray(json.read(toPath))) {
+		if(isJsonArray(json.read(toPath))) {
 			json.add(toPath, json.read(fromPath));
 			return json.delete(fromPath);
 		}
@@ -61,7 +65,7 @@ public class JsonPathMover extends DataTransformer<DocumentContext, DocumentCont
 	}
 
 	private DocumentContext putOrigin(DocumentContext json) {
-		if(isObject(json.read(toPath))) {
+		if(isJsonObject(json.read(toPath))) {
 			json.put(toPath, key, json.read(fromPath));
 			return json.delete(fromPath);
 		}
@@ -71,23 +75,23 @@ public class JsonPathMover extends DataTransformer<DocumentContext, DocumentCont
 	private DocumentContext mergeOrigin(DocumentContext json) {
 		var origin = json.read(fromPath);
 		var target = json.read(toPath);
-		if(isArray(target)) {
-			if(isArray(origin)) {
+		if(isJsonArray(target)) {
+			if(isJsonArray(origin)) {
 				((JSONArray)origin).forEach(o-> json.add(toPath, o)); //filter items
 			}
-			else if(isObject(origin)) {
+			else if(isJsonObject(origin)) {
 				throw new UnsupportedOperationException("cannot merge object " + fromPath.getPath() + " with array " + toPath.getPath());
 			}
 			else {
 				throw expectArray(fromPath);
 			}
 		}
-		else if(isObject(target))  {
-			if(isObject(origin)) {
+		else if(isJsonObject(target))  {
+			if(isJsonObject(origin)) {
 				((Map<String, ?>)origin).entrySet()
 				.forEach(e-> json.put(toPath, e.getKey(), e.getValue()));//filter fields
 			}
-			else if(isArray(origin)) {
+			else if(isJsonArray(origin)) {
 				throw new UnsupportedOperationException("cannot merge array " + fromPath.getPath() + " with object " + toPath.getPath());
 			}
 			else {
@@ -111,19 +115,6 @@ public class JsonPathMover extends DataTransformer<DocumentContext, DocumentCont
 	private IllegalAccessError expectArrayOrObject(JsonPath path) {
 		return new IllegalAccessError(path.getPath() + " must be an object or array");
 	}
-	
-	private static boolean isObject(Object o) {
-		return o instanceof Map;
-	}
-	
-	private static boolean isArray(Object o) {
-		return o instanceof JSONArray;
-	}
-	
-	@Override
-	public String getType() {
-		return JSON_PATH_MOVER.name();
-	}	
 	
 	public enum Action {
 		SET, PUT, ADD, MERGE;

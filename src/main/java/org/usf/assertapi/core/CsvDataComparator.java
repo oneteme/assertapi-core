@@ -1,6 +1,6 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.DataComparator.ResponseType.CSV;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +12,14 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @Getter
+@JsonTypeName("CSV")
 @RequiredArgsConstructor //keep one default constructor
-public final class CsvDataComparator implements DataComparator<String> {
+public final class CsvDataComparator implements ModelComparator<String> {
 	
-	private final DataTransformer<String, String>[] transformers;
+	private final AbstractModelTransformer<String>[] transformers;
 
 	@Override
 	public CompareResult compare(String expected, String actual){
 		throw new UnsupportedOperationException("not yet implemented");
-	}
-	
-	@Override
-	public String getType() {
-		return CSV.name();
 	}
 }

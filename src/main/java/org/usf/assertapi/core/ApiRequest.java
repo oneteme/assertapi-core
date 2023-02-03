@@ -31,7 +31,7 @@ public final class ApiRequest extends HttpRequest {
 	private final Integer version;
 	private final String description; //case description
 	private final int[] acceptableStatus;
-	private final DataComparator<?> contentComparator; //nullable
+	private final ModelComparator<?> contentComparator; //nullable
 	private final ExecutionConfig executionConfig;
 	private final HttpRequest remoteApi;
 	private final StaticResponse staticResponse;
@@ -40,7 +40,7 @@ public final class ApiRequest extends HttpRequest {
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
 			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody, 
-			int[] acceptableStatus, ExecutionConfig executionConfig, DataComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
+			int[] acceptableStatus, ExecutionConfig executionConfig, ModelComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
 		
 		super(uri, method, headers, body, lazyBody);
 		this.id = id;

@@ -19,8 +19,7 @@ public abstract class JsonAbstractValueMapper extends DataTransformer<DocumentCo
 	
 	@Override
 	protected DocumentContext transform(DocumentContext json) {
-		json.map(path, (o, c)-> transformValue(o));
-		return json;
+		return json.map(path, (o, c)-> transformValue(o));
 	}
 	
 	protected abstract Object transformValue(Object value);

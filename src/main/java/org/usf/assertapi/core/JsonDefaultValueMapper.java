@@ -27,14 +27,13 @@ public final class JsonDefaultValueMapper extends JsonAbstractValueMapper { //co
 		if(map.containsKey(strValue)) {
 			return map.get(strValue);
 		}
-		var entry = map.entrySet().stream().filter(e-> strValue.matches(e.getKey())).findAny();
-		if(entry.isPresent()) {
-			var o = entry.get().getValue();
-			return o instanceof String 
-					? strValue.replaceFirst(entry.get().getKey(), (String)o) 
-					: o;
-		}
-		return value;
+		return map.entrySet().stream()
+				.filter(e-> strValue.matches(e.getKey()))
+				.findAny()
+				.map(e-> e.getValue() instanceof String 
+						? strValue.replaceFirst(e.getKey(), (String)e.getValue()) 
+						: e.getValue())
+				.orElse(value);
 	}
 
 	@Override

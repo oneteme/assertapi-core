@@ -18,10 +18,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonTypeName("DATA_MAPPER")
 public final class DataMapper implements DataTransformer {
-	
+
 	private final Map<String, Object> map;
 	
-	public DataMapper(Map<String, Object> map) {
+	public DataMapper(Map<String, Object> map, String avoidOnlyOneArg) {
 		this.map = requireNonEmpty(map, jsonTypeName(this.getClass()), "Map<oldValue|regex,newValue>");
 		this.map.keySet().forEach(Pattern::compile); // verify regex
 	}

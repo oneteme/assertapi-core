@@ -15,13 +15,13 @@ import com.jayway.jsonpath.JsonPath;
  * @since 1.0
  *
  */
-@JsonTypeName("JSON_VALUE_MAPPER")
+@JsonTypeName("JSON_DATA_MAPPER")
 public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 
 	private final JsonPath path;
 	private final DataTransformer[] transformers;
 
-	protected JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers) {
+	public JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers) {
 		super(applyOn);
 		this.path = compile(requireNonEmpty(path, jsonTypeName(this.getClass()), "path"));
 		this.transformers = requireNonEmpty(transformers, jsonTypeName(this.getClass()), "transformers");

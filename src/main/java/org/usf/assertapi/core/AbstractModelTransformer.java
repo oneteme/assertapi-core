@@ -1,7 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.stream.Collectors.joining;
-import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 
 import java.util.stream.Stream;
@@ -29,6 +29,6 @@ public abstract class AbstractModelTransformer<T> implements ModelTransformer<T>
 	
 	@Override
 	public String toString() {
-		return typeName(this.getClass()) + Stream.of(applyOn).map(Object::toString).collect(joining(",", "(", ")"));
+		return jsonTypeName(this.getClass()) + Stream.of(applyOn).map(Object::toString).collect(joining(",", "(", ")"));
 	}
 }

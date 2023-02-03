@@ -20,7 +20,7 @@ import lombok.NonNull;
 	    property = "@type")
 public interface PolymorphicType {
 
-	static String typeName(@NonNull Class<? extends PolymorphicType> type) {
+	static String jsonTypeName(@NonNull Class<? extends PolymorphicType> type) {
 		return ofNullable(type.getAnnotation(JsonTypeName.class))
 				.map(JsonTypeName::value)
 				.orElse(null);

@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNullElse;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.assertapi.core.JsonPathMover.Action.PUT;
 import static org.usf.assertapi.core.JsonPathMover.Action.SET;
-import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.isJsonArray;
 import static org.usf.assertapi.core.Utils.isJsonObject;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
@@ -31,7 +31,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		this.fromPath = compile(from);
 		this.toPath = compile(to);
 		this.action = requireNonNullElse(action, SET);
-		this.key = action == PUT ? requireNonEmpty(key, typeName(this.getClass()), "key") : null; //else unused key
+		this.key = action == PUT ? requireNonEmpty(key, jsonTypeName(this.getClass()), "key") : null; //else unused key
 	}
 	
 	@Override

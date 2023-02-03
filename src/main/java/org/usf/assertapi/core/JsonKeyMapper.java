@@ -1,7 +1,7 @@
 package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
-import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.Map;
@@ -24,8 +24,8 @@ public final class JsonKeyMapper extends AbstractModelTransformer<DocumentContex
 	
 	public JsonKeyMapper(ReleaseTarget[] applyOn, String path, Map<String, String> map) {
 		super(applyOn);
-		this.path = compile(requireNonEmpty(path, typeName(this.getClass()), "path"));
-		this.map = requireNonEmpty(map, typeName(this.getClass()), "Map<oldKey,newKey>");
+		this.path = compile(requireNonEmpty(path, jsonTypeName(this.getClass()), "path"));
+		this.map = requireNonEmpty(map, jsonTypeName(this.getClass()), "Map<oldKey,newKey>");
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 package org.usf.assertapi.core;
 
 import static com.jayway.jsonpath.JsonPath.compile;
-import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.flow;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
@@ -23,8 +23,8 @@ public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 
 	protected JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers) {
 		super(applyOn);
-		this.path = compile(requireNonEmpty(path, typeName(this.getClass()), "path"));
-		this.transformers = transformers;
+		this.path = compile(requireNonEmpty(path, jsonTypeName(this.getClass()), "path"));
+		this.transformers = requireNonEmpty(transformers, jsonTypeName(this.getClass()), "transformers");
 	}
 	
 	@Override

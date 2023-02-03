@@ -1,7 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.stream.Collectors.toList;
-import static org.usf.assertapi.core.PolymorphicType.typeName;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public final class JsonPathFilter extends AbstractModelTransformer<DocumentConte
 	
 	public JsonPathFilter(ReleaseTarget[] applyOn, String[] paths) {
 		super(applyOn);
-		this.paths = Stream.of(requireNonEmpty(paths, typeName(this.getClass()), "paths"))
+		this.paths = Stream.of(requireNonEmpty(paths, jsonTypeName(this.getClass()), "paths"))
 				.map(JsonPath::compile)
 				.collect(toList());
 	}

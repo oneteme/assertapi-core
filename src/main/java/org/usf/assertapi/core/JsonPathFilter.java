@@ -34,4 +34,5 @@ public final class JsonPathFilter extends AbstractModelTransformer<DocumentConte
 		paths.forEach(json::delete);
 		return json;
     }
+	
 }

@@ -1,6 +1,9 @@
 package org.usf.assertapi.core;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
 

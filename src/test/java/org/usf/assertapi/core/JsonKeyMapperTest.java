@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
@@ -17,6 +18,7 @@ import org.usf.junit.addons.ConvertWithObjectMapper;
 import org.usf.junit.addons.FolderSource;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.InvalidPathException;
 
 class JsonKeyMapperTest {
@@ -47,9 +49,9 @@ class JsonKeyMapperTest {
 	@ParameterizedTest
 	@FolderSource(path="json/key-mapper")
 	void testTransform(String origin, String expected,
-			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") JsonKeyMapper transformer) throws JSONException {
+			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") ModelTransformer<DocumentContext> transformer) throws JSONException {	
 		var json = jsonParser.parse(origin);
-		transformer.transform(json);
-		JSONAssert.assertEquals(expected, json.jsonString(), true);
+		assertInstanceOf(JsonKeyMapper.class, transformer).transform(json); // test @JsonTypeName deserialization 
+		JSONAssert.assertEquals(expected, transformer.transform(json).jsonString(), true);
 	}
 }

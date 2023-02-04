@@ -96,7 +96,6 @@ public final class Utils {
 				, JsonPathMover.class
 				, JsonDataMapper.class
 				, JsonKeyMapper.class);
-		
 	}
 	
 	public static ObjectMapper defaultMapper() {

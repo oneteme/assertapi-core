@@ -1,0 +1,38 @@
+[
+  {
+    "value": true,
+    "expected": 1
+  },
+  {
+    "value": "true",
+    "expected": 1
+  },
+  {
+    "value": false,
+    "expected": false
+  },
+  {
+    "value": "false",
+    "expected": "false"
+  },
+  {
+    "value": null,
+    "expected": -1
+  },
+  {
+    "value": "null",
+    "expected": -1
+  },
+  {
+    "value": "True",
+    "expected": "True"
+  },
+  {
+    "value": "falsE",
+    "expected": 0
+  },
+  {
+    "value": "NULL",
+    "expected": "NULL"
+  }
+]

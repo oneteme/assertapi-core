@@ -2,7 +2,7 @@ package org.usf.assertapi.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
@@ -25,7 +25,7 @@ class JsonPathFilterTest {
 		var msg = "JSON_PATH_FILTER : require [paths] field";
 		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonPathFilter(null, null)); //paths null
 		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonPathFilter(null, new String[] {})); //paths empty
-		assertThrows(InvalidPathException.class, ()-> new JsonPathFilter(null, new String[] {"[$]"})); //paths empty
+		assertThrowsExactly(InvalidPathException.class, ()-> new JsonPathFilter(null, new String[] {"[$]"})); //paths empty
 	}
 
 	@Test

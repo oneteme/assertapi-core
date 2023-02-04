@@ -11,5 +11,5 @@ package org.usf.assertapi.core;
 @FunctionalInterface
 public interface DataTransformer extends PolymorphicType {
 	
-	abstract Object transform(Object value);
+	Object transform(Object value);
 }

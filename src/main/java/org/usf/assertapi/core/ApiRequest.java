@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.usf.assertapi.core.Utils.isEmpty;
 
 import java.net.URI;
 import java.util.List;
@@ -47,7 +48,7 @@ public final class ApiRequest extends HttpRequest {
 		this.name = name;
 		this.version = version;
 		this.description = description;
-		this.acceptableStatus = acceptableStatus == null || acceptableStatus.length == 0 ? new int[] {DEFAULT_STATUS} : acceptableStatus; //OK or may be NotFound ?
+		this.acceptableStatus = isEmpty(acceptableStatus) ? new int[] {DEFAULT_STATUS} : acceptableStatus; //OK or may be NotFound ?
 		this.contentComparator = contentComparator;
 		this.executionConfig = requireNonNullElseGet(executionConfig, ExecutionConfig::new);
 		this.remoteApi = remoteApi;

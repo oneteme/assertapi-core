@@ -72,7 +72,7 @@ public final class RuntimeEnvironement {
 	
 	static String getLocalBranch() {
 		try {
-			Process process = Runtime.getRuntime().exec(new String[]{ "cmd", "/C", "git rev-parse --abbrev-ref HEAD" });
+			Process process = Runtime.getRuntime().exec(new String[]{ "cmd", "/C", "git rev-parse --abbrev-ref HEAD" }); //unix shell ?
 		    try(InputStreamReader isr = new InputStreamReader(process.getInputStream());
 		    	BufferedReader reader = new BufferedReader(isr)) {
 		    	return reader.readLine();

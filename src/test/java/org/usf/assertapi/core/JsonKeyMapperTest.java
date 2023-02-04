@@ -3,7 +3,7 @@ package org.usf.assertapi.core;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.usf.assertapi.core.JsonDataComparator.jsonParser;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
@@ -31,7 +31,7 @@ class JsonKeyMapperTest {
 		var msg = "JSON_KEY_MAPPER : require [path] field";
 		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, null, map)); //path null
 		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> new JsonKeyMapper(null, "", map)); //path empty
-		assertThrows(InvalidPathException.class, ()-> new JsonKeyMapper(null, "[$]", map)); //invalid path
+		assertThrowsExactly(InvalidPathException.class, ()-> new JsonKeyMapper(null, "[$]", map)); //invalid path
 	}
 
 	@Test

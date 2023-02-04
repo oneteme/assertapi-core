@@ -1,11 +1,12 @@
 {
   "map": {
     "true" : 1,
-    "falsE": 0,
+    "false": {"value" : false},
     "null" : -1,
     "1234" : 4321,
+    "4321" : {"value" : 4321},
     "dummy": "DUMMY",
-    "\\w*Name": "title",
+    "\\w*Name": {"value" : "title"},
     "(\\w*)_code": "$1Code"
   },
   "@type": "DATA_MAPPER"

@@ -22,5 +22,13 @@
   {
     "value": 234,
     "expected": 234
+  },
+  {
+    "value": 4321,
+    "expected": {"value" : 4321}
+  },
+  {
+    "value": "4321",
+    "expected": {"value" : 4321}
   }
 ]

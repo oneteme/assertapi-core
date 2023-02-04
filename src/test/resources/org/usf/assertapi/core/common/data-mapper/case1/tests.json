@@ -9,11 +9,11 @@
   },
   {
     "value": false,
-    "expected": false
+    "expected": {"value" : false}
   },
   {
     "value": "false",
-    "expected": "false"
+    "expected": {"value" : false}
   },
   {
     "value": null,
@@ -29,7 +29,7 @@
   },
   {
     "value": "falsE",
-    "expected": 0
+    "expected": "falsE"
   },
   {
     "value": "NULL",

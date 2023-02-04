@@ -21,7 +21,7 @@
   },
   {
     "value": "firstName",
-    "expected": "title"
+    "expected": {"value" : "title"}
   },
   {
     "value": "firstname",
@@ -29,7 +29,7 @@
   },
   {
     "value": "lastName",
-    "expected": "title"
+    "expected": {"value" : "title"}
   },
   {
     "value": "lastname",

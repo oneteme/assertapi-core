@@ -5,6 +5,8 @@ import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.flow;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -21,10 +23,12 @@ public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 	private final JsonPath path;
 	private final DataTransformer[] transformers;
 
-	public JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers) {
+	public JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers, Map<String, Object> map) {
 		super(applyOn);
 		this.path = compile(requireNonEmpty(path, jsonTypeName(this.getClass()), "path"));
-		this.transformers = requireNonEmpty(transformers, jsonTypeName(this.getClass()), "transformers");
+		this.transformers = map == null 
+				? requireNonEmpty(transformers, jsonTypeName(this.getClass()), "transformers") 
+				: new DataTransformer[] {new DataMapper(map, null)};  //default transformer @see JsonUnwrapped
 	}
 	
 	@Override

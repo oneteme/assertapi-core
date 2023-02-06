@@ -1,0 +1,7 @@
+{
+  "from" : "$.sorting.id",
+  "to" : "$.default",
+  "key": "newField",
+  "action": "PUT",
+  "@type": "JSON_PATH_MOVER"
+}

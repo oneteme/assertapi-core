@@ -119,7 +119,10 @@ public final class ApiAssertionExecutor {
 			throw new Utils.EmptyValueException("ApiRequest", "staticResponse");
 		}
 		var ms = currentTimeMillis();
-		res = res.withBody(loadBody(res, location));
+		var body = loadBody(res, location);
+		if(body != res.getBody()) {
+			res = res.withBody(body);
+		}
 		var exe = new ExecutionInfo(ms, currentTimeMillis(), res.getStatus(), sizeOf(res.getBody()));
 		return new HttpRequestWrapper(res, exe);
 	}
@@ -127,7 +130,7 @@ public final class ApiAssertionExecutor {
 	private static byte[] loadBody(HttpRequest req, URI location) {
 		if(req.getBody() == null && req.getLazyBody() != null) {
 			if(req.getLazyBody().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server 
-				//TODO REST call
+				//TODO REST call 
 			}
 			else {
 				var f = new File(requireNonNull(location).resolve(req.getLazyBody()));

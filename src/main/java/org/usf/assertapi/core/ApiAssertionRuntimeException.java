@@ -7,14 +7,14 @@ package org.usf.assertapi.core;
  *
  */
 @SuppressWarnings("serial")
-public final class ApiAssertionRuntimeException extends RuntimeException {
+public class ApiAssertionRuntimeException extends RuntimeException {
 	
-	public ApiAssertionRuntimeException(String msg) {
-		super(msg);
+	public ApiAssertionRuntimeException(String message) {
+		super(message);
 	}
 
-	public ApiAssertionRuntimeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ApiAssertionRuntimeException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 }

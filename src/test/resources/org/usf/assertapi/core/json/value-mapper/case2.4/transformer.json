@@ -1,0 +1,5 @@
+{
+  "path" : "$.columns[*].name",
+  "map" : { "(\\w+)\\s(\\w+)" : {"value": "Event ID"}},
+  "@type": "JSON_VALUE_MAPPER"
+}

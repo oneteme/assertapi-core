@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.usf.assertapi.core.Utils.isEmpty;
 
 import java.net.URI;
 import java.util.List;
@@ -24,14 +25,14 @@ import lombok.Getter;
 @Getter
 @JsonInclude(NON_NULL)
 @JsonIgnoreProperties(value = "location")
-public final class ApiRequest extends HttpRequest  {
+public final class ApiRequest extends HttpRequest {
 
 	private final Long id;
 	private final String name;
 	private final Integer version;
 	private final String description; //case description
 	private final int[] acceptableStatus;
-	private final ContentComparator<?> contentComparator; //nullable
+	private final ModelComparator<?> contentComparator; //nullable
 	private final ExecutionConfig executionConfig;
 	private final HttpRequest remoteApi;
 	private final StaticResponse staticResponse;
@@ -40,14 +41,14 @@ public final class ApiRequest extends HttpRequest  {
 	
 	public ApiRequest(Long id, String name, Integer version, String description, 
 			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody, 
-			int[] acceptableStatus, ExecutionConfig executionConfig, ContentComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
+			int[] acceptableStatus, ExecutionConfig executionConfig, ModelComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
 		
 		super(uri, method, headers, body, lazyBody);
 		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.description = description;
-		this.acceptableStatus = acceptableStatus == null || acceptableStatus.length == 0 ? new int[] {DEFAULT_STATUS} : acceptableStatus; //OK or may be NotFound ?
+		this.acceptableStatus = isEmpty(acceptableStatus) ? new int[] {DEFAULT_STATUS} : acceptableStatus; //OK or may be NotFound ?
 		this.contentComparator = contentComparator;
 		this.executionConfig = requireNonNullElseGet(executionConfig, ExecutionConfig::new);
 		this.remoteApi = remoteApi;
@@ -84,7 +85,6 @@ public final class ApiRequest extends HttpRequest  {
 		if(description != null) {
 			sb.append(description);
 		}
-		var s = sb.toString();
-		return s.isEmpty() ? super.toString() : s;
+		return sb.length() == 0 ? super.toString() : sb.toString(); //isEmpty java15
 	}
 }

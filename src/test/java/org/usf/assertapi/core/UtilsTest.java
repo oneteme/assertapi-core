@@ -67,29 +67,29 @@ class UtilsTest {
 	
 	@Test
 	void testRequireNonEmpty_string_map() {
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String)null, "object", "name"));
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty("", "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty((String)null, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty("", "object", "name"));
 		assertDoesNotThrow(()-> requireNonEmpty("1", null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_int_array() {
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((int[])null, "object", "name"));
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new int[] {}, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty((int[])null, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty(new int[] {}, "object", "name"));
 		assertDoesNotThrow(()-> requireNonEmpty(new int[] {1}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_string_array() {
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((String[])null, "object", "name"));
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new String[]{}, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty((String[])null, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty(new String[]{}, "object", "name"));
 		assertDoesNotThrow(()-> requireNonEmpty(new String[] {"1"}, null, null));
 	}
 
 	@Test
 	void testRequireNonEmpty_map() {
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty((Map<?,?>)null, "object", "name"));
-		assertThrowsWithMessage(msg, EmptyValueException.class, ()-> requireNonEmpty(new HashMap<>(), "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty((Map<?,?>)null, "object", "name"));
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> requireNonEmpty(new HashMap<>(), "object", "name"));
 		assertDoesNotThrow(()-> requireNonEmpty(Map.of(1, "1"), null, null));
 	}
 

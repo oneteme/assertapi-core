@@ -9,11 +9,11 @@ import org.springframework.http.HttpHeaders;
 
 class BearerClientAuthenticatorTest {
 	
-	private static final String dummyToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+	final String dummyToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
 			+ ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
 			+ ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 	
-	private static final String anothToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+	final String anothToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
 			+ ".eyJtYWlsIjoidXNmLmFsYW1pQGdtYWlsLmNvbSIsIm5hbWUiOiJ1JGYiLCJpYXQiOjE1MTYyMzkwMjJ9"
 			+ ".qUKtNcdBobZuOZzjfvf0XgfzkqcQ8s7iRPzaLOvUN8w";
 

@@ -1,0 +1,6 @@
+{
+  "from" : "$.sorting.id",
+  "to" : "$.order",
+  "action": "ADD",
+  "@type": "JSON_PATH_MOVER"
+}

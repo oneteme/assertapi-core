@@ -13,7 +13,7 @@ class ExecutionInfoTest {
 
 	@Test
 	void testToString() {
-		assertEquals("5o transferred in 1000ms", new ExecutionInfo(3600, 4600, 200, 5).toString());
+		assertEquals("200 : 5o transferred in 1000ms", new ExecutionInfo(3600, 4600, 200, 5).toString());
 	}
 
 }

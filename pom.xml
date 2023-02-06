@@ -21,8 +21,8 @@
 	</scm>
 	<licenses>
 		<license>
-			<name>The Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<name>Apache License 2.0</name>
+			<url>https://github.com/oneteme/assertapi-core/blob/main/LICENSE</url>
 		</license>
 	</licenses>
 	<properties>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>io.github.oneteme</groupId>
 			<artifactId>junit-addons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -106,6 +106,30 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<formats>
+								<format>XML</format>
+							</formats>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -124,30 +148,6 @@
 								<goals>
 									<goal>jar-no-fork</goal>
 								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.7</version>
-						<executions>
-							<execution>
-								<id>prepare-agent</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>report</id>
-								<goals>
-									<goal>report</goal>
-								</goals>
-								<configuration>
-									<formats>
-										<format>XML</format>
-									</formats>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>

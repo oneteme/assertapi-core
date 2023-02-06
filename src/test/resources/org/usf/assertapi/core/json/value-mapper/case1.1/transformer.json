@@ -1,0 +1,5 @@
+{
+  "path" : "$.sorting.id",
+  "map":{"number": "string"},
+  "@type": "JSON_VALUE_MAPPER"
+}

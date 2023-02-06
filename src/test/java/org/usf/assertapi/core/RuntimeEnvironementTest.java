@@ -36,9 +36,8 @@ class RuntimeEnvironementTest {
 
 	@Test
 	void testFrom() {
-		RuntimeEnvironement.from(variables::get).push((k, v)->{
-			assertEquals(variables.get(k), v);
-		});
+		RuntimeEnvironement.from(variables::get).push((k, v)-> 
+			assertEquals(variables.get(k), v));
 	}
 
 	@Test

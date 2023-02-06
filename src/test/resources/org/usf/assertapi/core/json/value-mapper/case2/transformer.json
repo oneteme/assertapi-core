@@ -1,6 +1,0 @@
-{
-  "xpath" : "$.order[*]",
-  "regex" : "^\\w+(name)$",
-  "map" : {"$1": "Name"},
-  "@type": "JSON_VALUE_MAPPER"
-}

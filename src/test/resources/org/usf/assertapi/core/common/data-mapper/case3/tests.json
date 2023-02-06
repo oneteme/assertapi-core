@@ -1,0 +1,38 @@
+[
+  {
+    "value": "code",
+    "expected": "code"
+  },
+  {
+    "value": "_code",
+    "expected": "Code"
+  },
+  {
+    "value": "dymmy_code",
+    "expected": "dymmyCode"
+  },
+  {
+    "value": "dummy",
+    "expected": "DUMMY"
+  },
+  {
+    "value": "Dummy",
+    "expected": "Dummy"
+  },
+  {
+    "value": "firstName",
+    "expected": {"value" : "title"}
+  },
+  {
+    "value": "firstname",
+    "expected": "firstname"
+  },
+  {
+    "value": "lastName",
+    "expected": {"value" : "title"}
+  },
+  {
+    "value": "lastname",
+    "expected": "lastname"
+  }
+]

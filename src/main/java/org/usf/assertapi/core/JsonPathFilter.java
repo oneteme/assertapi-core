@@ -1,13 +1,15 @@
 package org.usf.assertapi.core;
 
-import static org.usf.assertapi.core.ResponseTransformer.TransformerType.JSON_PATH_FILTER;
+import static java.util.stream.Collectors.toList;
+import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jayway.jsonpath.DocumentContext;
-
-import lombok.Getter;
+import com.jayway.jsonpath.JsonPath;
 
 /**
  * 
@@ -15,23 +17,22 @@ import lombok.Getter;
  * @since 1.0
  *
  */
-@Getter
-public final class JsonPathFilter extends ResponseTransformer<DocumentContext> {
+@JsonTypeName("JSON_PATH_FILTER")
+public final class JsonPathFilter extends AbstractModelTransformer<DocumentContext> {
 
-	private final String[] xpaths; //exclude | include ?
+	private final List<JsonPath> paths; //exclude | include ?
 	
-	public JsonPathFilter(ReleaseTarget[] targets, String[] xpaths) {
-		super(targets);
-		this.xpaths = requireNonEmpty(xpaths, getType(), "xpaths");
+	public JsonPathFilter(ReleaseTarget[] applyOn, String[] paths) {
+		super(applyOn);
+		this.paths = Stream.of(requireNonEmpty(paths, jsonTypeName(this.getClass()), "paths"))
+				.map(JsonPath::compile)
+				.collect(toList());
 	}
 	
 	@Override
-	public void transform(DocumentContext json) {
-		Stream.of(xpaths).forEach(json::delete);
+	public DocumentContext transform(DocumentContext json) {
+		paths.forEach(json::delete);
+		return json;
     }
 	
-	@Override
-	public String getType() {
-		return JSON_PATH_FILTER.name();
-	}
 }

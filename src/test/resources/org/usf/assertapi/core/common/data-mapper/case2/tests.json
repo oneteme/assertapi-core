@@ -1,0 +1,34 @@
+[
+  {
+    "value": 1234,
+    "expected": 4321
+  },
+  {
+    "value": "1234",
+    "expected": 4321
+  },
+  {
+    "value": "123",
+    "expected": "123"
+  },
+  {
+    "value": 123,
+    "expected": 123
+  },
+  {
+    "value": "234",
+    "expected": "234"
+  },
+  {
+    "value": 234,
+    "expected": 234
+  },
+  {
+    "value": 4321,
+    "expected": {"value" : 4321}
+  },
+  {
+    "value": "4321",
+    "expected": {"value" : 4321}
+  }
+]

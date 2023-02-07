@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.minidev.json.JSONArray;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -68,6 +70,13 @@ public final class Utils {
 		return o;
 	}
 
+	@SafeVarargs
+	public static <T> void requireAnyOneNonEmpty(String parent, String fieldName, Predicate<T> emptyFn, @NonNull T... args) {
+		if(Stream.of(args).allMatch(emptyFn)) {
+			throw new EmptyValueException(parent, fieldName);
+		}
+	}
+
 	@SuppressWarnings("serial")
 	public static final class EmptyValueException extends RuntimeException {
 
@@ -108,6 +117,13 @@ public final class Utils {
 
 	public static boolean isJsonArray(Object o) {
 		return o instanceof JSONArray;
+	}
+	
+	public static String requireStringValue(Object o) {
+		if(o instanceof String) {
+			return o.toString();
+		}
+		throw new IllegalArgumentException("String value expected but was : " + o); 
 	}
 	
 	@SafeVarargs

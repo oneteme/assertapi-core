@@ -31,7 +31,7 @@ class AbstractModelTransformerTest {
 	}
 	
 	@Test
-	void testTioString() {
+	void testToString() {
 		assertEquals("null(STABLE)", newModelTransformer().toString()); //no annotation
 		@JsonTypeName("dummy")
 		class DummyClass extends AbstractModelTransformer<Object> {

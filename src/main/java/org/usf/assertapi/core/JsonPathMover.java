@@ -77,7 +77,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		var target = json.read(toPath);
 		if(isJsonArray(target)) {
 			if(isJsonArray(origin)) {
-				((JSONArray)origin).forEach(o-> json.add(toPath, o)); //filter items
+				((JSONArray)origin).forEach(o-> json.add(toPath, o)); //filter items ==> Array[path]
 			}
 			else if(isJsonObject(origin)) {
 				throw new UnsupportedOperationException("cannot merge object " + fromPath.getPath() + " with array " + toPath.getPath());
@@ -89,7 +89,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		else if(isJsonObject(target))  {
 			if(isJsonObject(origin)) {
 				((Map<String, ?>)origin).entrySet()
-				.forEach(e-> json.put(toPath, e.getKey(), e.getValue()));//filter fields
+				.forEach(e-> json.put(toPath, e.getKey(), e.getValue()));//filter fields ==> Map<path,path>
 			}
 			else if(isJsonArray(origin)) {
 				throw new UnsupportedOperationException("cannot merge array " + fromPath.getPath() + " with object " + toPath.getPath());

@@ -52,18 +52,22 @@ public final class TemporalShiftTransformer implements DataTransformer {
 				? (Temporal) value 
 				: from(requireStringValue(value));
 		if(plus != null) {
-			temporal = adjust(temporal, plus, temporal::plus); 
+			temporal = adjust(temporal, plus, true); 
 		}
 		if(minus != null) {
-			temporal = adjust(temporal, minus, temporal::minus); 
+			temporal = adjust(temporal, minus, false); 
 		}
 		return formatter.format(temporal); //origin format
 	}
 	
-	Temporal adjust(Temporal t, String s, BiFunction<Long, TemporalUnit, Temporal> fn) {
+	Temporal adjust(Temporal t, String s, boolean add) {
 		var m = pattern.matcher(s);
 		while(m.find()) {
-			t = fn.apply(parseLong(m.group(1)), unit(m.group(2)));
+			var v = parseLong(m.group(1));
+			var u = parseUnit(m.group(2));
+			t = add 
+				? t.plus(v, u)
+				: t.minus(v, u);
 		}
 		return t;
 	}
@@ -82,7 +86,7 @@ public final class TemporalShiftTransformer implements DataTransformer {
         throw new UnsupportedOperationException("Unsupported pattern " + value);
 	}
 	
-	TemporalUnit unit(String unit) {
+	static TemporalUnit parseUnit(String unit) {
 		switch (unit) {
 		case "y": return YEARS;
 		case "m": return MONTHS;

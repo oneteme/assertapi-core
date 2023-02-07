@@ -26,11 +26,21 @@ public final class StaticResponse extends HttpRequest {
 	
 	public StaticResponse(Integer status, Map<String, List<String>> headers, 
 			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) { 
-		super("", null, headers, body, lazyBody);
+		super(null, null, headers, body, lazyBody);
 		this.status = requireNonNullElse(status, DEFAULT_STATUS);
 	}
 	
 	public StaticResponse withBody(byte[] body) {
 		return new StaticResponse(status, getHeaders(), body, getUri());
+	}
+	
+	@Override
+	public String getUri() {
+		throw new UnsupportedOperationException("unsupported uri field");
+	}
+	
+	@Override
+	public String getMethod() {
+		throw new UnsupportedOperationException("unsupported uri method");
 	}
 }

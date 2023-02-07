@@ -155,7 +155,7 @@ interface ClientResponseWrapper {
 
 		@Override
 		public MediaType getContentType() {
-			return ofNullable(response.getHeader(CONTENT_TYPE))
+			return ofNullable(response.getFirstHeader(CONTENT_TYPE))
 					.map(MediaType::parseMediaType)
 					.orElse(null);
 		}

@@ -10,6 +10,7 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.NANOS;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
 import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireAnyOneNonEmpty;
@@ -50,10 +51,10 @@ public final class TemporalShift implements DataTransformer {
 		Temporal temporal = value instanceof Temporal 
 				? (Temporal) value 
 				: from(requireStringValue(value));
-		if(plus != null) {
+		if(nonNull(plus)) {
 			temporal = adjust(temporal, plus, true); 
 		}
-		if(minus != null) {
+		if(nonNull(minus)) {
 			temporal = adjust(temporal, minus, false); 
 		}
 		return formatter.format(temporal); //origin format
@@ -80,7 +81,7 @@ public final class TemporalShift implements DataTransformer {
         		LocalDate::from, 
         		LocalTime::from);
         if(ta instanceof Temporal) {
-        	return (Temporal)ta;
+        	return (Temporal) ta;
         }
         throw new UnsupportedOperationException("Unsupported pattern " + value);
 	}

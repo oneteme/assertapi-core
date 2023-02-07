@@ -1,0 +1,6 @@
+{
+	"uri": "/api",
+	"method": "POST",
+	"headers": {"hdr1":["value1", "value2"], "hdr2":["value1"]},
+	"lazyBody": "dummy-file.json"
+}

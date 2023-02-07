@@ -96,9 +96,10 @@ public final class Utils {
 	public static SimpleModule defaultModule() {
 		return new SimpleModule("assertapi").registerSubtypes(
 				//register DataTransformer implementations
-				DataMapper.class,
+				DataMapper.class
+				, TemporalShift.class
 				//register TypeComparatorConfig implementations
-				  JsonDataComparator.class
+				, JsonDataComparator.class
 				, CsvDataComparator.class
 				//register ModelTransformer implementations
 				, JsonPathFilter.class

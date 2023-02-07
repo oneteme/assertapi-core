@@ -26,20 +26,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalUnit;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("TEMPORAL_SHIFT")
-public final class TemporalShiftTransformer implements DataTransformer {
+public final class TemporalShift implements DataTransformer {
 
 	private final Pattern pattern = compile("(\\d+)(min|ms|ns|y|m|d|h|s)"); //do not change order
 	private final DateTimeFormatter formatter;
 	private final String plus;
 	private final String minus;
 	
-	public TemporalShiftTransformer(String pattern, String plus, String minus) {
+	public TemporalShift(String pattern, String plus, String minus) {
 		this.formatter = ofPattern(requireNonEmpty(pattern, jsonTypeName(this.getClass()), "pattern"));
 		requireAnyOneNonEmpty(jsonTypeName(this.getClass()), "plus|minus", Utils::isEmpty, plus, minus);
 		this.plus = plus;

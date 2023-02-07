@@ -6,6 +6,7 @@ import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.usf.junit.addons.ConvertWithObjectMapper;
 import org.usf.junit.addons.FolderSource;
 
@@ -75,12 +75,9 @@ class HttpRequestTest {
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") Map<String, Object> expectedRequest, 
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") HttpRequest originRequest) throws JsonProcessingException, JSONException {
 
-		if(expectedRequest.get("body") == null) {
-			assertNull(originRequest.bodyAsString());
-		}
-		else {
-			JSONAssert.assertEquals(mapper.writeValueAsString(expectedRequest.get("body")), originRequest.bodyAsString(), true);
-		}
+		var body = expectedRequest.get("body");
+		var bStr = body == null ? null : mapper.writeValueAsString(body); 
+		assertEquals(bStr, originRequest.bodyAsString(), true);
 	}
 	
 	@ParameterizedTest
@@ -102,7 +99,7 @@ class HttpRequestTest {
 	@FolderSource(path="request/http")
 	void testDeserialize(String requestContent,
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") HttpRequest expectedRequest) throws JsonProcessingException, JSONException {
-		JSONAssert.assertEquals(requestContent, mapper.writeValueAsString(expectedRequest), true);
+		assertEquals(requestContent, mapper.writeValueAsString(expectedRequest), true);
 	}
 	
 }

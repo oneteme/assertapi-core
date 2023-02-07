@@ -55,7 +55,7 @@ public class HttpRequest {
 	}
 
 	public String bodyAsString() {
-		return body == null ? null : new String(body);
+		return ofNullable(body).map(String::new).orElse(null);
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ import static java.nio.file.Files.readAllBytes;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static org.usf.assertapi.core.Utils.isEmpty;
 import static org.usf.assertapi.core.Utils.sizeOf;
 
 import java.io.File;
@@ -93,7 +94,7 @@ public final class ApiAssertionExecutor {
     
 	static ClientResponseWrapper exchange(RestTemplate template, HttpRequest req, URI location) {
 		HttpHeaders headers = null;
-		if(req.hasHeaders()) {
+		if(!isEmpty(req.getHeaders())) {
 			headers = new HttpHeaders();
 			headers.putAll(req.getHeaders());
 		}
@@ -101,7 +102,8 @@ public final class ApiAssertionExecutor {
 		var method = HttpMethod.valueOf(req.getMethod());
 		var start = currentTimeMillis();
 		try {
-			var res = template.exchange(req.getUri(), method, entity, byte[].class);
+			var uri = req.getUri().startsWith("/") ? req.getUri() : "/" + req.getUri();
+			var res = template.exchange(uri, method, entity, byte[].class);
 			var exe = new ExecutionInfo(start, currentTimeMillis(), res.getStatusCodeValue(), sizeOf(res.getBody()));
 			return new ResponseEntityWrapper(res, exe);
 		}

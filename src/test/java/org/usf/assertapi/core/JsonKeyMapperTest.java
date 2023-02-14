@@ -47,7 +47,7 @@ class JsonKeyMapperTest {
 	}
 
 	@ParameterizedTest
-	@FolderSource(path="json/key-mapper")
+	@FolderSource(path="transformer/json/key-mapper")
 	void testTransform(String origin, String expected,
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") ModelTransformer<DocumentContext> transformer) throws JSONException {	
 		var json = jsonParser.parse(origin);

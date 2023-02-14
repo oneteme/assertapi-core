@@ -21,8 +21,6 @@ import lombok.Getter;
 public final class StaticResponse extends HttpRequest {
 
 	private final int status;
-	//lazyBody => SELFT (null) | local(filename) | remote(UID) resource
-	//contentType => headers
 	
 	public StaticResponse(Integer status, Map<String, List<String>> headers, 
 			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) { 
@@ -31,7 +29,7 @@ public final class StaticResponse extends HttpRequest {
 	}
 	
 	public StaticResponse withBody(byte[] body) {
-		return new StaticResponse(status, getHeaders(), body, getUri());
+		return new StaticResponse(status, getHeaders(), body, getLazyBody());
 	}
 	
 	@Override
@@ -41,6 +39,6 @@ public final class StaticResponse extends HttpRequest {
 	
 	@Override
 	public String getMethod() {
-		throw new UnsupportedOperationException("unsupported uri method");
+		throw new UnsupportedOperationException("unsupported method field");
 	}
 }

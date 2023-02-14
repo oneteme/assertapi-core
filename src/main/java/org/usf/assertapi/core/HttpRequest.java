@@ -33,6 +33,7 @@ public class HttpRequest {
 	@JsonSerialize(using = StringBytesSerializer.class )
 	private final byte[] body;
 	private final String lazyBody;
+	//lazyBody => SELFT (null) | local(filename) | remote(UID) resource
 	
 	public HttpRequest(String uri, String method, Map<String, List<String>> headers, 
 			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) {

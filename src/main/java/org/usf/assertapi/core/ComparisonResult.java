@@ -20,9 +20,7 @@ public final class ComparisonResult {
 	
 	@Override
 	public String toString() {
-		return status + (step == null ? "" : "@" + step) +
-				"\n\t\t stable : " + stableApiExecution +
-				"\n\t\t latest : " + latestApiExecution;
+		return status + (step == null ? "" : "@" + step);
 	}
 	
 }

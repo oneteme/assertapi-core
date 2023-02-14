@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonTypeName("DATA_MAPPER")
 public final class DataMapper implements DataTransformer {
 
-	private final Map<String, Object> map;
+	final Map<String, Object> map;
 	
 	public DataMapper(Map<String, Object> map, String avoidOnlyOneArg) {
 		this.map = requireNonEmpty(map, jsonTypeName(this.getClass()), "map<oldValue|regex,newValue>");

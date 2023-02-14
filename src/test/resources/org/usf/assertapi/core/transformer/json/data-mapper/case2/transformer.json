@@ -1,0 +1,12 @@
+{
+  "path": "$.sorting.id",
+  "transformers": [{
+  	"map":{"number": "string"},
+    "@type": "DATA_MAPPER"
+  },
+  {
+  	"map":{"string": "date"},
+    "@type": "DATA_MAPPER"
+  }],
+  "@type": "JSON_DATA_MAPPER"
+}

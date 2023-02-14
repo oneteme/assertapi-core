@@ -20,8 +20,8 @@ import com.jayway.jsonpath.JsonPath;
 @JsonTypeName("JSON_DATA_MAPPER")
 public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 
-	private final JsonPath path;
-	private final DataTransformer[] transformers;
+	final JsonPath path;
+	final DataTransformer[] transformers;
 
 	public JsonDataMapper(ReleaseTarget[] applyOn, String path, DataTransformer[] transformers, Map<String, Object> map) {
 		super(applyOn);
@@ -38,6 +38,6 @@ public class JsonDataMapper extends AbstractModelTransformer<DocumentContext>  {
 	
 	@Override
 	public String toString() {
-		return super.toString() + " " + path;
+		return super.toString() + " " + path.getPath();
 	}
 }

@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-02-14T21:02:41.576Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="ryZZrQ_mA0NPP5fdprnI" version="20.8.20" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-02-14T21:09:28.952Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="lUFAQVQ_FaIovriVjqF_" version="20.8.20" type="github" pages="3">
   <diagram id="XNCPKfqxy8FyufNQV1Dv" name="assertion-step">
     <mxGraphModel dx="993" dy="505" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -176,7 +176,7 @@
           <mxGeometry x="292" y="527.5" width="58" height="59" as="geometry" />
         </mxCell>
         <mxCell id="8NkG12g9Tnx1JhUNDqtO-1" value="Static resources" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontFamily=Garamond;" vertex="1" parent="1">
-          <mxGeometry x="323" y="503" width="109.5" height="30" as="geometry" />
+          <mxGeometry x="321" y="502" width="109.5" height="30" as="geometry" />
         </mxCell>
         <mxCell id="T9bJgMlix6xWXFzp1NK1-2" style="sketch=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;" edge="1" parent="1" source="T9bJgMlix6xWXFzp1NK1-1" target="Vnb0dEzSiaL1aCIL5Cxy-8">
           <mxGeometry relative="1" as="geometry" />

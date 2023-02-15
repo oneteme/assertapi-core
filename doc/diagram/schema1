@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-02-15T20:34:18.939Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="0l4tLCKv3XUrZ0oDYJWA" version="20.8.20" type="github" pages="5">
+<mxfile host="app.diagrams.net" modified="2023-02-15T20:39:22.199Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="DP5rPl3w61v_REuDgPZC" version="20.8.20" type="github" pages="5">
   <diagram id="jE9zruc9DM_LIHJt3E0o" name="intro">
     <mxGraphModel dx="690" dy="351" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -146,7 +146,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="NPPwJwIPPRkILk7DqUY0" name="general">
-    <mxGraphModel dx="662" dy="337" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="662" dy="365" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -198,7 +198,7 @@
           <mxGeometry x="448" y="146" width="35" height="49" as="geometry" />
         </mxCell>
         <mxCell id="PEwkuW-ZVZZzFpRJ5Pzx-1" value="BUILD &amp;amp; TEST" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" vertex="1" parent="1">
-          <mxGeometry x="230" y="34" width="56" height="30" as="geometry" />
+          <mxGeometry x="230" y="40" width="56" height="24" as="geometry" />
         </mxCell>
         <mxCell id="yvcKqpGhkv2o7dMCNhIa-6" style="edgeStyle=none;curved=1;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;strokeColor=default;fontFamily=Times New Roman;fontSize=10;startArrow=none;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="bhjZAg0ltB2cUzfXCwoL-1" target="ml4UHPW6HE7N_rmPcoYz-2">
           <mxGeometry relative="1" as="geometry">
@@ -212,10 +212,10 @@
           <mxGeometry x="630" y="187.5" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="PEwkuW-ZVZZzFpRJ5Pzx-4" value="MAVEN /&lt;br style=&quot;font-size: 10px;&quot;&gt;JENKINS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" vertex="1" parent="1">
-          <mxGeometry x="319.5" y="30" width="60" height="30" as="geometry" />
+          <mxGeometry x="319.5" y="40" width="60" height="20" as="geometry" />
         </mxCell>
         <mxCell id="PEwkuW-ZVZZzFpRJ5Pzx-5" value="AssertApi Server" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" vertex="1" parent="1">
-          <mxGeometry x="444" y="34" width="60" height="30" as="geometry" />
+          <mxGeometry x="435.5" y="38" width="60" height="24" as="geometry" />
         </mxCell>
         <mxCell id="7UQU2zU6VZfaprtX11yV-5" style="sketch=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;strokeColor=default;fontFamily=Times New Roman;fontSize=10;startArrow=classic;startFill=1;endArrow=classic;endFill=1;curved=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AQGChlmt_qvruJx_oE2M-10" target="SvXWM-ua9gGyu3cGQZCC-4">
           <mxGeometry relative="1" as="geometry">
@@ -240,7 +240,7 @@
           <mxGeometry x="320.5" y="211" width="58" height="59" as="geometry" />
         </mxCell>
         <mxCell id="yvcKqpGhkv2o7dMCNhIa-9" value="Web App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" vertex="1" parent="1">
-          <mxGeometry x="540" y="37" width="60" height="30" as="geometry" />
+          <mxGeometry x="542" y="43.5" width="60" height="17" as="geometry" />
         </mxCell>
         <mxCell id="yvcKqpGhkv2o7dMCNhIa-11" style="edgeStyle=none;curved=1;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;strokeColor=default;fontFamily=Times New Roman;fontSize=10;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="ml4UHPW6HE7N_rmPcoYz-4" target="ml4UHPW6HE7N_rmPcoYz-2">
           <mxGeometry relative="1" as="geometry">
@@ -250,7 +250,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="yvcKqpGhkv2o7dMCNhIa-12" value="Repository" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" vertex="1" parent="1">
-          <mxGeometry x="425" y="257" width="81" height="30" as="geometry" />
+          <mxGeometry x="425" y="257" width="81" height="23" as="geometry" />
         </mxCell>
         <mxCell id="bhjZAg0ltB2cUzfXCwoL-6" value="" style="edgeStyle=none;curved=1;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;strokeColor=default;fontFamily=Times New Roman;fontSize=10;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="7UQU2zU6VZfaprtX11yV-1" target="bhjZAg0ltB2cUzfXCwoL-1">
           <mxGeometry relative="1" as="geometry">
@@ -278,7 +278,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="WhWVhQ1ra27f61EwLu6a" name="usecase">
-    <mxGraphModel dx="794" dy="404" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="934" dy="515" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -601,7 +601,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="a-iyyju6VWcAFU2jmqDD" name="setup">
-    <mxGraphModel dx="1793" dy="955" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="993" dy="548" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -875,7 +875,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="XNCPKfqxy8FyufNQV1Dv" name="assertion-step">
-    <mxGraphModel dx="2206" dy="1175" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1222" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />

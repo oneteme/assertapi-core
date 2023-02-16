@@ -11,10 +11,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [ "main" ]
-    paths-ignore: [ "README.md"]
+    paths-ignore: [ "README.md", "doc/**" ]
   push:
     branches: [ "main", "develop" ]
-    paths-ignore: [ "README.md"]
+    paths-ignore: [ "README.md", "doc/**" ]
 jobs:
   build:
     runs-on: ubuntu-latest

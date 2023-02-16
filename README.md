@@ -19,6 +19,11 @@
 </dependency>
 ```
 
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/overview.diagram.svg)
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/usecase.diagram.svg)
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 
 ## Usage
 

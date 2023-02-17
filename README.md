@@ -7,9 +7,28 @@
 [![CI/CD](https://github.com/oneteme/assertapi-core/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/oneteme/assertapi-core/actions/workflows/main.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=oneteme_assertapi-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=oneteme_assertapi-core)
 
+## Problem
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/problem.diagram.svg)
+
+## Integration
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/integration.diagram.svg)
+
+## Usecase
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/usecase.diagram.svg)
+
+## Overview
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/overview.diagram.svg)
+
+## Setup
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
+
 
 ## MAVEN Integration
-
 
 ```xml
 <dependency>
@@ -18,16 +37,6 @@
   <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
-
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/problem.diagram.svg)
-
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/integration.diagram.svg)
-
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/usecase.diagram.svg)
-
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/overview.diagram.svg)
-
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 
 ## Usage
 

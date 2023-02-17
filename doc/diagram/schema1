@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-02-17T13:03:46.071Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="zTFaULIiUsztuJrMZkSN" version="20.8.20" type="github" pages="8">
+<mxfile host="app.diagrams.net" modified="2023-02-17T13:04:45.138Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="P5J5ef-MhDhxPqtJSdqQ" version="20.8.20" type="github" pages="8">
   <diagram id="itpCjIW_mOmyJ4LTEuFx" name="problem">
     <mxGraphModel dx="966" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -112,8 +112,8 @@
         <mxCell id="elwISgN5xFo3T2mnlF4t-3" value="Case 2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="16" y="230.5" width="50" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="elwISgN5xFo3T2mnlF4t-4" value="Case n" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="16" y="311.5" width="50" height="20" as="geometry" />
+        <mxCell id="elwISgN5xFo3T2mnlF4t-4" value="...&lt;br&gt;Case n" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
+          <mxGeometry x="16" y="288" width="50" height="41.5" as="geometry" />
         </mxCell>
         <mxCell id="elwISgN5xFo3T2mnlF4t-5" value="Release" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="123" y="46" width="50" height="20" as="geometry" />
@@ -232,8 +232,8 @@
         <mxCell id="Wk0N_tG3TZePkoaDYJGg-20" value="Case 2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="482" y="229.5" width="50" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="Wk0N_tG3TZePkoaDYJGg-21" value="Case n" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="482" y="309.5" width="50" height="20" as="geometry" />
+        <mxCell id="Wk0N_tG3TZePkoaDYJGg-21" value="...&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;Case n" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
+          <mxGeometry x="482" y="294" width="50" height="29.5" as="geometry" />
         </mxCell>
         <mxCell id="Wk0N_tG3TZePkoaDYJGg-22" value="Release" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="591" y="46" width="50" height="20" as="geometry" />

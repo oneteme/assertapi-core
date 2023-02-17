@@ -19,7 +19,7 @@
 </dependency>
 ```
 
-![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/intro.diagram.svg)
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/problem.diagram.svg)
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/integration.diagram.svg)
 

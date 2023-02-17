@@ -9,21 +9,31 @@
 
 ## Problem
 
+text..
+
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/problem.diagram.svg)
 
 ## Integration
+
+text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/integration.diagram.svg)
 
 ## Usecase
 
+text..
+
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/usecase.diagram.svg)
 
 ## Overview
 
+text..
+
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/overview.diagram.svg)
 
 ## Setup
+
+text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 

@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.not;
 import static org.usf.assertapi.core.Utils.isEmpty;
 
 import java.util.List;
@@ -32,33 +33,30 @@ public class HttpRequest {
 	@JsonSerialize(using = StringBytesSerializer.class )
 	private final byte[] body;
 	private final String lazyBody;
+	//lazyBody => SELFT (null) | local(filename) | remote(UID) resource
 	
 	public HttpRequest(String uri, String method, Map<String, List<String>> headers, 
 			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) {
-		this.uri = ofNullable(uri).map(String::trim).map(u-> u.startsWith("/") ? u : "/" + u)
-				.orElseThrow(()-> new IllegalArgumentException("URI connot be null"));
-		this.method = ofNullable(method).map(String::trim).map(m-> m.trim().toUpperCase()).orElse(DEFAULT_METHOD);
+		this.uri = ofNullable(uri).map(String::trim).orElse("");
+		this.method = ofNullable(method).map(String::trim).map(String::toUpperCase).filter(not(String::isEmpty)).orElse(DEFAULT_METHOD);
 		this.headers = headers;
 		this.body = body;
 		this.lazyBody = lazyBody;
 	}
 	
-	public boolean hasHeaders() {
-		return headers != null && !headers.isEmpty();
-	}
-	
-	public String getHeader(String title) {
-		if(headers != null) {
+	/**@see HttpHeaders.getFirst(CONTENT_TYPE);*/
+	public String getFirstHeader(String title) {
+		if(!isEmpty(headers)) {
 			var header = headers.get(title);
 			if(!isEmpty(header)) {
-				return header.get(0);  /**@see HttpHeaders.getFirst(CONTENT_TYPE);*/
+				return header.get(0);  
 			}
 		}
 		return null;
 	}
 
 	public String bodyAsString() {
-		return body == null ? null : new String(body);
+		return ofNullable(body).map(String::new).orElse(null);
 	}
 	
 	@Override
@@ -67,7 +65,7 @@ public class HttpRequest {
 	}
 	
 	public String toRequestUri() {
-		return new StringBuilder(100)
+		return new StringBuilder(50)
 				.append("[").append(method).append("] ")
 				.append(uri).toString();
 	}

@@ -1,0 +1,6 @@
+{
+	"uri": "/api",
+	"method": "POST",
+	"headers": {"hdr1":["value1", "value2"]},
+	"body": {"key" : [{"filed": "value"}]}
+}

@@ -122,7 +122,7 @@ public class ResponseComparator {
 		}
 	}
 	
-	public void assertJsonContent(String expected, String actual, DataComparator<?> config) {
+	public void assertJsonContent(String expected, String actual, ModelComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("jsonContent", expected, actual, true);
 		var cr = castConfig(config, JsonDataComparator.class, ()-> new JsonDataComparator(null, null)).compare(expected, actual);
@@ -156,7 +156,7 @@ public class ResponseComparator {
 				format("%s : stable=%s ~ latest=%s", currentStage, valueOf(expected), valueOf(actual))); //body size ? binary ? 
 	}
 	
-	static <T extends DataComparator<?>> T castConfig(DataComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
+	static <T extends ModelComparator<?>> T castConfig(ModelComparator<?> obj, Class<T> expectedClass, Supplier<T> orElseGet){
 		if(obj == null) {
 			return orElseGet.get();
 		}

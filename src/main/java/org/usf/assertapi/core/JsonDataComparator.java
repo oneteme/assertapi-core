@@ -4,17 +4,17 @@ import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static java.util.Objects.requireNonNullElse;
-import static java.util.stream.Collectors.toList;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.usf.assertapi.core.DataComparator.ResponseType.JSON;
 import static org.usf.assertapi.core.ReleaseTarget.LATEST;
 import static org.usf.assertapi.core.ReleaseTarget.STABLE;
+import static org.usf.assertapi.core.Utils.flow;
 import static org.usf.assertapi.core.Utils.isEmpty;
 
 import java.util.stream.Stream;
 
 import org.json.JSONException;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
 
@@ -27,14 +27,15 @@ import lombok.Getter;
  *
  */
 @Getter
-public final class JsonDataComparator implements DataComparator<String> {
+@JsonTypeName("JSON")
+public final class JsonDataComparator implements ModelComparator<String> {
 	
 	static final ParseContext jsonParser = using(defaultConfiguration().addOptions(SUPPRESS_EXCEPTIONS));
 
 	private final boolean strict;
-	private final DataTransformer<DocumentContext, DocumentContext>[] transformers;
+	private final AbstractModelTransformer<DocumentContext>[] transformers;
 
-	public JsonDataComparator(Boolean strict, DataTransformer<DocumentContext, DocumentContext>[] transformers) {
+	public JsonDataComparator(Boolean strict, AbstractModelTransformer<DocumentContext>[] transformers) {
 		this.strict = requireNonNullElse(strict, true);
 		this.transformers = transformers;
 	}
@@ -54,25 +55,17 @@ public final class JsonDataComparator implements DataComparator<String> {
 			throw new ApiAssertionRuntimeException("error while parsing JSON content", e);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	private final String transform(String resp, ReleaseTarget target){
 		if(resp != null) {
-			var list = Stream.of(transformers)
+			var arr = Stream.of(transformers)
 					.filter(t-> t.matchTarget(target))
-					.collect(toList());
-			if(!list.isEmpty()) {
-				var doc = jsonParser.parse(resp);
-				for(var t : list) {
-					doc = t.transform(doc);
-				}
-				resp = doc.jsonString();
+					.toArray(AbstractModelTransformer[]::new);
+			if(arr.length > 0) {
+				return flow(jsonParser.parse(resp), AbstractModelTransformer::transform, (AbstractModelTransformer<DocumentContext>[]) arr).jsonString();
 			}
 		}
 		return resp;
-	}
-
-	@Override
-	public String getType() {
-		return JSON.name();
 	}
 }

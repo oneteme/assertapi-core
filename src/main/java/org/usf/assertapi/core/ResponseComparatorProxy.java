@@ -67,7 +67,7 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 
 	@Override
-	public void assertJsonContent(String expected, String actual, DataComparator<?> config) {
+	public void assertJsonContent(String expected, String actual, ModelComparator<?> config) {
 		comparator.assertJsonContent(expected, actual, config);
 	}
 

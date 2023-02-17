@@ -1,38 +1,46 @@
 package org.usf.assertapi.core;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.http.HttpHeaders;
 import org.usf.assertapi.core.Utils.EmptyValueException;
 
 class BasicClientAuthenticatorTest {
 	
-	@Test
-	void testAuthorization_empty() {
+	@NullSource
+	@EmptySource
+	@ParameterizedTest
+	void testAuthorization_bad_username(String username) {
+		String msg = "BASIC : require [username] field";
 		var headers = new HttpHeaders();
 		var auth = new ServerAuth();
 		var authenticator = new BasicClientAuthenticator();
-		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //username null
-		auth.put("username", "");
-		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //username empty
-		auth.put("username", "dummyUser");
-		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //password null
-		auth.put("password", "");
-		assertThrows(EmptyValueException.class, ()-> authenticator.authorization(headers, auth)); //password empty
-		auth.put("password", "dummyPass");
-		assertDoesNotThrow(()-> new BasicClientAuthenticator().authorization(headers, auth));
+		auth.put("username", username);
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> authenticator.authorization(headers, auth));
 	}
-
+	
+	@NullSource
+	@EmptySource
+	@ParameterizedTest
+	void testAuthorization_bad_password(String password) {
+		String msg = "BASIC : require [password] field";
+		var headers = new HttpHeaders();
+		var auth = new ServerAuth();
+		var authenticator = new BasicClientAuthenticator();
+		auth.put("username", "dummy");
+		auth.put("password", password);
+		assertThrowsWithMessage(EmptyValueException.class, msg, ()-> authenticator.authorization(headers, auth));
+	}
+	
 	@ParameterizedTest
 	@CsvSource({
-	    "dummyUser,dummyPass,Basic ZHVtbXlVc2VyOmR1bW15UGFzcw==",
-	    "username1,password0,Basic dXNlcm5hbWUxOnBhc3N3b3JkMA==",
+	    "dummy,dummy,Basic ZHVtbXk6ZHVtbXk=",
 	    "admin,12345,Basic YWRtaW46MTIzNDU="
 	})
 	void testAuthorization(String username, String password, String expected) {

@@ -43,6 +43,12 @@ text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 
+## Assertion
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/assertion.diagram.svg)
+
 
 ## MAVEN Integration
 

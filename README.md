@@ -13,6 +13,12 @@ text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/problem.diagram.svg)
 
+## Solution
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/solution.diagram.svg)
+
 ## Integration
 
 text..

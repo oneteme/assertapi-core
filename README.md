@@ -43,6 +43,23 @@ text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 
+## Deploy
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/deploy.diagram.svg)
+
+## Assertion
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/assertion.diagram.svg)
+
+## Architecture
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/architecture.diagram.svg)
 
 ## MAVEN Integration
 

@@ -37,8 +37,6 @@ public final class ApiRequest extends HttpRequest {
 	private final HttpRequest remoteApi;
 	private final StaticResponse staticResponse;
 	
-	private URI location; //must be injected after deserialization
-	
 	public ApiRequest(Long id, String name, Integer version, String description, 
 			String uri, String method, Map<String, List<String>> headers, @JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody, 
 			int[] acceptableStatus, ExecutionConfig executionConfig, ModelComparator<?> contentComparator, HttpRequest remoteApi, StaticResponse staticResponse) {
@@ -72,7 +70,13 @@ public final class ApiRequest extends HttpRequest {
 	}
 	
 	public ApiRequest withLocation(URI location) {
-		this.location = location;
+		if(staticResponse != null) {
+			staticResponse.setLocation(location);
+		}
+		if(remoteApi != null) {
+			remoteApi.setLocation(location);
+		}
+		setLocation(location);
 		return this;
 	}
 	

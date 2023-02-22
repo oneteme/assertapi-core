@@ -43,6 +43,12 @@ text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/setup.diagram.svg)
 
+## Deploy
+
+text..
+
+![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/deploy.diagram.svg)
+
 ## Assertion
 
 text..

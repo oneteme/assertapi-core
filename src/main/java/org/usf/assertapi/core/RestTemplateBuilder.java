@@ -43,18 +43,18 @@ public final class RestTemplateBuilder {
 		return rt;
 	}
 	
+	public static RestTemplate build(String url) {
+		var rt = new RestTemplate();
+		RootUriTemplateHandler.addTo(rt, url);
+		return rt;
+	}
+	
 	private static ClientAuthenticator newInstance(Class<? extends ClientAuthenticator> clazz) {
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			throw new IllegalArgumentException("error while instantiating " + clazz.getName(), e);
 		}
-	}
-	
-	public static RestTemplate build(String url) {
-		var rt = new RestTemplate();
-		RootUriTemplateHandler.addTo(rt, url);
-		return rt;
 	}
 
 }

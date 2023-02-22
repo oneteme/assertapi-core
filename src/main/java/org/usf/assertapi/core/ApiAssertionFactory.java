@@ -31,7 +31,7 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionFactory comparingWithStaticResponse(@NonNull ServerConfig latestRelease) {
+	public ApiAssertionFactory comparingStatically(@NonNull ServerConfig latestRelease) {
 		return comparing(null, latestRelease);
 	}
 	

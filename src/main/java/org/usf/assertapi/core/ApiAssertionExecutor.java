@@ -71,7 +71,7 @@ public final class ApiAssertionExecutor {
 		ClientResponseWrapper expected = null;
     	try {
         	expected = stableReleaseTemp == null 
-        			? staticResponse(api)
+        			? staticResponse(api.staticResponse())
         			: exchange(api.stableApi(), stableReleaseTemp);
         	if(!api.acceptStatus(expected.getStatusCodeValue())) {
         		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
@@ -115,8 +115,7 @@ public final class ApiAssertionExecutor {
 		}
     }
 	
-	static ClientResponseWrapper staticResponse(ApiRequest req) {
-		var res = req.getStaticResponse();
+	static ClientResponseWrapper staticResponse(StaticResponse res) {
 		if(res == null) {
 			throw new Utils.EmptyValueException("ApiRequest", "staticResponse");
 		}

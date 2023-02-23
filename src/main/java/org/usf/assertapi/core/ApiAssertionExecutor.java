@@ -47,10 +47,9 @@ public final class ApiAssertionExecutor {
 	private final RestTemplate latestReleaseTemp;
 	
 	private static ExecutorService executor;
-	private Future<?> async; //cancel ??
 	
-	public void assertAllAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
-		this.async = executor().submit(()-> assertAll(queries.get()));
+	public Future<?> assertAllAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
+		return executor().submit(()-> assertAll(queries.get()));
 	}
 	
 	public void assertAll(Stream<ApiRequest> stream) {

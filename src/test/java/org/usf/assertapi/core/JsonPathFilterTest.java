@@ -34,7 +34,7 @@ class JsonPathFilterTest {
 	}
 
 	@ParameterizedTest
-	@FolderSource(path="json/path-filter")
+	@FolderSource(path="transformer/json/path-filter")
 	void testTransform(String origin, String expected,
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") ModelTransformer<DocumentContext> transformer) throws JSONException {
 		var json = jsonParser.parse(origin);

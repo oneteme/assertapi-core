@@ -29,7 +29,7 @@ class JsonPathMoverTest {
 	}
 
 	@ParameterizedTest
-	@FolderSource(path="json/path-mover")
+	@FolderSource(path="transformer/json/path-mover")
 	void testTransform(String origin, String expected,
 			@ConvertWithObjectMapper ThrowableMessage exception,
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") ModelTransformer<DocumentContext> transformer) throws JSONException {

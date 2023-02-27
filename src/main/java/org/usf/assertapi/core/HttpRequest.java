@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
 import static org.usf.assertapi.core.Utils.isEmpty;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
@@ -20,6 +22,7 @@ import lombok.Getter;
  * @since 1.0
  *
  */
+@Setter
 @Getter
 @JsonInclude(NON_NULL)
 public class HttpRequest {
@@ -33,6 +36,9 @@ public class HttpRequest {
 	@JsonSerialize(using = StringBytesSerializer.class )
 	private final byte[] body;
 	private final String lazyBody;
+	//lazyBody => SELFT (null) | local(filename) | remote(UID) resource
+	
+	private URI location; //must be injected after deserialization
 	
 	public HttpRequest(String uri, String method, Map<String, List<String>> headers, 
 			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) {

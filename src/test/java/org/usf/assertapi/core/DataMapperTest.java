@@ -35,7 +35,7 @@ class DataMapperTest {
 	}
 	
 	@ParameterizedTest
-	@FolderSource(path="common/data-mapper")
+	@FolderSource(path="transformer/data/data-mapper")
 	void testTransform(
 			@ConvertWithObjectMapper List<Map<String, Object>> tests,
 			@ConvertWithObjectMapper(clazz=Utils.class, method="defaultMapper") DataTransformer transformer) {

@@ -9,6 +9,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.NANOS;
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
@@ -35,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonTypeName("TEMPORAL_SHIFT")
 public final class TemporalShift implements DataTransformer {
 
-	private final Pattern pattern = compile("(\\d+)(min|ms|ns|y|m|d|h|s)"); //do not change order
+	private final Pattern pattern = compile("(\\d+)(min|ms|ns|y|m|w|d|h|s)"); //do not change order
 	private final DateTimeFormatter formatter;
 	private final String plus;
 	private final String minus;
@@ -92,6 +93,7 @@ public final class TemporalShift implements DataTransformer {
 		case "y": return YEARS;
 		case "m": return MONTHS;
 		case "d": return DAYS;
+		case "w": return WEEKS;
 		case "h": return HOURS;
 		case "min": return MINUTES;
 		case "s": return SECONDS;

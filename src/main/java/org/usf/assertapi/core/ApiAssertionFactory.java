@@ -56,7 +56,7 @@ public final class ApiAssertionFactory {
 		var cmp = requireNonNullElseGet(comparator, ResponseComparator::new);
 		cmp.setExecutor(stableRelease == null
 				? new DisconnectedAssertionExecutor(latestTemp)
-				: new ConnectedAssertionExecutor(latestTemp, RestTemplateBuilder.build(stableRelease, map)));
+				: new ConnectedAssertionExecutor(RestTemplateBuilder.build(stableRelease, map), latestTemp));
 		if(tracer != null) {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}

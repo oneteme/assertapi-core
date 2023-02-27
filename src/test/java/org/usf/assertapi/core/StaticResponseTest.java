@@ -1,41 +1,38 @@
 package org.usf.assertapi.core;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Arrays;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 
 class StaticResponseTest {
 
-	@Test
-	void testStaticResponse_Status() {
-		assertEquals(200, new StaticResponse(null, null, null, null).getStatus());
-		assertEquals(404, new StaticResponse(404, null, null, null).getStatus());
-	}
+	private final StaticResponse response = new StaticResponse();
 	
 	@Test
-	void testWithBody() {
-		var status = Integer.valueOf(404);
-		var haders = Map.of("key", Arrays.asList("value"));
-		var lasyBd = "filename.json";
-		var sr = new StaticResponse(status, haders, new byte[]{}, lasyBd)
-				.withBody(new byte[] {1,2,3});
-		assertEquals(status, sr.getStatus()); //primitive status type
-		assertSame(haders, sr.getHeaders());
-		assertSame(lasyBd, sr.getLazyBody());
-		assertArrayEquals(new byte[] {1,2,3}, sr.getBody());
+	void testSetStatus() {
+		assertEquals(200, response.getStatus());
+		assertEquals(404, response.setStatus(404).getStatus());
+		assertEquals(200, response.setStatus(null).getStatus());
 	}
-	
+		
 	@Test
 	void testGetUri() {
-		assertThrowsExactly(UnsupportedOperationException.class, ()-> new StaticResponse(null, null, null, null).getUri());
+		assertThrowsExactly(UnsupportedOperationException.class, ()-> response.getUri());
+	}
+
+	@Test
+	void testSetUri() {
+		assertThrowsExactly(UnsupportedOperationException.class, ()-> response.setUri(""));
 	}
 	
 	@Test
 	void testGetMethod() {
-		assertThrowsExactly(UnsupportedOperationException.class, ()-> new StaticResponse(null, null, null, null).getMethod());
+		assertThrowsExactly(UnsupportedOperationException.class, ()-> response.getMethod());
 	}
-
+	
+	@Test
+	void testSetMethod() {
+		assertThrowsExactly(UnsupportedOperationException.class, ()-> response.setMethod(""));
+	}
 }

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.oneteme.assertapi</groupId>
 	<artifactId>assertapi-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>assertapi-core</name>
 	<description>assertapi-core</description>

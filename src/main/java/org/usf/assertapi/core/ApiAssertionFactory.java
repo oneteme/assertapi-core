@@ -2,7 +2,6 @@ package org.usf.assertapi.core;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNullElseGet;
-import static java.util.Optional.ofNullable;
 import static org.usf.assertapi.core.RestTemplateBuilder.defaultAuthenticators;
 
 import java.util.HashMap;
@@ -51,14 +50,16 @@ public final class ApiAssertionFactory {
 		return this;
 	}
 	
-	public ApiAssertionExecutor build() {
+	public ResponseComparator build() {
+		var map = unmodifiableMap(clientAuthenticators);
+		var latestTemp = RestTemplateBuilder.build(latestRelease, map);
 		var cmp = requireNonNullElseGet(comparator, ResponseComparator::new);
+		cmp.setExecutor(stableRelease == null
+				? new DisconnectedAssertionExecutor(latestTemp)
+				: new ConnectedAssertionExecutor(RestTemplateBuilder.build(stableRelease, map), latestTemp));
 		if(tracer != null) {
 			cmp = new ResponseComparatorProxy(cmp, tracer);
 		}
-		var map = unmodifiableMap(clientAuthenticators);
-		var stableTemp = ofNullable(stableRelease).map(c-> RestTemplateBuilder.build(c, map)).orElse(null);
-		var latestTemp = RestTemplateBuilder.build(latestRelease, map);
-		return new ApiAssertionExecutor(cmp, stableTemp, latestTemp);
+		return cmp;
 	}
 }

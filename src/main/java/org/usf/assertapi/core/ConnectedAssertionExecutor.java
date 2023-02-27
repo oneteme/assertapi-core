@@ -4,20 +4,18 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.nio.file.Files.readAllBytes;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static org.usf.assertapi.core.Utils.defaultMapper;
 import static org.usf.assertapi.core.Utils.isEmpty;
 import static org.usf.assertapi.core.Utils.sizeOf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +23,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-import org.usf.assertapi.core.ClientResponseWrapper.HttpRequestWrapper;
 import org.usf.assertapi.core.ClientResponseWrapper.ResponseEntityWrapper;
 import org.usf.assertapi.core.ClientResponseWrapper.RestClientResponseExceptionWrapper;
 
-import lombok.Getter;
-import lombok.NonNull;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -40,39 +38,19 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RequiredArgsConstructor
-public final class ApiAssertionExecutor {
+public class ConnectedAssertionExecutor implements ApiExecutor {
 	
-	private final ResponseComparator comparator;
-	private final RestTemplate stableReleaseTemp; //nullable => static response
-	private final RestTemplate latestReleaseTemp;
+	private static final ObjectMapper mapper = defaultMapper();
 	
-	private static ExecutorService executor;
-	
-	public Future<?> assertAllAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
-		return executor().submit(()-> assertAll(queries.get()));
-	}
-	
-	public void assertAll(Stream<ApiRequest> stream) {
-		stream.forEach(q->{
-			try {
-				assertApi(q);
-			}
-	    	catch(Exception | AssertionError e) {/* do nothing exception already logged */}
-		});
-	}
-	
-	public void assertApi(@NonNull ApiRequest api) {
-		comparator.assertResponse(api, this::execBoth);
-	}
+	private final RestTemplate stableApiTemplate; //nullable => static response
+	private final RestTemplate latestApiTemplate;
 
-	private PairResponse execBoth(ApiRequest api) {
-		var af = submit(api.getExecutionConfig().isParallel(), ()-> exchange(api.latestApi(), latestReleaseTemp));
+	public PairResponse exchange(ApiRequest api) {
+		var af = runLatest(api);
 		ClientResponseWrapper expected = null;
     	try {
-        	expected = stableReleaseTemp == null 
-        			? staticResponse(api.staticResponse())
-        			: exchange(api.stableApi(), stableReleaseTemp);
-        	if(!api.acceptStatus(expected.getStatusCodeValue())) {
+        	expected = runStable(api);
+        	if(!api.accept(expected.getStatusCodeValue())) {
         		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
         	}
     	}
@@ -81,6 +59,7 @@ public final class ApiAssertionExecutor {
     		throw e;
     	}
 		try {
+			loadComparators(api);
 			return new PairResponse(expected, af.get());
 		} catch (InterruptedException e) {
 			currentThread().interrupt();
@@ -89,7 +68,15 @@ public final class ApiAssertionExecutor {
 			throw new ApiAssertionRuntimeException("exception during latest release execution !", e);
 		}
 	}
-    
+	
+	Future<ClientResponseWrapper> runLatest(ApiRequest api) {
+		return submit(api.getExecution().isParallel(), ()-> exchange(api.latest(), latestApiTemplate));
+	}
+	
+	ClientResponseWrapper runStable(ApiRequest api) {
+		return exchange(api.stable(), stableApiTemplate);
+	}
+	
 	static ClientResponseWrapper exchange(HttpRequest req, RestTemplate template) {
 		HttpHeaders headers = null;
 		if(!isEmpty(req.getHeaders())) {
@@ -114,20 +101,7 @@ public final class ApiAssertionExecutor {
 		}
     }
 	
-	static ClientResponseWrapper staticResponse(StaticResponse res) {
-		if(res == null) {
-			throw new Utils.EmptyValueException("ApiRequest", "staticResponse");
-		}
-		var ms = currentTimeMillis();
-		var body = loadBody(res);
-		if(body != res.getBody()) {
-			res = res.withBody(body);
-		}
-		var exe = new ExecutionInfo(ms, currentTimeMillis(), res.getStatus(), sizeOf(res.getBody()));
-		return new HttpRequestWrapper(res, exe);
-	}
-	
-	private static byte[] loadBody(HttpRequest req) {
+	static byte[] loadBody(HttpRequest req) {
 		if(req.getBody() != null || req.getLazyBody() == null) {
 			return req.getBody();
 		}
@@ -147,24 +121,28 @@ public final class ApiAssertionExecutor {
 		}
 	}
 	
-	private static ExecutorService executor() {
-		if(executor == null) {
-			executor = newFixedThreadPool(10); //conf
+	private static void loadComparators(ApiRequest req) {
+		if(isEmpty(req.getComparators()) && req.getLazyComparators() != null) {
+			if(req.getLazyComparators().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server
+				throw new UnsupportedOperationException("not yet implemented");
+			}
+			else {
+				var f = new File(requireNonNull(req.getLocation()).resolve(req.getLazyComparators()));
+				if(!f.exists()) {
+					throw new NoSuchElementException("file not found : " + f.toURI());
+				}
+				try {
+					req.setComparators(mapper.readValue(f, new TypeReference<Map<String, ModelComparator<?>>>() {}));
+				} catch (IOException e) {
+					throw new ApiAssertionRuntimeException("cannot read file : " + f, e);
+				}
+			}
 		}
-		return executor;
-	}
+	}	
 	
 	private static <T> Future<T> submit(boolean parallel, Callable<T> callable) {
 		return parallel 
 				? commonPool().submit(callable)
 				: new SequentialFuture<>(callable);
-	}
-	
-	@Getter
-	@RequiredArgsConstructor
-	static final class PairResponse {
-		
-		private final ClientResponseWrapper expected;
-		private final ClientResponseWrapper actual;
 	}
 }

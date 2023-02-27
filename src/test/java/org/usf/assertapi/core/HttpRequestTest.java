@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 class HttpRequestTest {
 	
 	private final ObjectMapper mapper = new ObjectMapper();
+	private final HttpRequest request = new HttpRequest();
 
 	@ParameterizedTest
 	@CsvSource(ignoreLeadingAndTrailingWhitespace = false, value={
@@ -33,7 +34,8 @@ class HttpRequestTest {
 	    "api,\tapi",  //leading
 	    "api,api\t"}) //trailing
 	void testHttpRequest_uri(String expected, String uri) {
-		assertEquals(expected,  new HttpRequest(uri, null, null, null, null).getUri());
+		request.setUri(uri);
+		assertEquals(expected, request.getUri());
 	}
 	
 	@ParameterizedTest
@@ -46,16 +48,17 @@ class HttpRequestTest {
 	    "POST,\tPost",		//leading
 	    "DELETE,DELETE\t"}) //trailing
 	void testHttpRequest_method(String expected, String method) {
-		assertEquals(expected,  new HttpRequest(null, method, null, null, null).getMethod());
+		request.setMethod(method);
+		assertEquals(expected, request.getMethod());
 	}
 
 	@Test
 	void testGetFirstHeader() {
-		assertNull(new HttpRequest(null, null, null, null, null).getFirstHeader("hdr1"));
-		assertNull(new HttpRequest(null, null, emptyMap(), null, null).getFirstHeader("hdr1"));
-		assertNull(new HttpRequest(null, null, Map.of("hdr1", emptyList()), null, null).getFirstHeader("hdr1"));
-		assertEquals("value1", new HttpRequest(null, null, Map.of("hdr1", asList("value1")), null, null).getFirstHeader("hdr1"));
-		assertEquals("value2", new HttpRequest(null, null, Map.of("hdr1", asList("value2", "value1")), null, null).getFirstHeader("hdr1"));
+		assertNull(request.firstHeader("hdr1"));
+		assertNull(request.setHeaders(emptyMap()).firstHeader("hdr1"));
+		assertNull(request.setHeaders(Map.of("hdr1", emptyList())).firstHeader("hdr1"));
+		assertEquals("value1", request.setHeaders(Map.of("hdr1", asList("value1"))).firstHeader("hdr1"));
+		assertEquals("value2", request.setHeaders(Map.of("hdr1", asList("value2", "value1"))).firstHeader("hdr1"));
 	}
 	
 	@ParameterizedTest
@@ -64,9 +67,9 @@ class HttpRequestTest {
 	    "check , v2/api/exemple, [CHECK] v2/api/exemple",
 	    "Head  , v3/resource/r1, [HEAD] v3/resource/r1"})
 	void testToRequestUri(String method, String uri, String expected) {
-		var req = new HttpRequest(uri, method, null, null, null);
-		assertEquals(expected, req.toRequestUri());
-		assertEquals(expected, req.toString());
+		request.setUri(uri).setMethod(method);
+		assertEquals(expected, request.toRequestUri());
+		assertEquals(expected, request.toString());
 	}
 
 	@ParameterizedTest

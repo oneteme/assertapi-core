@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
 import static org.usf.assertapi.core.Utils.isEmpty;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
@@ -24,28 +27,58 @@ import lombok.Getter;
 @JsonInclude(NON_NULL)
 public class HttpRequest {
 	
-	static final int DEFAULT_STATUS = 200;
+	static final String DEFAULT_URI = "";
 	static final String DEFAULT_METHOD = "GET";
+	static final int DEFAULT_STATUS = 200;
 
-	private final String uri;
-	private final String method;
-	private final Map<String, List<String>> headers;
-	@JsonSerialize(using = StringBytesSerializer.class )
-	private final byte[] body;
-	private final String lazyBody;
+	private String uri = DEFAULT_URI;
+	private String method = DEFAULT_METHOD;
+	private Map<String, List<String>> headers;
+	private byte[] body;
+	private String lazyBody;
 	//lazyBody => SELFT (null) | local(filename) | remote(UID) resource
+
+	@Setter(AccessLevel.PACKAGE)
+	private URI location; //must be injected after deserialization
 	
-	public HttpRequest(String uri, String method, Map<String, List<String>> headers, 
-			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) {
-		this.uri = ofNullable(uri).map(String::trim).orElse("");
-		this.method = ofNullable(method).map(String::trim).map(String::toUpperCase).filter(not(String::isEmpty)).orElse(DEFAULT_METHOD);
+	public HttpRequest setUri(String uri) {
+		this.uri = ofNullable(uri).map(String::trim).orElse(DEFAULT_URI);
+		return this;
+	}
+	
+	public HttpRequest setMethod(String method) {
+		this.method = ofNullable(method).map(String::trim).filter(not(String::isEmpty)).map(String::toUpperCase).orElse(DEFAULT_METHOD);
+		return this;
+	}
+	
+	public HttpRequest setHeaders(Map<String, List<String>> headers) {
 		this.headers = headers;
+		return this;
+	}
+	
+	@JsonDeserialize(using = StringBytesDeserializer.class) 
+	public HttpRequest setBody(byte[] body){
 		this.body = body;
+		return this;
+	}
+
+	@JsonSerialize(using = StringBytesSerializer.class )
+	public byte[] getBody(){
+		return body;
+	}
+	
+	public HttpRequest setLazyBody(String lazyBody) {
 		this.lazyBody = lazyBody;
+		return this;
+	}
+	
+
+	public String bodyAsString() {
+		return ofNullable(body).map(String::new).orElse(null);
 	}
 	
 	/**@see HttpHeaders.getFirst(CONTENT_TYPE);*/
-	public String getFirstHeader(String title) {
+	public String firstHeader(String title) {
 		if(!isEmpty(headers)) {
 			var header = headers.get(title);
 			if(!isEmpty(header)) {
@@ -53,10 +86,6 @@ public class HttpRequest {
 			}
 		}
 		return null;
-	}
-
-	public String bodyAsString() {
-		return ofNullable(body).map(String::new).orElse(null);
 	}
 	
 	@Override

@@ -2,11 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNullElse;
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
 
@@ -20,25 +16,34 @@ import lombok.Getter;
 @JsonIgnoreProperties({"uri", "method"}) //unused fields check that
 public final class StaticResponse extends HttpRequest {
 
-	private final int status;
+	private int status = DEFAULT_STATUS;
 	
-	public StaticResponse(Integer status, Map<String, List<String>> headers, 
-			@JsonDeserialize(using = StringBytesDeserializer.class) byte[] body, String lazyBody) { 
-		super(null, null, headers, body, lazyBody);
+	public StaticResponse setStatus(Integer status) { 
 		this.status = requireNonNullElse(status, DEFAULT_STATUS);
+		return this;
 	}
 	
-	public StaticResponse withBody(byte[] body) {
-		return new StaticResponse(status, getHeaders(), body, getLazyBody());
+	@Override
+	public StaticResponse setUri(String uri) {
+		throw unsupportedOperation("setUri");
 	}
 	
 	@Override
 	public String getUri() {
-		throw new UnsupportedOperationException("unsupported uri field");
+		throw unsupportedOperation("getUri");
+	}
+	
+	@Override
+	public StaticResponse setMethod(String method) {
+		throw unsupportedOperation("setMethod");
 	}
 	
 	@Override
 	public String getMethod() {
-		throw new UnsupportedOperationException("unsupported method field");
+		throw unsupportedOperation("getMethod");
+	}
+	
+	private UnsupportedOperationException unsupportedOperation(String method) {
+		return new UnsupportedOperationException(getClass().getCanonicalName() + "::" + method);
 	}
 }

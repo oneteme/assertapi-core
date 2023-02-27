@@ -14,13 +14,11 @@ import lombok.ToString;
 @Getter
 @ToString
 public final class ExecutionConfig {
+	
+	static final ExecutionConfig DEFAULT_CONFIG = new ExecutionConfig(null, null);
 
 	private boolean enabled;
 	private final boolean parallel;
-	
-	public ExecutionConfig() {
-		this(null, null);
-	}
 	
 	public ExecutionConfig(Boolean enable, Boolean parallel) {
 		this.enabled = requireNonNullElse(enable, true);

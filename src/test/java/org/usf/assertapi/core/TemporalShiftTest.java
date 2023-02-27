@@ -10,6 +10,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.usf.assertapi.core.TemporalShift.parseUnit;
+import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,8 @@ class TemporalShiftTest {
 		assertSame(SECONDS, parseUnit("s"));
 		assertSame(MILLIS, parseUnit("ms"));
 		assertSame(NANOS, parseUnit("ns"));
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported unit : w", 
+				()-> parseUnit("w"));
 	}
 
 }

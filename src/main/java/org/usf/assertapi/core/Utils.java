@@ -144,6 +144,6 @@ public final class Utils {
 	}
 	
 	public static UnsupportedOperationException unsupportedOperation(String op, String value) {
-		return new UnsupportedOperationException("unupported " + op + " : " + value);
+		return new UnsupportedOperationException("unsupported " + op + " : " + value);
 	}
 }

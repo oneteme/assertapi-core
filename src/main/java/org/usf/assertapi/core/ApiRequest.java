@@ -85,11 +85,11 @@ public final class ApiRequest extends HttpRequest {
 	}
 	
 	public ApiRequest withLocation(URI location) {
-		if(response != null) {
-			response.setLocation(location);
-		}
 		if(stable != null) {
 			stable.setLocation(location);
+		}
+		if(response != null) {
+			response.setLocation(location);
 		}
 		setLocation(location);
 		return this;

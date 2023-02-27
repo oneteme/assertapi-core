@@ -3,6 +3,7 @@ package org.usf.assertapi.core;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithCause;
 import static org.usf.junit.addons.AssertExt.assertThrowsWithMessage;
@@ -16,6 +17,7 @@ class SequentialFutureTest {
 
 	@Test
 	void testGet() {
+		assertNull(assertDoesNotThrow(()-> new SequentialFuture<>(()-> null).get()));
 		assertEquals(10, assertDoesNotThrow(()-> new SequentialFuture<>(()-> 10).get()));
 		assertEquals("", assertDoesNotThrow(()-> new SequentialFuture<>(()-> "").get()));
 		var exp = new IOException();
@@ -24,23 +26,26 @@ class SequentialFutureTest {
 
 	@Test
 	void testCancel() {
-		assertTrue(assertDoesNotThrow(()-> new SequentialFuture<>(null).cancel(true)));
-		assertTrue(assertDoesNotThrow(()-> new SequentialFuture<>(null).cancel(false)));
+		assertTrue(new SequentialFuture<>(null).cancel(true));
+		assertTrue(new SequentialFuture<>(null).cancel(false));
 	}
 
 	@Test
 	void testIsCancelled() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isCancelled", ()-> new SequentialFuture<>(null).isCancelled());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isCancelled", 
+				()-> new SequentialFuture<>(null).isCancelled());
 	}
 
 	@Test
 	void testIsDone() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isDone", ()-> new SequentialFuture<>(null).isDone());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isDone", 
+				()-> new SequentialFuture<>(null).isDone());
 	}
 
 	@Test
 	void testGet_timeout() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::get", ()-> new SequentialFuture<>(null).get(100l, SECONDS));
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::get", 
+				()-> new SequentialFuture<>(null).get(100l, SECONDS));
 	}
 
 }

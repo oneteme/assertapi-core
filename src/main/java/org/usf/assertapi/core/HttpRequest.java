@@ -77,7 +77,6 @@ public class HttpRequest {
 		return ofNullable(body).map(String::new).orElse(null);
 	}
 	
-	/**@see HttpHeaders.getFirst(CONTENT_TYPE);*/
 	public String firstHeader(String title) {
 		if(!isEmpty(headers)) {
 			var header = headers.get(title);

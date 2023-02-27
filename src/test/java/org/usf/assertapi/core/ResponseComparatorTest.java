@@ -27,7 +27,7 @@ class ResponseComparatorTest {
 	
 	@Test
 	void testPrepare() {
-		var api = new ApiRequest(null, null, null, null, "api", null, null, null, null, null, null, null, null, null);
+		var api = new ApiRequest();
 		assertDoesNotThrow(()-> comparator.before(api));
 		expectCurrentStage(null);
 	}

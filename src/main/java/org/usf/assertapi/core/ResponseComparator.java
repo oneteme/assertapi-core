@@ -2,6 +2,7 @@ package org.usf.assertapi.core;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.usf.assertapi.core.ApiAssertionError.skippedAssertionError;
 import static org.usf.assertapi.core.ApiAssertionError.wasSkipped;
 import static org.usf.assertapi.core.ComparisonStage.CONTENT_TYPE;
@@ -18,12 +19,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-import org.usf.assertapi.core.ApiAssertionExecutor.PairResponse;
-
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,14 +40,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.usf.assertapi.core.ApiAssertion")
 public class ResponseComparator {
 	
+	@Setter(AccessLevel.PACKAGE)
+	private ApiExecutor executor;
 	ComparisonStage currentStage;
 	
-	public final void assertResponse(ApiRequest api, Function<ApiRequest, PairResponse> execution) {
+	private static ExecutorService es;
+	
+	public Future<?> assertAsync(@NonNull Supplier<Stream<ApiRequest>> queries)  {
+		return executor().submit(()-> assertAll(queries.get()));
+	}
+	
+	public void assertAll(Stream<ApiRequest> stream) {
+		stream.forEach(q->{
+			try {
+				assertApi(q);
+			}
+	    	catch(Exception | AssertionError e) {/* do nothing exception already logged */}
+		});
+	}
+	
+	public final void assertApi(ApiRequest api) {
 		this.currentStage = null; //important : init starting stage
 		try {
 			before(api);
-			assumeEnabled(api.getExecutionConfig().isEnabled());
-			var pair = execution.apply(api); //
+			assumeEnabled(api.getExecution().isEnabled());
+			var pair = executor.exchange(api); //
 			assertElapsedTime(pair.getExpected().getRequestExecution(), pair.getActual().getRequestExecution());
 	    	assertStatusCode(pair.getExpected().getStatusCodeValue(), pair.getActual().getStatusCodeValue());
 	    	assertContentType(pair.getExpected().getContentTypeValue(), pair.getActual().getContentTypeValue());
@@ -52,7 +73,7 @@ public class ResponseComparator {
 		    	var eCont = pair.getExpected().getResponseBodyAsString();
 		    	var aCont = pair.getActual().getResponseBodyAsString();
 		    	if(pair.getExpected().isJsonCompatible()) {
-		    		assertJsonContent(eCont, aCont, api.getContentComparator());
+		    		assertJsonContent(eCont, aCont, api.comparator(pair.getExpected().getStatusCodeValue()));
 		    	}
 		    	else {
 		    		assertTextContent(eCont, aCont);
@@ -70,7 +91,7 @@ public class ResponseComparator {
 	
 	public void before(ApiRequest api) {
 		logApiComparaison("START <" + api + ">");
-		logApiComparaison("URL ", api.stableApi().toRequestUri(), api.latestApi().toRequestUri(), false);
+		logApiComparaison("URL ", api.stable().toRequestUri(), api.latest().toRequestUri(), false);
 	}
 	
 	public void assumeEnabled(boolean enabled) {
@@ -179,5 +200,12 @@ public class ResponseComparator {
 		else {
 			log.info("Comparing API {} : stable={} ~ latest={}", format, expected, actual);
 		}
+	}
+
+	private static ExecutorService executor() {
+		if(es == null) {
+			es = newFixedThreadPool(10); //conf
+		}
+		return es;
 	}
 }

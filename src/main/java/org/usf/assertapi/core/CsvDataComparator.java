@@ -1,5 +1,7 @@
 package org.usf.assertapi.core;
 
+import static org.usf.assertapi.core.Utils.notImplemented;
+
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.Getter;
@@ -20,6 +22,6 @@ public final class CsvDataComparator implements ModelComparator<String> {
 
 	@Override
 	public CompareResult compare(String expected, String actual){
-		throw new UnsupportedOperationException("not yet implemented");
+		throw notImplemented();
 	}
 }

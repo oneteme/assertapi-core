@@ -9,6 +9,7 @@ import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.isJsonArray;
 import static org.usf.assertapi.core.Utils.isJsonObject;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
+import static org.usf.assertapi.core.Utils.unsupportedOperation;
 
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		case ADD  : return addOrigin(json);
 		case PUT  : return putOrigin(json);
 		case MERGE: return mergeOrigin(json);
-		default: throw new UnsupportedOperationException("unsupported action " + action);
+		default: throw unsupportedOperation("action", action.name());
 		}
 	}
 	

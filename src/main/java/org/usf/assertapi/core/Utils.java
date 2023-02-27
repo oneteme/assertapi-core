@@ -134,4 +134,16 @@ public final class Utils {
 		}
 		return v;
 	}
+	
+	public static UnsupportedOperationException notImplemented() {
+		return new UnsupportedOperationException("not yet implemented");
+	}
+
+	public static UnsupportedOperationException unsupportedMethod(Class<?> op, String method) {
+		return new UnsupportedOperationException("unsupported method " + op.getSimpleName() + "::" + method);
+	}
+	
+	public static UnsupportedOperationException unsupportedOperation(String op, String value) {
+		return new UnsupportedOperationException("unupported " + op + " : " + value);
+	}
 }

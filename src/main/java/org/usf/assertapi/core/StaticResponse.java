@@ -1,6 +1,7 @@
 package org.usf.assertapi.core;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.usf.assertapi.core.Utils.unsupportedMethod;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,25 +26,21 @@ public final class StaticResponse extends HttpRequest {
 	
 	@Override
 	public StaticResponse setUri(String uri) {
-		throw unsupportedOperation("setUri");
+		throw unsupportedMethod(getClass(), "setUri");
 	}
 	
 	@Override
 	public String getUri() {
-		throw unsupportedOperation("getUri");
+		throw unsupportedMethod(getClass(), "getUri");
 	}
 	
 	@Override
 	public StaticResponse setMethod(String method) {
-		throw unsupportedOperation("setMethod");
+		throw unsupportedMethod(getClass(), "setMethod");
 	}
 	
 	@Override
 	public String getMethod() {
-		throw unsupportedOperation("getMethod");
-	}
-	
-	private UnsupportedOperationException unsupportedOperation(String method) {
-		return new UnsupportedOperationException(getClass().getCanonicalName() + "::" + method);
+		throw unsupportedMethod(getClass(), "getMethod");
 	}
 }

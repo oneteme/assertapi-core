@@ -16,6 +16,7 @@ import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireAnyOneNonEmpty;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 import static org.usf.assertapi.core.Utils.requireStringValue;
+import static org.usf.assertapi.core.Utils.unsupportedOperation;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -83,7 +84,7 @@ public final class TemporalShift implements DataTransformer {
         if(ta instanceof Temporal) {
         	return (Temporal) ta;
         }
-        throw new UnsupportedOperationException("Unsupported pattern " + value);
+        throw unsupportedOperation("pattern", value);
 	}
 	
 	static TemporalUnit parseUnit(String unit) {
@@ -96,7 +97,7 @@ public final class TemporalShift implements DataTransformer {
 		case "s": return SECONDS;
 		case "ms": return MILLIS;
 		case "ns": return NANOS;
-		default: throw new UnsupportedOperationException("Unsupported unit " + unit);
+		default: throw unsupportedOperation("unit", unit);
 		}
 	}
 }

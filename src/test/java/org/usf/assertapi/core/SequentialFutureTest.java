@@ -30,17 +30,17 @@ class SequentialFutureTest {
 
 	@Test
 	void testIsCancelled() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).isCancelled());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isCancelled", ()-> new SequentialFuture<>(null).isCancelled());
 	}
 
 	@Test
 	void testIsDone() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).isDone());
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::isDone", ()-> new SequentialFuture<>(null).isDone());
 	}
 
 	@Test
 	void testGet_timeout() {
-		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported", ()-> new SequentialFuture<>(null).get(100l, SECONDS));
+		assertThrowsWithMessage(UnsupportedOperationException.class, "unsupported method SequentialFuture::get", ()-> new SequentialFuture<>(null).get(100l, SECONDS));
 	}
 
 }

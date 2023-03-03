@@ -1,5 +1,7 @@
 package org.usf.assertapi.core;
 
+import static org.usf.assertapi.core.Utils.unsupportedMethod;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -29,16 +31,16 @@ final class SequentialFuture<T> implements Future<T> {
 
 	@Override
 	public boolean isCancelled() {
-		throw new UnsupportedOperationException("unsupported");
+		throw unsupportedMethod(getClass(), "isCancelled");
 	}
 
 	@Override
 	public boolean isDone() {
-		throw new UnsupportedOperationException("unsupported");
+		throw unsupportedMethod(getClass(), "isDone");
 	}
 
 	@Override
 	public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		throw new UnsupportedOperationException("unsupported");
+		throw unsupportedMethod(getClass(), "get");
 	}
 }

@@ -27,7 +27,7 @@ import lombok.With;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RuntimeEnvironement {
 
-	private static String prefix = "$env-";
+	private static String prefix = "$api-";
 
 	@With
 	private final String user;

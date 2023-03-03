@@ -7,6 +7,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.usf.assertapi.core.Utils.defaultMapper;
 import static org.usf.assertapi.core.Utils.isEmpty;
+import static org.usf.assertapi.core.Utils.notImplemented;
 import static org.usf.assertapi.core.Utils.sizeOf;
 
 import java.io.File;
@@ -69,12 +70,12 @@ public class ConnectedAssertionExecutor implements ApiExecutor {
 		}
 	}
 	
-	Future<ClientResponseWrapper> runLatest(ApiRequest api) {
-		return submit(api.getExecution().isParallel(), ()-> exchange(api.latest(), latestApiTemplate));
-	}
-	
 	ClientResponseWrapper runStable(ApiRequest api) {
 		return exchange(api.stable(), stableApiTemplate);
+	}
+	
+	Future<ClientResponseWrapper> runLatest(ApiRequest api) {
+		return submit(api.getExecution().isParallel(), ()-> exchange(api.latest(), latestApiTemplate));
 	}
 	
 	static ClientResponseWrapper exchange(HttpRequest req, RestTemplate template) {
@@ -106,7 +107,7 @@ public class ConnectedAssertionExecutor implements ApiExecutor {
 			return req.getBody();
 		}
 		if(req.getLazyBody().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server
-			throw new UnsupportedOperationException("not yet implemented");
+			throw notImplemented();
 		}
 		else {
 			var f = new File(requireNonNull(req.getLocation()).resolve(req.getLazyBody()));
@@ -121,10 +122,10 @@ public class ConnectedAssertionExecutor implements ApiExecutor {
 		}
 	}
 	
-	private static void loadComparators(ApiRequest req) {
+	static void loadComparators(ApiRequest req) {
 		if(isEmpty(req.getComparators()) && req.getLazyComparators() != null) {
 			if(req.getLazyComparators().matches("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}")) { //get reference from server
-				throw new UnsupportedOperationException("not yet implemented");
+				throw notImplemented();
 			}
 			else {
 				var f = new File(requireNonNull(req.getLocation()).resolve(req.getLazyComparators()));

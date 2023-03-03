@@ -9,6 +9,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.NANOS;
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
@@ -16,6 +17,7 @@ import static org.usf.assertapi.core.PolymorphicType.jsonTypeName;
 import static org.usf.assertapi.core.Utils.requireAnyOneNonEmpty;
 import static org.usf.assertapi.core.Utils.requireNonEmpty;
 import static org.usf.assertapi.core.Utils.requireStringValue;
+import static org.usf.assertapi.core.Utils.unsupportedOperation;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -34,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonTypeName("TEMPORAL_SHIFT")
 public final class TemporalShift implements DataTransformer {
 
-	private final Pattern pattern = compile("(\\d+)(min|ms|ns|y|m|d|h|s)"); //do not change order
+	private final Pattern pattern = compile("(\\d+)(min|ms|ns|y|m|w|d|h|s)"); //do not change order
 	private final DateTimeFormatter formatter;
 	private final String plus;
 	private final String minus;
@@ -83,7 +85,7 @@ public final class TemporalShift implements DataTransformer {
         if(ta instanceof Temporal) {
         	return (Temporal) ta;
         }
-        throw new UnsupportedOperationException("Unsupported pattern " + value);
+        throw unsupportedOperation("pattern", value);
 	}
 	
 	static TemporalUnit parseUnit(String unit) {
@@ -91,12 +93,13 @@ public final class TemporalShift implements DataTransformer {
 		case "y": return YEARS;
 		case "m": return MONTHS;
 		case "d": return DAYS;
+		case "w": return WEEKS;
 		case "h": return HOURS;
 		case "min": return MINUTES;
 		case "s": return SECONDS;
 		case "ms": return MILLIS;
 		case "ns": return NANOS;
-		default: throw new UnsupportedOperationException("Unsupported unit " + unit);
+		default: throw unsupportedOperation("unit", unit);
 		}
 	}
 }

@@ -3,6 +3,17 @@
 
 AssertAPI is a Java library designed for testing RESTful APIs. It allows developers to easily write and automate tests, while also enabling collaboration with QA teams.
 
+### Features
+Here are some of the key features of AssertAPI:
+
+- Tests can be defined in JSON format, making it easy to write and maintain test cases.
+- Supports testing of APIs using different authentication methods, such as BASIC and BEARER.
+- Can compare API responses in different formats, including JSON, XML, TXT, CSV, and more.
+- Supports testing of API migrations between different versions.
+- Developers can extend AssertAPI's functionality by injecting their own classes for authentication, comparison, and response transformation.
+- Tests can be executed automatically before each deployment to production.
+- AssertAPI promotes collaboration between developers and QA teams.
+
 ...
 
 ## Status
@@ -62,6 +73,10 @@ text..
 text..
 
 ![CI/CD](https://raw.githubusercontent.com/oneteme/assertapi-core/main/doc/diagram/architecture.diagram.svg)
+
+### Extensibility
+
+Developers can extend the functionality of AssertAPI by injecting their own classes to override authentication, comparison, and transformation of responses before comparison. This makes AssertAPI highly customizable and flexible to fit your specific needs.
 
 ## MAVEN Integration
 

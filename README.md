@@ -1,6 +1,8 @@
 
 # assertapi-core
 
+AssertAPI is a Java library designed for testing RESTful APIs. It allows developers to easily write and automate tests, while also enabling collaboration with QA teams.
+
 ...
 
 ## Status

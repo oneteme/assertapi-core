@@ -62,8 +62,8 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 
 	@Override
-	public void assertByteContent(byte[] expected, byte[] actual) {
-		comparator.assertByteContent(expected, actual);
+	public void assertByteContent(byte[] expected, byte[] actual, ModelComparator<?> config) {
+		comparator.assertByteContent(expected, actual, config);
 	}
 
 	@Override

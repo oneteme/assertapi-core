@@ -80,7 +80,7 @@ public class ResponseComparator {
 		    	}
 			}
 			else {
-				assertByteContent(pair.getExpected().getResponseBodyAsByteArray(), pair.getActual().getResponseBodyAsByteArray());
+				assertByteContent(pair.getExpected().getResponseBodyAsByteArray(), pair.getActual().getResponseBodyAsByteArray(), api.comparator(pair.getExpected().getStatusCodeValue()));
 			}
 			finish(OK);
 		}
@@ -127,11 +127,12 @@ public class ResponseComparator {
     	logApiComparaison("headers", expected, actual, true);
 	}
 
-	public void assertByteContent(byte[] expected, byte[] actual) {
+	public void assertByteContent(byte[] expected, byte[] actual, ModelComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("byteContent", expected, actual, true); //just reference
-		if(!Arrays.equals(expected, actual)) {
-			throw failNotEqual(Arrays.toString(expected), Arrays.toString(actual));
+		var cr = castConfig(config, BinaryDataComparator.class, ()-> new BinaryDataComparator()).compare(expected, actual);
+		if(!cr.isEquals()) {
+			throw failNotEqual(cr.getExpected(), cr.getActual());
 		}
 	}
 

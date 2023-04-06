@@ -38,7 +38,7 @@ class AbstractModelTransformerTest {
 			protected DummyClass() {super(new ReleaseTarget[] {STABLE, LATEST});}
 			public Object transform(Object model) {return model;}
 		}
-		assertEquals("dummy(STABLE,LATEST)", new DummyClass().toString());
+		assertEquals("dummy(STABLE,LATEST)", new DummyClass().toString()); //using typeName
 	}
 
 	private static AbstractModelTransformer<Object> newModelTransformer(ReleaseTarget... applyOn) {

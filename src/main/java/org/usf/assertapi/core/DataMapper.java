@@ -29,13 +29,14 @@ public final class DataMapper implements DataTransformer {
 	@Override
 	public Object transform(Object value) {
 		var strValue = valueOf(value); //String::valueOf => matching also with number & boolean
-		return map.containsKey(strValue) 
-				? map.get(strValue) 
-				: map.entrySet().stream()
+		if(map.containsKey(strValue)) {
+			return map.get(strValue);
+		}
+		var res = map.entrySet().stream()
 				.filter(e-> strValue.matches(e.getKey()))
-				.findAny()
-				.map(e-> replaceOrMap(strValue, e))
-				.orElse(value);
+				.findAny();
+		return res.isEmpty() ? value : replaceOrMap(strValue, res.get());
+
 	}
 	
 	static Object replaceOrMap(String value, Entry<String, Object> e) {

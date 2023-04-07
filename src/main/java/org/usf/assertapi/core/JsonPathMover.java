@@ -34,7 +34,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		this.action = requireNonNullElse(action, SET);
 		this.key = action == PUT ? requireNonEmpty(key, jsonTypeName(this.getClass()), "key") : null; //else unused key
 	}
-	
+
 	@Override
 	public DocumentContext transform(DocumentContext json) {
 		switch (action) {
@@ -45,7 +45,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		default: throw unsupportedOperation("action", action.name());
 		}
 	}
-	
+
 	private DocumentContext setOrigin(DocumentContext json) { //warn key
 		var origin = json.read(fromPath);
 		if(toPath.getPath().equals("$")) {//root
@@ -56,7 +56,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 			return json.delete(fromPath);
 		}
 	}
-	
+
 	private DocumentContext addOrigin(DocumentContext json) {
 		if(isJsonArray(json.read(toPath))) {
 			json.add(toPath, json.read(fromPath));
@@ -104,7 +104,7 @@ public class JsonPathMover extends AbstractModelTransformer<DocumentContext> {
 		}
 		return json.delete(fromPath);
 	}
-	
+
 	private static IllegalAccessError expectObject(JsonPath path) {
 		return new IllegalAccessError(path.getPath() + " is not an object");
 	}

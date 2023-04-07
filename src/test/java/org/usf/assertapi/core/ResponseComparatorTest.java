@@ -72,9 +72,9 @@ class ResponseComparatorTest {
 
 	@Test
 	void testAssertByteContent() {
-		assertDoesNotThrow(()-> comparator.assertByteContent(new byte[] {0, 2, 4, 6, 8, 'A'}, new byte[] {0, 2, 4, 6, 8, 'A'}));
+		assertDoesNotThrow(()-> comparator.assertByteContent(new byte[] {0, 2, 4, 6, 8, 'A'}, new byte[] {0, 2, 4, 6, 8, 'A'}, null));
 		expectCurrentStage(RESPONSE_CONTENT);
-		assertThrows(ApiAssertionError.class, ()-> comparator.assertByteContent(new byte[] {1, 2, 3, 4, 5}, new byte[] {1, 2, 'c', 4, 5}));
+		assertThrows(ApiAssertionError.class, ()-> comparator.assertByteContent(new byte[] {1, 2, 3, 4, 5}, new byte[] {1, 2, 'c', 4, 5}, null));
 		expectCurrentStage(RESPONSE_CONTENT);
 	}
 

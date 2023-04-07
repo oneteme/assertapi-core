@@ -11,9 +11,9 @@ public class BinaryDataComparator implements ModelComparator<byte[]>{
 
     @Override
     public CompareResult compare(byte[] expected, byte[] actual) {
-        if(!Arrays.equals(expected, actual)) {
-            return new CompareResult(Arrays.toString(expected), Arrays.toString(actual), false);
-        }
-        return new CompareResult(Arrays.toString(expected), Arrays.toString(actual), true);
+        return new CompareResult(
+        		Arrays.toString(expected), 
+        		Arrays.toString(actual), 
+        		Arrays.equals(expected, actual));
     }
 }

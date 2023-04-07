@@ -15,7 +15,6 @@ import static org.usf.assertapi.core.ComparisonStatus.FAIL;
 import static org.usf.assertapi.core.ComparisonStatus.OK;
 import static org.usf.assertapi.core.ComparisonStatus.SKIP;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -130,7 +129,7 @@ public class ResponseComparator {
 	public void assertByteContent(byte[] expected, byte[] actual, ModelComparator<?> config) {
     	this.currentStage = RESPONSE_CONTENT;
 		logApiComparaison("byteContent", expected, actual, true); //just reference
-		var cr = castConfig(config, BinaryDataComparator.class, ()-> new BinaryDataComparator()).compare(expected, actual);
+		var cr = castConfig(config, BinaryDataComparator.class, BinaryDataComparator::new).compare(expected, actual);
 		if(!cr.isEquals()) {
 			throw failNotEqual(cr.getExpected(), cr.getActual());
 		}

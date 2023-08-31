@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.usf.assertapi.core.ApiExecutor.PairResponse;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -63,7 +65,7 @@ public class ResponseComparator {
 		try {
 			before(api);
 			assumeEnabled(api.getExecution().isEnabled());
-			var pair = executor.exchange(api); //
+			var pair = exchange(api); //
 			assertElapsedTime(pair.getExpected().getRequestExecution(), pair.getActual().getRequestExecution());
 	    	assertStatusCode(pair.getExpected().getStatusCodeValue(), pair.getActual().getStatusCodeValue());
 	    	assertContentType(pair.getExpected().getContentTypeValue(), pair.getActual().getContentTypeValue());
@@ -86,6 +88,10 @@ public class ResponseComparator {
 		catch (Exception | AssertionError e) {
 			assertionFail(e);
 		}
+	}
+	
+	protected PairResponse exchange(ApiRequest api) {
+		return executor.exchange(api); //
 	}
 	
 	public void before(ApiRequest api) {
@@ -202,7 +208,7 @@ public class ResponseComparator {
 		}
 	}
 
-	private static ExecutorService executor() {
+	static ExecutorService executor() {
 		if(es == null) {
 			es = newFixedThreadPool(10); //conf
 		}

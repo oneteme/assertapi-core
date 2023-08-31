@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import org.usf.assertapi.core.ApiExecutor.PairResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +24,11 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	private ApiRequest currentApi;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
+	
+	@Override
+	protected PairResponse exchange(ApiRequest api) {
+		return comparator.exchange(api);
+	}
 	
 	@Override
 	void setExecutor(ApiExecutor executor) {

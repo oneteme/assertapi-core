@@ -83,11 +83,19 @@ public class ResponseComparator {
 			else {
 				assertByteContent(pair.getExpected().getResponseBodyAsByteArray(), pair.getActual().getResponseBodyAsByteArray(), api.comparator(pair.getExpected().getStatusCodeValue()));
 			}
-			finish(OK);
 		}
 		catch (Exception | AssertionError e) {
-			assertionFail(e);
+			ComparisonStatus cs = ERROR;
+			if(e instanceof AssertionError) {
+				cs = wasSkipped((AssertionError)e) ? SKIP : FAIL;
+			}
+			try {
+				assertionFail(e);
+			} finally {
+				finish(cs);
+			}
 		}
+		finish(OK);
 	}
 	
 	protected PairResponse exchange(ApiRequest api) {
@@ -164,10 +172,8 @@ public class ResponseComparator {
 	public void assertionFail(Throwable t) {
 		log.error("Testing API fail : ", t);
 		if(t instanceof AssertionError) {
-			finish(wasSkipped(t) ? SKIP : FAIL);
 			throw (AssertionError) t;
 		}
-		finish(ERROR);
 		if(t instanceof RuntimeException) {
 			throw (RuntimeException) t;
 		}

@@ -111,9 +111,12 @@ class ResponseComparatorTest {
 		assertThrowsWithMessage(AssertionError.class, "", ()-> comparator.assertionFail(new AssertionError("")));
 		assertThrowsWithMessage(ApiAssertionError.class, "assertion fail", ()-> comparator.assertionFail(new ApiAssertionError(null, null, "assertion fail")));
 		assertThrowsWithMessage(ApiAssertionError.class, "skiped", ()-> comparator.assertionFail(skippedAssertionError("skiped")));
-		assertThrowsWithMessage(RuntimeException.class,  "dummy msg", ()-> comparator.assertionFail(new RuntimeException("dummy msg")));
-		assertThrowsWithMessage(ApiAssertionRuntimeException.class, "Error while testing api", ()-> comparator.assertionFail(new Exception("unkonwn")));
-		
+	}
+	
+	@Test
+	void testAssertError(){
+		assertThrowsWithMessage(RuntimeException.class,  "dummy msg", ()-> comparator.assertionError(new RuntimeException("dummy msg")));
+		assertThrowsWithMessage(ApiAssertionRuntimeException.class, "Error while testing api", ()-> comparator.assertionError(new Exception("unkonwn")));
 	}
 
 	@ParameterizedTest

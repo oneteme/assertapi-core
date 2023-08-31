@@ -84,15 +84,20 @@ public class ResponseComparator {
 				assertByteContent(pair.getExpected().getResponseBodyAsByteArray(), pair.getActual().getResponseBodyAsByteArray(), api.comparator(pair.getExpected().getStatusCodeValue()));
 			}
 		}
-		catch (Exception | AssertionError e) {
-			ComparisonStatus cs = ERROR;
-			if(e instanceof AssertionError) {
-				cs = wasSkipped((AssertionError)e) ? SKIP : FAIL;
-			}
+		catch (AssertionError e) {
 			try {
 				assertionFail(e);
+				throw new IllegalStateException("assertionFail must throw exception");
 			} finally {
-				finish(cs);
+				finish(wasSkipped(e) ? SKIP : FAIL);
+			}
+		}
+		catch (Exception e) {
+			try {
+				assertionError(e);
+				throw new IllegalStateException("assertionError must throw exception");
+			} finally {
+				finish(ERROR);
 			}
 		}
 		finish(OK);
@@ -169,15 +174,17 @@ public class ResponseComparator {
 		}
 	}
 
-	public void assertionFail(Throwable t) {
-		log.error("Testing API fail : ", t);
-		if(t instanceof AssertionError) {
-			throw (AssertionError) t;
+	public void assertionFail(AssertionError err) {
+		log.error("Testing API fail : ", err);
+		throw err;
+	}
+	
+	public void assertionError(Exception err) {
+		log.error("Testing API error : ", err);
+		if(err instanceof RuntimeException) { //TD change this test
+			throw (RuntimeException) err;
 		}
-		if(t instanceof RuntimeException) {
-			throw (RuntimeException) t;
-		}
-		throw new ApiAssertionRuntimeException("Error while testing api", t);
+		throw new ApiAssertionRuntimeException("Error while testing api", err);
 	}
 	
 	public void finish(ComparisonStatus status) { 

@@ -84,8 +84,8 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 
 	@Override
-	public void assertionFail(Throwable t) {
-		comparator.assertionFail(t);
+	public void assertionFail(AssertionError err) {
+		comparator.assertionFail(err);
 	}
 		
 	@Override

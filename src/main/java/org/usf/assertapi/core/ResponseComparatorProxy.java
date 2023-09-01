@@ -21,14 +21,9 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	private final ResponseComparator comparator;
 	private final BiConsumer<ApiRequest, ComparisonResult> tracer;
 
-	private ApiRequest currentApi;
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
-	@Override
-	protected PairResponse exchange(ApiRequest api) {
-		return comparator.exchange(api);
-	}
 	
 	@Override
 	void setExecutor(ApiExecutor executor) {
@@ -36,21 +31,21 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 	
 	@Override
-	public void before(ApiRequest api) {
-		this.currentApi = api; //current API
-		comparator.before(api);
+	public void assumeEnabled(boolean enabled) {
+		comparator.assumeEnabled(enabled);
+	}
+
+	@Override
+	protected PairResponse execute(ApiRequest api) {
+		var res = comparator.execute(api);
+		this.stableReleaseExec = res.getExpected().getRequestExecution();
+		this.latestReleaseExec = res.getActual().getRequestExecution();
+		return res;
 	}
 	
 	@Override
 	public void assertElapsedTime(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
-		this.stableReleaseExec = stableReleaseExec;
-		this.latestReleaseExec = latestReleaseExec;
 		comparator.assertElapsedTime(stableReleaseExec, latestReleaseExec);
-	}
-
-	@Override
-	public void assumeEnabled(boolean enabled) {
-		comparator.assumeEnabled(enabled);
 	}
 	
 	@Override
@@ -89,18 +84,18 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	}
 		
 	@Override
-	public void finish(ComparisonStatus status) {
+	public void finish(ApiRequest api, ComparisonStatus status) {
 		var result = new ComparisonResult(
 				stableReleaseExec,
 				latestReleaseExec,
 				status, getCurrentStage());
 		try {
-			tracer.accept(currentApi, result);
+			tracer.accept(api, result);
 		}
 		catch(Exception e) {
-			log.warn("cannot trace {} => {} : {}", currentApi, result, e.getMessage());
+			log.warn("cannot trace {} => {} : {}", api, result, e.getMessage());
 		}
-		comparator.finish(status);
+		comparator.finish(api, status);
 	}
 	
 	@Override

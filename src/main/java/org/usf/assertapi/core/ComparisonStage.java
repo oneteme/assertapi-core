@@ -8,6 +8,7 @@ package org.usf.assertapi.core;
  */
 public enum ComparisonStage {
 	
+	STABLE_OK,
 	ELAPSED_TIME,
 	HTTP_CODE, 
 	CONTENT_TYPE, 

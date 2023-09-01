@@ -10,6 +10,7 @@ import static org.usf.assertapi.core.ComparisonStage.ELAPSED_TIME;
 import static org.usf.assertapi.core.ComparisonStage.HEADER_CONTENT;
 import static org.usf.assertapi.core.ComparisonStage.HTTP_CODE;
 import static org.usf.assertapi.core.ComparisonStage.RESPONSE_CONTENT;
+import static org.usf.assertapi.core.ComparisonStage.STABLE_OK;
 import static org.usf.assertapi.core.ComparisonStatus.ERROR;
 import static org.usf.assertapi.core.ComparisonStatus.FAIL;
 import static org.usf.assertapi.core.ComparisonStatus.OK;
@@ -62,10 +63,11 @@ public class ResponseComparator {
 	
 	public final void assertApi(ApiRequest api) {
 		this.currentStage = null; //important : init starting stage
+		logApiComparaison("START <" + api + ">");
 		try {
-			before(api);
 			assumeEnabled(api.getExecution().isEnabled());
-			var pair = exchange(api); //
+			var pair = execute(api); 
+			assumeStable(api, pair); //separated exec & check
 			assertElapsedTime(pair.getExpected().getRequestExecution(), pair.getActual().getRequestExecution());
 	    	assertStatusCode(pair.getExpected().getStatusCodeValue(), pair.getActual().getStatusCodeValue());
 	    	assertContentType(pair.getExpected().getContentTypeValue(), pair.getActual().getContentTypeValue());
@@ -87,35 +89,39 @@ public class ResponseComparator {
 		catch (AssertionError e) {
 			try {
 				assertionFail(e);
-				throw new IllegalStateException("assertionFail must throw exception");
+				throw new IllegalStateException("assertionFail must throw exception", e);
 			} finally {
-				finish(wasSkipped(e) ? SKIP : FAIL);
+				finish(api, wasSkipped(e) ? SKIP : FAIL);
 			}
 		}
 		catch (Exception e) {
 			try {
 				assertionError(e);
-				throw new IllegalStateException("assertionError must throw exception");
+				throw new IllegalStateException("assertionError must throw exception", e);
 			} finally {
-				finish(ERROR);
+				finish(api, ERROR);
 			}
 		}
-		finish(OK);
-	}
-	
-	protected PairResponse exchange(ApiRequest api) {
-		return executor.exchange(api); //
-	}
-	
-	public void before(ApiRequest api) {
-		logApiComparaison("START <" + api + ">");
-		logApiComparaison("URL ", api.stable().toRequestUri(), api.latest().toRequestUri(), false);
+		finish(api, OK);
 	}
 	
 	public void assumeEnabled(boolean enabled) {
 		if(!enabled) {
 			throw skippedAssertionError("api assertion skipped");
 		}
+	}
+	
+	protected PairResponse execute(ApiRequest api) {
+		logApiComparaison("URL ", api.stable().toRequestUri(), api.latest().toRequestUri(), false);
+		return executor.exchange(api); //
+	}
+	
+	public void assumeStable(ApiRequest api, PairResponse pair) {
+		this.currentStage = STABLE_OK;
+    	if(!api.accept(pair.getExpected().getStatusCodeValue())) {
+    		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + 
+    				pair.getExpected().getStatusCodeValue());
+    	}
 	}
 	
 	public void assertElapsedTime(ExecutionInfo stableReleaseExec, ExecutionInfo latestReleaseExec) {
@@ -187,8 +193,8 @@ public class ResponseComparator {
 		throw new ApiAssertionRuntimeException("Error while testing api", err);
 	}
 	
-	public void finish(ComparisonStatus status) { 
-		logApiComparaison("TEST " + status);
+	public void finish(ApiRequest api, ComparisonStatus status) { 
+		logApiComparaison("FINSIH <" + status + ">");
 	}
 
 	protected AssertionError failNotEqual(Object expected, Object actual) {

@@ -24,7 +24,6 @@ public class ResponseComparatorProxy extends ResponseComparator {
 	private ExecutionInfo stableReleaseExec;
 	private ExecutionInfo latestReleaseExec;
 	
-	
 	@Override
 	void setExecutor(ApiExecutor executor) {
 		comparator.setExecutor(executor);

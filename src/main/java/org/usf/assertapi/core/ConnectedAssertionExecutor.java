@@ -51,9 +51,6 @@ public class ConnectedAssertionExecutor implements ApiExecutor {
 		ClientResponseWrapper expected = null;
     	try {
         	expected = runStable(api);
-        	if(!api.accept(expected.getStatusCodeValue())) {
-        		throw new ApiAssertionRuntimeException("unexpected stable release response code : " + expected.getStatusCodeValue());
-        	}
     	}
     	catch(Exception e) {
     		af.cancel(true); //may throw exception ?

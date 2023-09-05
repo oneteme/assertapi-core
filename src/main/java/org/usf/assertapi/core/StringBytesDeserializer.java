@@ -10,7 +10,8 @@ public final class StringBytesDeserializer extends JsonDeserializer<byte[]> {
 
 	@Override
 	public byte[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		return ctxt.readTree(p).toString().getBytes();
+		var node = ctxt.readTree(p);
+		return (node.isTextual() ? node.textValue() : node.toString()).getBytes();
 	}
 
 }
